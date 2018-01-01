@@ -1,7 +1,0 @@
-<!--index.wxml-->
-<view class="container">
-    <!-- 用户登录测试 -->
-    <view>{{info}}</view>
-
-</view>
-

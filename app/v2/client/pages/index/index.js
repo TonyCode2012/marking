@@ -23,6 +23,9 @@ Page({
             success(result) {
                 if (result) {
                     //util.showSuccess('登录成功')
+                    wx.redirectTo({
+                        url: '../dashboard/dashboard?logInfo='+JSON.stringify(result)
+                    })
                     that.setData({
                         userInfo: result,
                         logged: true
@@ -34,7 +37,9 @@ Page({
                         login: true,
                         success(result) {
                             //util.showSuccess('登录成功')
-                            //util.showSuccess(result.data.data.openId)
+                            wx.redirectTo({
+                                url: '../dashboard/dashboard?logInfo='+JSON.stringify(result)
+                            })
                             that.setData({
                                 userInfo: result.data.data,
                                 logged: true
@@ -47,13 +52,6 @@ Page({
                         }
                     })
                 }
-                wx.redirectTo({
-                    url: '../dashboard/dashboard',
-                    success: function(res){
-                        //util.showSuccess(result.data.data.openId)
-                        //util.showSuccess(JSON.stringify(res))
-                    }
-                })
             },
 
             fail(error) {

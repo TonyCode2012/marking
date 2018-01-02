@@ -84,6 +84,7 @@ var login = function login(options) {
         }
         
         var userInfo = wxLoginResult.userInfo;
+        userInfo.iv = wxLoginResult.iv
 
         // 构造请求头，包含 code、encryptedData 和 iv
         var code = wxLoginResult.code;

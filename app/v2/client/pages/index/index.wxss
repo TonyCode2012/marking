@@ -4,6 +4,13 @@ page {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    -webkit-user-select:none;
+    user-select:none;
+    overflow-x:hidden;
+    width:80%;
+    height: 100%;
+    margin-top: 50%;
+    margin-left: 10%;
 }
 
 .userinfo, .uploader, .tunnel {

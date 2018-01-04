@@ -1,16 +1,10 @@
 <!--index.wxml-->
-<view class="container">
-    <!-- 用户登录测试 -->
-    <view class="userinfo" bindtap="login">
-        <image
-            class="userinfo-avatar"
-            src="{{logged ? userInfo.avatarUrl : './user-unlogin.png'}}"
-            background-size="cover"
-        ></image>
-        <view>
-            <text class="userinfo-nickname">{{logged ? userInfo.nickName : '点击测试登录接口'}}</text>
-            <text class="userinfo-nickname" wx:if="{{logged}}">{{userInfo.lastLoginTime}}</text>
-        </view>
+<!--view class="container"-->
+<view class="page" style="height:100%">
+    <view class="page__bd page__bd_spacing">
+        <button class="weui-btn" type="primary" bindtap="login">
+            点击授权登录
+        </button>
     </view>
 
 </view>

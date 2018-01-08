@@ -1,7 +1,9 @@
 {
   "pages":[
     "pages/index/index",
-    "pages/dashboard/dashboard",
+    "pages/seeker/seeker",
+    "pages/seeker/newReward",
+    "pages/delegator/delegator",
     "pages/addCgi/addCgi"
   ],
   "window":{
@@ -10,5 +12,23 @@
     "navigationBarBackgroundColor": "#F6F6F6",
     "navigationBarTitleText": "Wafer Quick Start",
     "navigationBarTextStyle":"black"
+  },
+  "tabBar": {  
+   "color":"#666666",  
+   "selectedColor":"#06bd04",  
+   "list": [
+     {  
+       "pagePath": "pages/seeker/seeker",
+       "text": "找对象",
+       "iconPath": "images/index.png",
+       "selectedIconPath": "images/indexHL.png"
+     },
+     {  
+       "pagePath": "pages/delegator/delegator",
+       "text": "当红娘",  
+       "iconPath": "images/picDisplay.png",  
+       "selectedIconPath": "images/picDisplayHL.png"  
+     }
+   ]  
   }
 }

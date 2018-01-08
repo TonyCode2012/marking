@@ -1,0 +1,42 @@
+<view class="page">
+    <view class="page__bd">
+        <view class="weui-panel weui-panel_access">
+            <view class="weui-panel__bd">
+                <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+                    <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                        <image class="weui-media-box__thumb" src="{{userInfo.avatarUrl}}" />
+                    </view>
+                    <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                        <view class="weui-media-box__title">{{userInfo.nickName}}</view>
+                        <view class="weui-media-box__desc">keep fighting</view>
+                    </view>
+                </navigator>
+            </view>
+        </view>
+    </view>
+</view>
+<view class="page">
+    <view class="page__bd">
+        <view class="weui-tab">
+            <view class="weui-navbar">
+                <block wx:for="{{tabs}}" wx:key="*this">
+                    <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+                        <view class="weui-navbar__title">{{item}}</view>
+                    </view>
+                </block>
+                <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+            </view>
+            <view class="weui-tab__panel">
+                <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+                </view>
+                <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+                    <!--button class="weui-btn mini-btn" type="primary" size="mini" bindtap="newReward" style="position: absolute;margin-top: 90%;margin-left: 80%;">新建</button-->
+                <view class="icon-wrap">
+                    <view class="zan-icon zan-icon-add" bindtap="newReward" style="color: #ff434;position: absolute;margin-top: 90%;margin-left: 80%;"></view>
+                </view>
+                </view>
+                <view class="weui-tab__content" hidden="{{activeIndex != 2}}"></view>
+            </view>
+        </view>
+    </view>
+</view>

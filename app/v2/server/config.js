@@ -19,7 +19,7 @@ const CONF = {
      */
     mysql: {
         //host: 'https://afx4ghqk.qcloud.la',
-        host: 'https://afx4ghqk.qcloud.la',
+        host: 'localhost',
         port: 3306,
         user: 'root',
         db: 'cAuth',

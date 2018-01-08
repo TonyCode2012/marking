@@ -23,8 +23,8 @@ Page({
             success(result) {
                 if (result) {
                     //util.showSuccess('登录成功')
-                    wx.redirectTo({
-                        url: '../dashboard/dashboard?logInfo='+JSON.stringify(result)
+                    wx.switchTab({
+                        url: '../seeker/seeker?logInfo='+JSON.stringify(result)
                     })
                     that.setData({
                         userInfo: result,
@@ -37,8 +37,8 @@ Page({
                         login: true,
                         success(result) {
                             //util.showSuccess('登录成功')
-                            wx.redirectTo({
-                                url: '../dashboard/dashboard?logInfo='+JSON.stringify(result)
+                            wx.switchTab({
+                                url: '../seeker/seeker?logInfo='+JSON.stringify(result)
                             })
                             that.setData({
                                 userInfo: result.data.data,

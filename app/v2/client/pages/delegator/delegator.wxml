@@ -14,7 +14,6 @@
             </view>
         </view>
     </view>
-    <!--button open-type="share" class="weui-btn mini-btn" type="primary" size="mini">按钮</button-->
 </view>
 <view class="page">
     <view class="page__bd">
@@ -35,3 +34,4 @@
         </view>
     </view>
 </view>
+

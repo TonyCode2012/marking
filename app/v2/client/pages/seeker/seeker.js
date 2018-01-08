@@ -10,40 +10,15 @@ Page({
         sliderOffset: 0,
         sliderLeft: 0
     },
-    onShareAppMessage: function (res) {
-        if (res.from === 'button') {
-          // 来自页面内转发按钮
-          console.log(res.target)
-        }
-        return {
-          title: 'to my friend',
-          path: '/pages/index/index',
-          success: function(res) {
-            // 转发成功
-            util.showSuccess('转发成功')
-          },
-          fail: function(res) {
-            // 转发失败
-            util.showSuccess('转发失败')
-          }
-        }
-    },
     onLoad: function (opt) {
-        // get opening share info
-        if(opt.scene == 1044) {
-            wx.getShareInfo({
-                shareTicket: opt.shareTicket,
-                success: function(res) {
-                    var encryptedData = res.encryptedData;
-                    var iv = res.iv;
-                }
-            })
-        }
+        wx.setNavigationBarTitle({
+          title: '我要找对象'
+        })
         var that = this;
-        util.showSuccess(opt.title)
         that.setData({
             title: opt.title
         })
+        // show share menu
         wx.showShareMenu({
             withShareTicket: true
         })
@@ -62,6 +37,11 @@ Page({
                 });
             }
         });
+    },
+    newReward: function(opt) {
+        wx.navigateTo({
+            url: 'newReward'
+        })
     },
     tabClick: function (e) {
         this.setData({

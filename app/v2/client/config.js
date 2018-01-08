@@ -19,13 +19,16 @@ var config = {
         requestUrl: `${host}/weapp/user`,
 
         // 测试的请求地址，用于解密加密数据
-        //decryptUrl: `${host}/weapp/decrypt`,
+        decryptUrl: `${host}/weapp/decrypt`,
 
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,
 
         // 上传图片接口
-        uploadUrl: `${host}/weapp/upload`
+        uploadUrl: `${host}/weapp/upload`,
+
+        // 获取钱包地址接口
+        walletAddrUrl: `${host}/weapp/wallet`
     }
 };
 

@@ -4,9 +4,39 @@
 	"miniprogramRoot": "./client",
 	"qcloudRoot": "./server",
 	"setting": {
+		"urlCheck": true,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
 		"newFeature": true
 	},
 	"appid": "wx8727802679966793",
 	"projectname": "marking",
-	"condition": {}
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": [
+				{
+					"id": 0,
+					"name": "分享测试",
+					"pathName": "pages/index/index",
+					"query": "scene=1044",
+					"scene": "1044",
+					"shareInfo": {
+						"groupName": "测试模拟群0",
+						"shareName": "okSKrJHju7CriIhADtobc-1BRhHpqYwim8D_DgkmC-E@cr4dev",
+						"shareKey": "6ctu4CIRcLgiV5nPxjWYyHpr-OHy-_IuDkHamwYmG_g63vF97x35bDapbc9eOAhLIPaU875HGGGitrQrBL-jsg~~"
+					}
+				}
+			]
+		}
+	}
 }

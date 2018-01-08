@@ -39,4 +39,12 @@ var showModel = (title, content) => {
     })
 }
 
-module.exports = { formatTime, showBusy, showSuccess, showModel }
+var json2Form = (json) => {  
+    var str = [];  
+    for(var p in json){  
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(json[p]));  
+    }  
+    return str.join("&");  
+}  
+
+module.exports = { formatTime, showBusy, showSuccess, showModel, json2Form }

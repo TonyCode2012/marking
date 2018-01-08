@@ -11,6 +11,40 @@ Page({
         requestResult: ''
     },
 
+    onLoad: function(opt) {
+        wx.showShareMenu({
+            withShareTicket: true
+        })
+        // get opening share info
+        if(opt.scene == 1044) {
+            wx.getShareInfo({
+                shareTicket: opt.shareTicket,
+                success: function(res) {
+                    var encryptedData = res.encryptedData;
+                    var iv = res.iv;
+                }
+            })
+        }
+    },
+    onShareAppMessage: function (res) {
+        if (res.from === 'button') {
+          // 来自页面内转发按钮
+          console.log(res.target)
+        }
+        return {
+          title: '转发给',
+          path: '/pages/index/index',
+          success: function(res) {
+            // 转发成功
+            //util.showSuccess('转发成功')
+            util.showSuccess(JSON.stringify(res))
+          },
+          fail: function(res) {
+            // 转发失败
+            util.showSuccess('转发失败')
+          }
+        }
+    },
     // 用户登录示例
     login: function() {
         if (this.data.logged) return
@@ -21,10 +55,16 @@ Page({
         // 调用登录接口
         qcloud.login({
             success(result) {
+                //wx.request({
+                //    url: config.service.walletAddrUrl,
+                //    success: function(result) {
+                //        util.showSuccess(JSON.stringify(result))
+                //    }
+                //})
                 if (result) {
                     //util.showSuccess('登录成功')
-                    wx.redirectTo({
-                        url: '../dashboard/dashboard?logInfo='+JSON.stringify(result)
+                    wx.switchTab({
+                        url: '../seeker/seeker?logInfo='+JSON.stringify(result)
                     })
                     that.setData({
                         userInfo: result,
@@ -37,8 +77,8 @@ Page({
                         login: true,
                         success(result) {
                             //util.showSuccess('登录成功')
-                            wx.redirectTo({
-                                url: '../dashboard/dashboard?logInfo='+JSON.stringify(result)
+                            wx.switchTab({
+                                url: '../seeker/seeker?logInfo='+JSON.stringify(result)
                             })
                             that.setData({
                                 userInfo: result.data.data,

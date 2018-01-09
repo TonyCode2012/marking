@@ -22,7 +22,10 @@ var config = {
         tunnelUrl: `${host}/weapp/tunnel`,
 
         // 上传图片接口
-        uploadUrl: `${host}/weapp/upload`
+        uploadUrl: `${host}/weapp/upload`,
+
+        // 获取钱包地址 
+        walletAddrUrl: `${host}/weapp/wallet`
     }
 };
 

@@ -5,6 +5,7 @@ const router = require('koa-router')({
     prefix: '/weapp'
 })
 const controllers = require('../controllers')
+//const eth = require('../controllers/ethereum')
 
 // 从 sdk 中取出中间件
 // 这里展示如何使用 Koa 中间件完成登录态的颁发与验证
@@ -19,6 +20,8 @@ router.get('/user', validationMiddleware, controllers.user)
 // --- 图片上传 Demo --- //
 // 图片上传接口，小程序端可以直接将 url 填入 wx.uploadFile 中
 router.post('/upload', controllers.upload)
+
+//router.get('/wallet', eth.walletAddr)
 
 // --- 信道服务接口 Demo --- //
 // GET  用来响应请求信道地址的

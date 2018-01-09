@@ -1,5 +1,6 @@
 var sliderWidth = 96; // 需要设置slider的宽度，用于计算中间位置
 var util = require('../../utils/util.js')
+var config = require('../../config')
 
 Page({
     data: {
@@ -11,6 +12,12 @@ Page({
         sliderLeft: 0
     },
     onLoad: function (opt) {
+        //wx.request({
+        //    url: config.service.walletAddrUrl,
+        //    success: function(result) {
+        //        util.showSuccess(JSON.stringify(result))
+        //    }
+        //})
         wx.setNavigationBarTitle({
           title: '我要找对象'
         })

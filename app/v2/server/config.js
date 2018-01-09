@@ -3,14 +3,15 @@ const CONF = {
     rootPathname: '',
 
     // 微信小程序 App ID
-    appId: '',
+    appId: 'wx8727802679966793',
 
     // 微信小程序 App Secret
-    //appSecret: '20a3bf08c37e5006e37e409797a6cd67',
-    appSecret: '',
+    appSecret: '20a3bf08c37e5006e37e409797a6cd67',
+    //appSecret: '',
 
     // 是否使用腾讯云代理登录小程序
-    useQcloudLogin: true,
+    //useQcloudLogin: true,
+    useQcloudLogin: false,
 
     /**
      * MySQL 配置，用来存储 session 和用户信息
@@ -20,10 +21,11 @@ const CONF = {
     mysql: {
         //host: 'https://afx4ghqk.qcloud.la',
         host: 'localhost',
+        //host: '127.0.0.1',
         port: 3306,
         user: 'root',
         db: 'cAuth',
-        pass: 'wx8727802679966793',
+        pass: 'fishbowl',
         char: 'utf8mb4'
     },
 

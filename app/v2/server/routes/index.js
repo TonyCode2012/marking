@@ -26,7 +26,7 @@ router.get('/decrypt', controllers.decrypt)
 
 // --- 获取区块链钱包地址 Demo --- //
 // 图片上传接口，小程序端可以直接将 url 填入 wx.uploadFile 中
-router.get('/wallet', controllers.walletAddr)
+//router.get('/wallet', controllers.walletAddr)
 
 // --- 信道服务接口 Demo --- //
 // GET  用来响应请求信道地址的

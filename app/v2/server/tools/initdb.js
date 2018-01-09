@@ -16,6 +16,8 @@ const INIT_DB_FILE = path.join(__dirname, './cAuth.sql')
 const DB = require('knex')({
     client: 'mysql',
     connection: {
+        //socketPath: '/Users/yaoz/errands/ethereum/projects/marking/app/v2/server/mysqld/mysqld.sock',
+        //socketPath: '/var/run/mysqld/mysqld.sock',
         host: config.host,
         port: config.port,
         user: config.user,

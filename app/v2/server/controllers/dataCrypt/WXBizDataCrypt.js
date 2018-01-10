@@ -12,25 +12,23 @@ WXBizDataCrypt.prototype.decryptData = function (encryptedData, iv) {
   iv = new Buffer(iv, 'base64')
 
   try {
-     // 解密
+    // 解密
     var decipher = crypto.createDecipheriv('aes-128-cbc', sessionKey, iv)
     // 设置自动 padding 为 true，删除填充补位
     decipher.setAutoPadding(true)
-    //var decoded = decipher.update(encryptedData, 'binary', 'utf8')
-    var decoded = decipher.update(encryptedData, 'base64', 'ascii')
-    //var decoded = decipher.update(encryptedData)
-    //decoded += decipher.final('utf8')
-    //decoded = decipher.final('utf8')
+    var decoded = decipher.update(encryptedData, 'binary', 'utf8')
+    //var decoded = decipher.update(encryptedData, 'base64', 'ascii')
+    decoded += decipher.final('utf8')
     
     decoded = JSON.parse(decoded)
 
   } catch (err) {
-    //throw new Error('Illegal Buffer: exception,error:' + JSON.stringify(err))
+    throw new Error('Illegal Buffer: exception,error:' + JSON.stringify(err))
   }
 
-  //if (decoded.watermark.appid !== this.appId) {
-  //  throw new Error('Illegal Buffer: not equal')
-  //}
+  if (decoded.watermark.appid !== this.appId) {
+    throw new Error('Illegal Buffer: not equal')
+  }
 
   return decoded
 }

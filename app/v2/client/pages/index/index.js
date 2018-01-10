@@ -33,7 +33,7 @@ Page({
         }
         return {
           title: '转发给',
-          path: '/pages/index/index',
+          path: '/pages/index/index?name=qilei',
           success: function(res) {
             // 转发成功
             //util.showSuccess('转发成功')

@@ -22,13 +22,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "分享测试",
 					"pathName": "pages/index/index",
-					"query": "scene=1044",
+					"query": "name=qilei",
 					"scene": "1044",
 					"shareInfo": {
 						"groupName": "测试模拟群0",

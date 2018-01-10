@@ -10,12 +10,11 @@ module.exports = ctx => {
     //var data = ctx.req.data.request.url
     var data = urlParser.parse(ctx.originalUrl,true).query
 
-    var pc = new WXBizDataCrypt(data.appId, data.iv)
+    var pc = new WXBizDataCrypt(data.appId, data.session_key)
     
     var decryptedData = pc.decryptData(data.encryptedData, data.iv)
 
     ctx.state.data = {
-        //state: ctx.request.body
         decryptedData: decryptedData
     }
 }

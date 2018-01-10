@@ -29,7 +29,7 @@ App({
                             }, 
                             //dataType:"JSON",
                             success (result) {
-                                util.showSuccess(JSON.stringify(result))
+                                //util.showSuccess(JSON.stringify(result))
                             },
                             fail (error) {
                                 util.showModel('请求失败', error);

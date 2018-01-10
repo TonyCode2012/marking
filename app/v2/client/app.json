@@ -3,6 +3,9 @@
     "pages/index/index",
     "pages/seeker/seeker",
     "pages/seeker/newReward",
+    "pages/seeker/register/regPrivateInfo",
+    "pages/seeker/register/regPersonalInfo",
+    "pages/seeker/register/pictureUploader",
     "pages/delegator/delegator",
     "pages/addCgi/addCgi"
   ],
@@ -18,8 +21,14 @@
    "selectedColor":"#06bd04",  
    "list": [
      {  
-       "pagePath": "pages/seeker/seeker",
+       "pagePath": "pages/seeker/register/regPrivateInfo",
        "text": "找对象",
+       "iconPath": "images/index.png",
+       "selectedIconPath": "images/indexHL.png"
+     },
+     {  
+       "pagePath": "pages/seeker/seeker",
+       "text": "找对象2",
        "iconPath": "images/index.png",
        "selectedIconPath": "images/indexHL.png"
      },
@@ -27,7 +36,7 @@
        "pagePath": "pages/delegator/delegator",
        "text": "当红娘",  
        "iconPath": "images/picDisplay.png",  
-       "selectedIconPath": "images/picDisplayHL.png"  
+       "selectedIconPath": "images/picDisplayHL.png"
      }
    ]  
   }  

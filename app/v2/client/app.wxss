@@ -1,6 +1,7 @@
 /**app.wxss**/
 @import 'style/weui.wxss';
 @import 'style/icon.wxss';
+@import 'zanui-style/index.wxss';
 
 .container {
   display: flex;

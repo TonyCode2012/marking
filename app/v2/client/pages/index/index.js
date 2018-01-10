@@ -37,7 +37,7 @@ Page({
           success: function(res) {
             // 转发成功
             //util.showSuccess('转发成功')
-            util.showSuccess(JSON.stringify(res))
+            //util.showSuccess(JSON.stringify(res))
           },
           fail: function(res) {
             // 转发失败
@@ -65,6 +65,7 @@ Page({
                     //util.showSuccess('登录成功')
                     wx.switchTab({
                         url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                        //url: '../seeker/register/regPrivateInfo'
                     })
                     that.setData({
                         userInfo: result,
@@ -79,6 +80,7 @@ Page({
                             //util.showSuccess('登录成功')
                             wx.switchTab({
                                 url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                                //url: '../seeker/register/regPrivateInfo?logInfo='+JSON.stringify(result)
                             })
                             that.setData({
                                 userInfo: result.data.data,

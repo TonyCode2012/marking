@@ -1,6 +1,6 @@
 Page({
     data: {
-        title: '隐私信息',
+        title: '身份识别信息',
         myRequest: '我的要求'
     },
     onLoad: function(opt) {

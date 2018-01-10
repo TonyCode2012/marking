@@ -4,7 +4,7 @@ const { Tab, extend } = require('../../zanui-style/index');
 
 Page(extend({}, Tab, {
     data: {
-        tab1: {
+        tabContent: {
             list: [{
                 id: 'myPush',
                 title: '我的推送'
@@ -28,12 +28,19 @@ Page(extend({}, Tab, {
             scroll: true,
             height: 45
         },
+        myPush: {
+            title: '新建发布',
+            myRequest: '我的要求'
+        },
+        myInfo: {
+            infoType: ["身份识别信息","可公布信息","隐私信息"],
+            activeIndex: 0,
+            sliderOffset: 0,
+            sliderLeft: 0
+        },
         userInfo: {},
         title: '',
         //tabs: ["我的推送","我的匹配","信息发布榜","我的发布", "我的红娘", "我的信息"],
-        activeIndex: 0,
-        sliderOffset: 0,
-        sliderLeft: 0,
         toView: 'red' ,
         scrollTop: 100
     },
@@ -80,8 +87,8 @@ Page(extend({}, Tab, {
     },
     tabClick: function (e) {
         this.setData({
-            sliderOffset: e.currentTarget.offsetLeft,
-            activeIndex: e.currentTarget.id
+            'myInfo.sliderOffset': e.currentTarget.offsetLeft,
+            'myInfo.activeIndex': e.currentTarget.id
         });
     }
 }));

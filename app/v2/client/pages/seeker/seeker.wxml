@@ -1,4 +1,5 @@
 <import src="../../zanui-style/tab/index.wxml" />
+<import src="./seekerTpl.wxml" />
 
 <view class="page">
     <view class="page__bd">
@@ -18,36 +19,17 @@
     </view>
 </view>
 <view class="page">
-    <view class="page__bd">
-        <view style="margin: 20px 0">
-          <template
-            is="zan-tab"
-            data="{{ ...tab1, componentId: 'tab1' }}"></template>
-        </view>
-        <!--view class="weui-tab">
-            <view class="weui-navbar">
-                <block wx:for="{{tabs}}" wx:key="*this">
-                    <scroll-view scroll-x="true" class="tab-h" scroll-left="{{scrollLeft}}">
-                        <view class="tab-item {{currentTab==0?' active' :' ' }}"  data-current="0" bindtap="swichNav">
-                        <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
-                            <view class="weui-navbar__title">{{item}}</view>
-                        </view>
-                        </view>
-                    </scroll-view>
-                </block>
-                <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
-            </view>
-            <view class="weui-tab__panel">
-                <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
-                </view>
-                <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
-                    <button class="weui-btn mini-btn" type="primary" size="mini" bindtap="newReward" style="position: absolute;margin-top: 90%;margin-left: 80%;">新建</button-->
-                <!--view class="icon-wrap">
-                    <view class="zan-icon zan-icon-add" bindtap="newReward" style="color: #ff434;position: absolute;margin-top: 90%;margin-left: 80%;"></view>
-                </view>
-                </view>
-                <view class="weui-tab__content" hidden="{{activeIndex != 2}}"></view>
-            </view>
-        </view-->
+    <!--view class="page__bd"></view-->
+    <!--view style="margin: 20px 0"-->
+    <view>
+      <template
+        is="zan-tab"
+        data="{{ ...tabContent, componentId: 'tabContent' }}"></template>
+    </view>
+    <view wx:if="{{tabContent.selectedId == 'myRelease'}}">
+        <template is="myRelease" data="{{...myPush}}"/>
+    </view>
+    <view wx:if="{{tabContent.selectedId == 'myInfo'}}">
+        <template is="myInfo" data="{{...myInfo}}"/>
     </view>
 </view>

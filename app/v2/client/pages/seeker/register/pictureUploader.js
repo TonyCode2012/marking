@@ -1,5 +1,6 @@
 Page({
     data: {
+        title: '隐私信息',
         files: []
     },
     prePage: function() {

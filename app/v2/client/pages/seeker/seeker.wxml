@@ -24,10 +24,15 @@
     <view>
       <template is="zan-tab" data="{{ ...tabContent, componentId: 'tabContent' }}"/>
     </view>
-    <view wx:if="{{tabContent.selectedId == 'myInfo'}}">
+    <view wx:for="{{tabContent.list}}" wx:key="id">
+        <view wx:if="{{tabContent.selectedId == item.id}}">
+            <template is="{{item.id}}Tpl" data="{{...item.data}}"/>
+        </view>
+    </view>
+    <!--view wx:if="{{tabContent.selectedId == 'myInfo'}}">
         <template is="myInfoTpl" data="{{...myInfo}}"/>
     </view>
     <view wx:if="{{tabContent.selectedId == 'myPush'}}">
         <template is="myPushTpl" data="{{...myPush}}"/>
-    </view>
+    </view-->
 </view>

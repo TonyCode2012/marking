@@ -7,7 +7,15 @@ Page(extend({}, Tab, {
         tabContent: {
             list: [{
                 id: 'myPush',
-                title: '我的推送'
+                title: '我的推送',
+                data: {
+                    infoType: ["收到的推送","发出的推送"],
+                    activeIndex: 0,
+                    sliderOffset: 0,
+                    sliderLeft: 0,
+                    title: '新建发布',
+                    myRequest: '我的要求'
+                }
             },{
                 id: 'myMatch',
                 title: '我的匹配'
@@ -19,7 +27,19 @@ Page(extend({}, Tab, {
                 title: '我的红娘'
             },{
                 id: 'myInfo',
-                title: '我的信息'
+                title: '我的信息',
+                data: {
+                    infoType: ["身份信息","可公布信息","隐私信息", "我的发布"],
+                    identityInfo: {
+                        edit_vis: false
+                    },
+                    publicInfo: {
+                        edit_vis: false
+                    },
+                    activeIndex: 0,
+                    sliderOffset: 0,
+                    sliderLeft: 0
+                }
             }],
             selectedId: 'myPush',
             scroll: true,
@@ -93,10 +113,21 @@ Page(extend({}, Tab, {
         })
     },
     tabClick: function (e) {
+        var i = this.findIndex(this.data.tabContent);
+        var curData = "tabContent.list[" + i + "].data"
         this.setData({
-            'myInfo.sliderOffset': e.currentTarget.offsetLeft,
-            'myInfo.activeIndex': e.currentTarget.id
+            [curData + '.sliderOffset']: e.currentTarget.offsetLeft,
+            [curData + '.activeIndex']: e.currentTarget.id
         });
+    },
+    findIndex: function(tabContent) {
+        var i = 0;
+        for(;i<tabContent.list.length;i++){
+            if(tabContent.list[i].id == tabContent.selectedId){
+                break;
+            }
+        }
+        return i;
     },
     editIndentityInfo: function(opt) {
         this.setData({

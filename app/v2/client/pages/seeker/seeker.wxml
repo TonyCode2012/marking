@@ -22,14 +22,12 @@
     <!--view class="page__bd"></view-->
     <!--view style="margin: 20px 0"-->
     <view>
-      <template
-        is="zan-tab"
-        data="{{ ...tabContent, componentId: 'tabContent' }}"></template>
-    </view>
-    <view wx:if="{{tabContent.selectedId == 'myRelease'}}">
-        <template is="myRelease" data="{{...myPush}}"/>
+      <template is="zan-tab" data="{{ ...tabContent, componentId: 'tabContent' }}"/>
     </view>
     <view wx:if="{{tabContent.selectedId == 'myInfo'}}">
-        <template is="myInfo" data="{{...myInfo}}"/>
+        <template is="myInfoTpl" data="{{...myInfo}}"/>
+    </view>
+    <view wx:if="{{tabContent.selectedId == 'myPush'}}">
+        <template is="myPushTpl" data="{{...myPush}}"/>
     </view>
 </view>

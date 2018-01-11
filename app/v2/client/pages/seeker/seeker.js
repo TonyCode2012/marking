@@ -15,9 +15,6 @@ Page(extend({}, Tab, {
                 id: 'messageList',
                 title: '信息发布榜'
             },{
-                id: 'myRelease',
-                title: '我的发布'
-            },{
                 id: 'myMatchMaker',
                 title: '我的红娘'
             },{
@@ -29,11 +26,21 @@ Page(extend({}, Tab, {
             height: 45
         },
         myPush: {
+            infoType: ["收到的推送","发出的推送"],
+            activeIndex: 0,
+            sliderOffset: 0,
+            sliderLeft: 0,
             title: '新建发布',
             myRequest: '我的要求'
         },
         myInfo: {
-            infoType: ["身份识别信息","可公布信息","隐私信息"],
+            infoType: ["身份信息","可公布信息","隐私信息", "我的发布"],
+            identityInfo: {
+                edit_vis: false
+            },
+            publicInfo: {
+                edit_vis: false
+            },
             activeIndex: 0,
             sliderOffset: 0,
             sliderLeft: 0
@@ -90,5 +97,35 @@ Page(extend({}, Tab, {
             'myInfo.sliderOffset': e.currentTarget.offsetLeft,
             'myInfo.activeIndex': e.currentTarget.id
         });
+    },
+    editIndentityInfo: function(opt) {
+        this.setData({
+            'myInfo.identityInfo.edit_vis': true
+        })
+    },
+    cancelEditIdentityInfo: function(opt) {
+        this.setData({
+            'myInfo.identityInfo.edit_vis': false
+        })
+    },
+    saveIdentityInfo: function(opt) {
+        this.setData({
+            'myInfo.identityInfo.edit_vis': false
+        })
+    },
+    editPublicInfo: function(opt) {
+        this.setData({
+            'myInfo.publicInfo.edit_vis': true
+        })
+    },
+    cancelEditPublicInfo: function(opt) {
+        this.setData({
+            'myInfo.publicInfo.edit_vis': false
+        })
+    },
+    savePublicInfo: function(opt) {
+        this.setData({
+            'myInfo.publicInfo.edit_vis': false
+        })
     }
 }));

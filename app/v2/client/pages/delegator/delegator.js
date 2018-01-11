@@ -1,14 +1,37 @@
 var sliderWidth = 96; // 需要设置slider的宽度，用于计算中间位置
 var util = require('../../utils/util.js')
+const { Tab, extend } = require('../../zanui-style/index');
 
-Page({
+Page(extend({}, Tab, {
     data: {
+        tabContent: {
+            list: [{
+                id: 'infoReleaseTable',
+                title: '信息发布榜'
+            },{
+                id: 'myPush',
+                title: '我的推送'
+            },{
+                id: 'myTask',
+                title: '我的任务'
+            }], 
+            selectedId: 'infoReleaseTable',
+            scroll: false,
+            height: 45
+        },
         userInfo: {},
         title: '',
-        tabs: ["任务列表", "我的客户", "信息发布榜"],
         activeIndex: 0,
         sliderOffset: 0,
         sliderLeft: 0
+    },
+    handleZanTabChange(e) {
+      var componentId = e.componentId;
+      var selectedId = e.selectedId;
+    
+      this.setData({
+        [`${componentId}.selectedId`]: selectedId
+      });
     },
     onLoad: function (opt) {
         wx.setNavigationBarTitle({
@@ -29,14 +52,14 @@ Page({
             })
           }
         })
-        wx.getSystemInfo({
-            success: function(res) {
-                that.setData({
-                    sliderLeft: (res.windowWidth / that.data.tabs.length - sliderWidth) / 2,
-                    sliderOffset: res.windowWidth / that.data.tabs.length * that.data.activeIndex
-                });
-            }
-        });
+        //wx.getSystemInfo({
+        //    success: function(res) {
+        //        that.setData({
+        //            sliderLeft: (res.windowWidth / that.data.tabs.length - sliderWidth) / 2,
+        //            sliderOffset: res.windowWidth / that.data.tabs.length * that.data.activeIndex
+        //        });
+        //    }
+        //});
     },
     tabClick: function (e) {
         this.setData({
@@ -44,5 +67,5 @@ Page({
             activeIndex: e.currentTarget.id
         });
     }
-});
+}));
 

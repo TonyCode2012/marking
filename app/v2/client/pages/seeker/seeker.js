@@ -9,7 +9,14 @@ Page(extend({}, Tab, {
                 id: 'myPush',
                 title: '我的推送',
                 data: {
-                    infoType: ["收到的推送","发出的推送"],
+                    list: [{
+                        id: 'receivedPush',
+                        title: '收到的推送'
+                    },{
+                        id: 'sendedPush',
+                        title: '发出的推送'
+                    }],
+                    id2Index: {},
                     activeIndex: 0,
                     sliderOffset: 0,
                     sliderLeft: 0,
@@ -29,45 +36,51 @@ Page(extend({}, Tab, {
                 id: 'myInfo',
                 title: '我的信息',
                 data: {
-                    infoType: ["身份信息","可公布信息","隐私信息", "我的发布"],
-                    identityInfo: {
-                        edit_vis: false
-                    },
-                    publicInfo: {
-                        edit_vis: false
-                    },
+                    list: [{
+                        id: 'identityInfo',
+                        title: '身份信息',
+                        data: {
+                            name: '',
+                            gender: '',
+                            identityNum: '',
+                            wechat: '',
+                            phoneNum: '',
+                            edit_vis: false
+                        }
+                    },{
+                        id: 'publicInfo',
+                        title: '可公布信息',
+                        data: {
+                            age: '',
+                            height: '',
+                            education: '',
+                            constellation: '',
+                            bloodType: '',
+                            edit_vis: false
+                        }
+                    },{
+                        id: 'privateInfo',
+                        title: '隐私信息'
+                    },{
+                        id: 'releaseInfo',
+                        title: '我的发布',
+                        data: {
+                        }
+                    }],
+                    id2Index: {},
                     activeIndex: 0,
+                    selectedId: 'identityInfo',
                     sliderOffset: 0,
                     sliderLeft: 0
                 }
             }],
             selectedId: 'myPush',
             scroll: true,
+            id2Index: {},
             height: 45
-        },
-        myPush: {
-            infoType: ["收到的推送","发出的推送"],
-            activeIndex: 0,
-            sliderOffset: 0,
-            sliderLeft: 0,
-            title: '新建发布',
-            myRequest: '我的要求'
-        },
-        myInfo: {
-            infoType: ["身份信息","可公布信息","隐私信息", "我的发布"],
-            identityInfo: {
-                edit_vis: false
-            },
-            publicInfo: {
-                edit_vis: false
-            },
-            activeIndex: 0,
-            sliderOffset: 0,
-            sliderLeft: 0
         },
         userInfo: {},
         title: '',
-        //tabs: ["我的推送","我的匹配","信息发布榜","我的发布", "我的红娘", "我的信息"],
         toView: 'red' ,
         scrollTop: 100
     },
@@ -112,51 +125,43 @@ Page(extend({}, Tab, {
             url: 'newReward'
         })
     },
-    tabClick: function (e) {
+    tabClick: function (opt) {
         var i = this.findIndex(this.data.tabContent);
-        var curData = "tabContent.list[" + i + "].data"
+        //var j = this.findIndex(this.data.tabContent.list[i].data)
+        var selectedId = this.data.tabContent.list[i].data.list[opt.currentTarget.id].id;
+        //var curData = "tabContent.list[" + i + "].data.list[" + j + "].data";
+        var curData = "tabContent.list[" + i + "].data";
         this.setData({
-            [curData + '.sliderOffset']: e.currentTarget.offsetLeft,
-            [curData + '.activeIndex']: e.currentTarget.id
+            [curData + '.sliderOffset']: opt.currentTarget.offsetLeft,
+            [curData + '.activeIndex']: opt.currentTarget.id,
+            [curData + '.selectedId']: selectedId
         });
     },
     findIndex: function(tabContent) {
+        var curId = tabContent.selectedId
         var i = 0;
-        for(;i<tabContent.list.length;i++){
-            if(tabContent.list[i].id == tabContent.selectedId){
-                break;
+        if(tabContent.id2Index[curId] != undefined) {
+            i = tabContent.id2Index[curId];
+        } else {
+            for(;i<tabContent.list.length;i++){
+                if(tabContent.list[i].id == tabContent.selectedId){
+                    break;
+                }
             }
+            tabContent.id2Index[curId] = i
         }
         return i;
     },
-    editIndentityInfo: function(opt) {
+    editMyInfoBtn: function(opt) {
+        var i = this.findIndex(this.data.tabContent);
+        var j = this.findIndex(this.data.tabContent.list[i].data)
+        //var curData = "tabContent.list[" + i + "].data.list[" + j + "]." + opt.currentTarget.dataset.infotype;
+        var curData = "tabContent.list[" + i + "].data.list[" + j + "].data";
         this.setData({
-            'myInfo.identityInfo.edit_vis': true
+            [curData + '.edit_vis']: true
         })
+
     },
-    cancelEditIdentityInfo: function(opt) {
-        this.setData({
-            'myInfo.identityInfo.edit_vis': false
-        })
-    },
-    saveIdentityInfo: function(opt) {
-        this.setData({
-            'myInfo.identityInfo.edit_vis': false
-        })
-    },
-    editPublicInfo: function(opt) {
-        this.setData({
-            'myInfo.publicInfo.edit_vis': true
-        })
-    },
-    cancelEditPublicInfo: function(opt) {
-        this.setData({
-            'myInfo.publicInfo.edit_vis': false
-        })
-    },
-    savePublicInfo: function(opt) {
-        this.setData({
-            'myInfo.publicInfo.edit_vis': false
-        })
+    changeInfoTblStatus: function(opt) {
     }
 }));

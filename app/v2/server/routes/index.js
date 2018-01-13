@@ -5,6 +5,7 @@ const router = require('koa-router')({
     prefix: '/weapp'
 })
 const controllers = require('../controllers')
+const dbControllers = require('../controllers/db')
 
 // 从 sdk 中取出中间件
 // 这里展示如何使用 Koa 中间件完成登录态的颁发与验证
@@ -21,8 +22,11 @@ router.get('/user', validationMiddleware, controllers.user)
 router.post('/upload', controllers.upload)
 
 // --- 解密数据 Demo --- //
-// 图片上传接口，小程序端可以直接将 url 填入 wx.uploadFile 中
 router.get('/decrypt', controllers.decrypt)
+
+// --- 数据库操作 --- //
+router.get('/registerSeeker', dbControllers.registerSeeker)
+router.get('/getSeekerInfo', dbControllers.getSeekerInfo)
 
 // --- 获取区块链钱包地址 Demo --- //
 // 图片上传接口，小程序端可以直接将 url 填入 wx.uploadFile 中

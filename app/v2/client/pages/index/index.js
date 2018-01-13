@@ -62,10 +62,14 @@ Page({
                 //    }
                 //})
                 if (result) {
-                    //util.showSuccess('登录成功')
+                    try {
+                        wx.setStorageSync('loginInfo',result)
+                    } catch(e) {
+                        util.showModel(JSON.stringify(e))
+                    }
                     wx.switchTab({
-                        url: '../seeker/seeker?logInfo='+JSON.stringify(result)
-                        //url: '../seeker/register/regPrivateInfo'
+                        //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                        url: '../seeker/seeker'
                     })
                     that.setData({
                         userInfo: result,
@@ -78,6 +82,11 @@ Page({
                         login: true,
                         success(result) {
                             //util.showSuccess('登录成功')
+                            try {
+                                wx.setStorageSync('loginInfo',result)
+                            } catch(e) {
+                                util.showModel(JSON.stringify(e))
+                            }
                             wx.switchTab({
                                 url: '../seeker/seeker?logInfo='+JSON.stringify(result)
                                 //url: '../seeker/register/regPrivateInfo?logInfo='+JSON.stringify(result)

@@ -29,6 +29,7 @@ App({
                             }, 
                             //dataType:"JSON",
                             success (result) {
+                                var testRes = result;
                                 //util.showSuccess(JSON.stringify(result))
                             },
                             fail (error) {

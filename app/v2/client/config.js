@@ -26,6 +26,15 @@ var config = {
         // 获取钱包地址接口
         //walletAddrUrl: `${host}/weapp/wallet`,
 
+        // 注册seeker用户
+        getSeekerInfoUrl: `${host}/weapp/getSeekerInfo`,
+
+        // 注册seeker用户
+        registerSeekerUrl: `${host}/weapp/registerSeeker`,
+
+        // 获取用户信息接口
+        getUserInfoUrl: `${host}/weapp/getUserInfo`,
+
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,
 

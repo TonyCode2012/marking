@@ -1,32 +1,9 @@
-<import src="../../zanui-style/tab/index.wxml" />
-<import src="./seekerTpl.wxml" />
+<import src="./homePageTpl.wxml" />
+<import src="./registerPageTpl.wxml" />
 
-<view class="page">
-    <view class="page__bd">
-        <view class="weui-panel weui-panel_access">
-            <view class="weui-panel__bd">
-                <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
-                    <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <image class="weui-media-box__thumb" src="{{userInfo.avatarUrl}}" />
-                    </view>
-                    <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <view class="weui-media-box__title">{{userInfo.nickName}}</view>
-                        <view class="weui-media-box__desc">keep fighting</view>
-                    </view>
-                </navigator>
-            </view>
-        </view>
-    </view>
+<view wx:if="{{registered}}">
+    <template is="homePage" data="{{...homePage}}" />
 </view>
-<view class="page">
-    <!--view class="page__bd"></view-->
-    <!--view style="margin: 20px 0"-->
-    <view>
-      <template is="zan-tab" data="{{ ...tabContent, componentId: 'tabContent' }}"/>
-    </view>
-    <view wx:for="{{tabContent.list}}" wx:key="id">
-        <view wx:if="{{tabContent.selectedId == item.id}}">
-            <template is="{{item.id}}Tpl" data="{{...item.data}}"/>
-        </view>
-    </view>
+<view wx:else>
+    <template is="{{registerPage.curPageId}}" data="{{...registerPage.curInfo}}"/>
 </view>

@@ -1,11 +1,12 @@
-<import src="./seekerInfoTpl.wxml" />
+<import src="./registerPageTpl.wxml" />
 
 <template name="myPushTpl">
     <view class="page">
         <view class="weui-tab">
             <view class="weui-navbar">
                 <block wx:for="{{list}}" wx:key="*this">
-                    <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+                    <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" 
+                        data-infotype="{{index}}" bindtap="tabClick">
                         <view class="weui-navbar__title">{{item.title}}</view>
                     </view>
                 </block>
@@ -13,16 +14,10 @@
             </view>
             <view class="weui-tab__panel">
                 <view wx:for="{{list}}" wx:key="id">
-                    <view class="weui-tab__content" hidden="{{activeIndex != index}}">
-                        <template is="{{item.id}}Tpl" data="{{...item.data}}"/>
+                    <view class="weui-tab__content" hidden="{{selectedId != index}}">
+                        <template is="{{index}}" data="{{...item}}"/>
                     </view>
                 </view>
-                <!--view class="weui-tab__content" hidden="{{activeIndex != 0}}">
-                </view>
-                <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
-                </view>
-                <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
-                </view-->
             </view>
         </view>
     </view>
@@ -35,17 +30,17 @@
             <view class="weui-tab">
                 <view class="weui-navbar">
                     <block wx:for="{{list}}" wx:key="*this">
-                        <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" data-infotype="{{item.id}}" bindtap="tabClick">
+                        <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" 
+                            data-infotype="{{index}}" bindtap="tabClick">
                             <view class="weui-navbar__title">{{item.title}}</view>
                         </view>
                     </block>
                     <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
                 </view>
                 <view class="weui-tab__panel">
-                    <view wx:for="{{list}}" wx:key="id">
-                        <view class="weui-tab__content" hidden="{{activeIndex != index}}">
-                            <template is="{{item.id}}Tpl" data="{{...item.data}}"/>
-                        </view>
+                    <view wx:for="{{list}}" wx:key="*this" class="weui-tab__content" hidden="{{selectedId != index}}">
+                        <!--view class="weui-tab__content" hidden="{{selectedId != index}}"-->
+                            <template is="{{index}}" data="{{...item}}"/>
                     </view>
                 </view>
             </view>

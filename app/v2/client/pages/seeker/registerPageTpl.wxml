@@ -2,7 +2,7 @@
 
 <template name="identityInfo">
 <view class="page">
-    <view>{{title}}</view>
+    <view hidden="{{mode!='register'}}">{{title}}</view>
     <view class="weui-cells__title"></view>
     <view class="weui-cells weui-cells_after-title">
         <view wx:for="{{data}}" wx:key="*this" class="weui-cell weui-cell_input">
@@ -10,7 +10,7 @@
                 <view class="weui-label">{{item.title}}</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" data-infotype="identityInfo" data-id="{{item.id}}" bindinput="getInputVal" 
+                <input class="weui-input" data-id="{{index}}" data-infotype="identityInfo" data-mode="{{mode}}" bindinput="getInputVal" disabled="{{mode=='show'}}"
                     value="{{item.value}}" placeholder="{{item.placeHolder}}"/>
             </view>
         </view>
@@ -59,41 +59,43 @@
     </view>
     <view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view>
     <view class="weui-btn-area" style="text-align:center">
-        <button class="weui-btn mini-btn" type="primary" data-nextpageid="publicInfo" bindtap="goNextStep" size="mini">保存并下一步</button>
-        <!--button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" style="left:50%">提交</button-->
+        <button class="weui-btn mini-btn" type="primary" data-nextpageid="publicInfo" bindtap="goNextStep" size="mini" hidden="{{mode!='register'}}">保存并下一步</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="identityInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="identityInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="identityInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
     </view>
 </view>
 </template>
 
 <template name="publicInfo">
 <view class="page">
-    <view>{{title}}</view>
+    <view hidden="{{mode!='register'}}">{{title}}</view>
     <view class="weui-cells__title"></view>
     <view class="weui-cells weui-cells_after-title">
-        <view wx:for="{{data}}" wx:key="*this">
-            <view class="weui-cell weui-cell_input">
-                <view class="weui-cell__hd">
-                    <view class="weui-label">{{item.title}}</view>
-                </view>
-                <view class="weui-cell__bd">
-                    <input class="weui-input" data-infotype="publicInfo" data-id="{{item.id}}" 
-                        value="{{item.value}}" bindinput="getInputVal" placeholder="{{item.placeHolder}}"/>
-                </view>
+        <view wx:for="{{data}}" wx:key="*this" class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+                <view class="weui-label">{{item.title}}</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" data-id="{{index}}" data-infotype="publicInfo" data-mode="{{mode}}" disabled="{{mode=='show'}}"
+                    value="{{item.value}}" bindinput="getInputVal" placeholder="{{item.placeHolder}}"/>
             </view>
         </view>
     </view>
     <view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view>
     <view class="weui-btn-area" style="text-align:center">
-        <button class="weui-btn mini-btn" type="primary" data-prepageid="identityInfo" bindtap="goPreStep" size="mini">上一步</button>
-        <button class="weui-btn mini-btn" type="primary" data-nextpageid="privateInfo" bindtap="goNextStep" size="mini" style="margin-left:30%">保存并下一步</button>
-        <!--button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" style="left:50%">提交</button-->
+        <button class="weui-btn mini-btn" type="primary" data-prepageid="identityInfo" bindtap="goPreStep" size="mini" hidden="{{mode!='register'}}">上一步</button>
+        <button class="weui-btn mini-btn" type="primary" data-nextpageid="privateInfo" bindtap="goNextStep" size="mini" style="margin-left:30%" hidden="{{mode!='register'}}">保存并下一步</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
     </view>
 </view>
 </template>
 
 <template name="privateInfo">
 <view class="page">
-    <view>{{title}}</view>
+    <view hidden="{{mode!='register'}}">{{title}}</view>
     <view class="weui-cells__title"></view>
     <view class="page__bd">
         <view class="weui-cells">
@@ -102,11 +104,11 @@
                     <view class="weui-uploader">
                         <view class="weui-uploader__hd">
                             <view class="weui-uploader__title">图片上传</view>
-                            <view class="weui-uploader__info">{{data.files.length}}/2</view>
+                            <view class="weui-uploader__info">{{data.life_photo.value.length}}/2</view>
                         </view>
                         <view class="weui-uploader__bd">
                             <view class="weui-uploader__files" id="uploaderFiles">
-                                <block wx:for="{{data.files}}" wx:key="*this">
+                                <block wx:for="{{data.life_photo.value}}" wx:key="*this">
                                     <view class="weui-uploader__file" bindtap="previewImage" id="{{item}}">
                                         <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
                                     </view>
@@ -142,9 +144,11 @@
     </view>
     <view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view>
     <view class="weui-btn-area" style="text-align:center">
-        <button class="weui-btn mini-btn" type="primary" data-prepageid="publicInfo" bindtap="goPreStep" size="mini">上一步</button>
-        <button class="weui-btn mini-btn" type="primary" bindtap="submitRegister" size="mini" style="margin-left:30%">保存并提交</button>
-        <!--button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" style="left:50%">提交</button-->
+        <button class="weui-btn mini-btn" type="primary" data-prepageid="publicInfo" bindtap="goPreStep" size="mini" hidden="{{mode!='register'}}">上一步</button>
+        <button class="weui-btn mini-btn" type="primary" bindtap="submitRegister" size="mini" style="margin-left:30%" hidden="{{mode!='register'}}">保存并提交</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="privateInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="privateInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="privateInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
     </view>
 </view>
 </template>
@@ -171,9 +175,12 @@
                 </view>
             </view>
         </view>
-        <view class="weui-btn-area">
-            <button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" style="left:20%">保存</button>
-            <button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" style="left:50%">提交</button>
+        <view class="weui-btn-area" style="text-align:center">
+            <button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" hidden="{{mode!='register'}}">保存</button>
+            <button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" style="margin-left:30%" hidden="{{mode!='register'}}">提交</button>
+            <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
+            <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
+            <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
         </view>
     </view>
 </template>

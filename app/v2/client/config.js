@@ -26,8 +26,14 @@ var config = {
         // 获取钱包地址接口
         //walletAddrUrl: `${host}/weapp/wallet`,
 
-        // 注册seeker用户
+        // 获取seeker信息
         getSeekerInfoUrl: `${host}/weapp/getSeekerInfo`,
+
+        // 更新seeker信息
+        updateSeekerInfoUrl: `${host}/weapp/updateSeekerInfo`,
+
+        // 注册user用户
+        registerUserUrl: `${host}/weapp/registerUser`,
 
         // 注册seeker用户
         registerSeekerUrl: `${host}/weapp/registerSeeker`,

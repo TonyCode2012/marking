@@ -2,8 +2,9 @@ const { mysql: config } = require('../../config')
 var mysql = require('mysql')
 var urlParser = require('url')
 var queryString  = require("querystring");
+var util = require('./util')
 
-function getInfo(ctx) {
+function updateInfo(ctx) {
     return new Promise(function (resolve, reject) {
         var connection = mysql.createConnection({
             host     : config.host,
@@ -14,11 +15,18 @@ function getInfo(ctx) {
         });
     
         var data = urlParser.parse(ctx.originalUrl,true).query
-        var openId = data.open_id
-        var queryStr = "select * from SeekerInfo where open_id='" + openId + "'"
+        var updateData = JSON.parse(data.data)
+        var setStr = ''
+        for(e in updateData) {
+            var tmp = updateData[e]
+            if(tmp == null || tmp === '') setStr += (e + "=NULL,")
+            else setStr += (e + "='" + tmp + "',")
+        }
+        setStr = setStr.substring(0,setStr.length-1)
+        var queryStr = "update SeekerInfo set " +  setStr + " where open_id='" + data.open_id + "'"
     
         connection.connect();
-        // get info from User by open_id
+        // update SeekerInfo by open_id
         connection.query(queryStr, function (error, results, fields) {
             var retInfo = {}
             if (error) {
@@ -29,11 +37,6 @@ function getInfo(ctx) {
                     errno: error.errno,
                     sqlMessage: error.sqlMessage,
                     status: 400
-                }
-            } else if(results.length == 0) {
-                retInfo = {
-                    msg: 'New user please register!',
-                    status: 201
                 }
             } else {
                 retInfo = {
@@ -50,8 +53,9 @@ function getInfo(ctx) {
 }
 
 module.exports = async ctx =>  {
-    var result = await getInfo(ctx)
+    var result = await updateInfo(ctx)
     ctx.state.data = {
         result: result
     }
 }
+

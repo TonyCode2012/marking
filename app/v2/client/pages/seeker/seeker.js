@@ -47,30 +47,10 @@ Page(extend({}, Tab, {
                         title: '我的信息',
                         data: {
                             list: {
-                                identityInfo: {
-                                    id: 'identityInfo',
-                                    title: '身份信息',
-                                    isEditMod: false,
-                                    data: {}
-                                },
-                                publicInfo: {
-                                    id: 'publicInfo',
-                                    title: '可公布信息',
-                                    isEditMod: false,
-                                    data: {}
-                                },
-                                privateInfo: {
-                                    id: 'privateInfo',
-                                    title: '隐私信息',
-                                    isEditMod: false,
-                                    data: {}
-                                },
-                                releaseInfo: {
-                                    id: 'releaseInfo',
-                                    title: '我的发布',
-                                    isEditMod: false,
-                                    data: {}
-                                }
+                                identityInfo: { id: 'identityInfo', title: '身份信息',mode: 'show',isEditMod: false,data: {}},
+                                publicInfo: { id: 'publicInfo',title: '可公布信息',mode: 'show',isEditMod: false,data: {}},
+                                privateInfo: { id: 'privateInfo',title: '隐私信息',mode: 'show',isEditMod: false,data: {}},
+                                releaseInfo: { id: 'releaseInfo',title: '我的发布',mode: 'show',isEditMod: false,data: {}}
                             },
                             id2Index: {},
                             activeIndex: 0,
@@ -95,36 +75,42 @@ Page(extend({}, Tab, {
         registerPage: {
             curPageId: 'identityInfo',
             curInfo: {},
-            identityInfo: {
-                data: {
-                    name: {id: 'name',title: '姓名', placeHolder: '请输入您的姓名', value: ''},
-                    gender: {id: 'gender',title: '性别', placeHolder: '请输入您的性别', value: ''},
-                    identityNum: {id: 'identityNum',title: '身份证号', placeHolder: '请输入您的身份证号', value: ''},
-                    wechat: {id: 'wechat',title: '微信号', placeHolder: '请输入您的微信号', value: ''},
-                    phoneNum: {id: 'phoneNum',title: '手机号', placeHolder: '请输入您的手机号', value: ''},
-                    verifyCode: {id: 'verifyCode',title: '验证码', placeHolder: '请输入您的验证码', value: ''}
+            list: {
+                identityInfo: {
+                    mode: 'register',
+                    data: {
+                        name: {id: 'name',title: '姓名', placeHolder: '请输入您的姓名', value: ''},
+                        gender: {id: 'gender',title: '性别', placeHolder: '请输入您的性别', value: ''},
+                        identity_num: {id: 'identity_num',title: '身份证号', placeHolder: '请输入您的身份证号', value: ''},
+                        wechat: {id: 'wechat',title: '微信号', placeHolder: '请输入您的微信号', value: ''},
+                        phone_num: {id: 'phone_num',title: '手机号', placeHolder: '请输入您的手机号', value: ''},
+                        verifyCode: {id: 'verifyCode',title: '验证码', placeHolder: '请输入您的验证码', value: ''}
+                    },
+                    title: '身份识别信息'
                 },
-                title: '身份识别信息'
-            },
-            publicInfo: {
-                data: {
-                    age: {id: 'age',title: '年龄', placeHolder: '请输入您的年龄', value: ''},
-                    height: {id: 'height',title: '身高', placeHolder: '请输入您的身高', value: ''},
-                    education: {id: 'education',title: '学历', placeHolder: '请输入您的学历', value: ''},
-                    constellation: {id: 'constellation',title: '星座', placeHolder: '请输入您的星座', value: ''},
-                    bloodType: {id: 'bloodType',title: '血型', placeHolder: '请输入您的血型', value: ''}
+                publicInfo: {
+                    mode: 'register',
+                    data: {
+                        age: {id: 'age',title: '年龄', placeHolder: '请输入您的年龄', value: ''},
+                        height: {id: 'height',title: '身高', placeHolder: '请输入您的身高', value: ''},
+                        education: {id: 'education',title: '学历', placeHolder: '请输入您的学历', value: ''},
+                        constellation: {id: 'constellation',title: '星座', placeHolder: '请输入您的星座', value: ''},
+                        blood_type: {id: 'blood_type',title: '血型', placeHolder: '请输入您的血型', value: ''}
+                    },
+                    title: '可公布信息'
                 },
-                title: '可公布信息'
-            },
-            privateInfo: {
-                data: {
-                    files: []
-                },
-                title: '隐私信息'
+                privateInfo: {
+                    mode: 'register',
+                    data: {
+                        life_photo: {title:'生活照', placeHolder:'请上传您的生活照', value:[]}
+                    },
+                    title: '隐私信息'
+                }
             }
         },
         registered: false,
-        userInfo: {}
+        nonRegInfo: {verifyCode:'y'},
+        userWXInfo: {}
     },
 
     onLoad: function (opt) {
@@ -136,7 +122,7 @@ Page(extend({}, Tab, {
         // set register page info
         var curRegPageId = this.data.registerPage.curPageId
         that.setData({
-            'registerPage.curInfo': this.data.registerPage[curRegPageId]
+            'registerPage.curInfo': this.data.registerPage.list[curRegPageId]
         })
         // get user info if registered
         try {
@@ -145,7 +131,8 @@ Page(extend({}, Tab, {
             if(loginInfo){
                 var userInfo = loginInfo.data.data
                 that.setData({
-                    'homePage.userInfo': userInfo
+                    'homePage.userWXInfo': userInfo,
+                    'userWXInfo': userInfo
                 })
                 // check if this user is registered
                 wx.request({
@@ -176,13 +163,6 @@ Page(extend({}, Tab, {
         wx.showShareMenu({
             withShareTicket: true
         })
-        //wx.getUserInfo({
-        //  success: function(res) {
-        //    that.setData({
-        //        userInfo: res.userInfo
-        //    })
-        //  }
-        //})
         //wx.getSystemInfo({
         //    success: function(res) {
         //        that.setData({
@@ -201,9 +181,9 @@ Page(extend({}, Tab, {
         identityInfo.data = {
             name: {title: '姓名', placeHolder: '请输入您的姓名', value: opt.name},
             gender: {title: '性别', placeHolder: '请输入您的性别', value: opt.gender},
-            identityNum: {title: '身份证号', placeHolder: '请输入您的身份证号', value: opt.identity_num},
+            identity_num: {title: '身份证号', placeHolder: '请输入您的身份证号', value: opt.identity_num},
             wechat: {title: '微信号', placeHolder: '请输入您的微信号', value: opt.wechat},
-            phoneNum: {title: '手机号', placeHolder: '请输入您的手机号', value: opt.phone_num},
+            phone_num: {title: '手机号', placeHolder: '请输入您的手机号', value: opt.phone_num},
             verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: ''}
         }
         // set public info
@@ -212,10 +192,25 @@ Page(extend({}, Tab, {
             height: {title: '身高', placeHolder: '请输入您的身高', value: opt.height},
             education: {title: '学历', placeHolder: '请输入您的学历', value: opt.education},
             constellation: {title: '星座', placeHolder: '请输入您的星座', value: opt.constellation},
-            bloodType: {title: '血型', placeHolder: '请输入您的血型', value: opt.blood_type}
+            blood_type: {title: '血型', placeHolder: '请输入您的血型', value: opt.blood_type}
         }
         this.setData({
             'homePage.tabContent.list.myInfo': myInfoData
+        })
+    },
+
+
+    //---------------both Page functions -----------------//
+    getInputVal: function(opt) {
+        var curInfoType = opt.currentTarget.dataset.infotype
+        var mode = opt.currentTarget.dataset.mode
+        var curDataId = opt.currentTarget.dataset.id
+        var curKey = ''
+        if(mode == 'register') curKey = 'registerPage.list.' + curInfoType + '.data.' + curDataId
+        else curKey = 'homePage.tabContent.list.myInfo.data.list.' + curInfoType + '.data.' + curDataId
+        // get new value and set to corresponding info(not curInfo)
+        this.setData({
+            [curKey + '.value']: opt.detail.value
         })
     },
 
@@ -229,6 +224,7 @@ Page(extend({}, Tab, {
         [`${componentId}.selectedId`]: selectedId
       });
     },
+    // functions related about myinfo navigate page
     tabClick: function (opt) {
         var curData = 'homePage.tabContent.list.myInfo.data'
         var selectedId = opt.currentTarget.dataset.infotype
@@ -238,59 +234,52 @@ Page(extend({}, Tab, {
             [curData + '.selectedId']: selectedId
         });
     },
-    //findIndex: function(tabContent) {
-    //    var curId = tabContent.selectedId
-    //    var i = 0;
-    //    if(tabContent.id2Index[curId] != undefined) {
-    //        i = tabContent.id2Index[curId];
-    //    } else {
-    //        for(;i<tabContent.list.length;i++){
-    //            if(tabContent.list[i].id == tabContent.selectedId){
-    //                break;
-    //            }
-    //        }
-    //        tabContent.id2Index[curId] = i
-    //    }
-    //    return i;
-    //},
-    //editMyInfoBtn: function(opt) {
-    //    var i = this.findIndex(this.data.tabContent);
-    //    var j = this.findIndex(this.data.tabContent.list[i].data)
-    //    //var curData = "tabContent.list[" + i + "].data.list[" + j + "]." + opt.currentTarget.dataset.infotype;
-    //    var curData = "tabContent.list[" + i + "].data.list[" + j + "].data";
-    //    this.setData({
-    //        [curData + '.edit_vis']: true
-    //    })
-    //},
-    changeInfoTblStatus: function(opt) {
+    editMyInfoBtn: function(opt) {
+        var curDataStr = 'homePage.tabContent.list.myInfo.data.list.' + opt.currentTarget.dataset.infotype
+        this.setData({
+            [curDataStr + '.mode']: 'edit'
+        })
+    },
+    cancelMyInfoBtn: function(opt) {
+        var curDataStr = 'homePage.tabContent.list.myInfo.data.list.' + opt.currentTarget.dataset.infotype
+        this.setData({
+            [curDataStr + '.mode']: 'show'
+        })
+    },
+    saveMyInfoBtn: function(opt) {
+        var curInfoData = this.data.homePage.tabContent.list.myInfo.data.list[opt.currentTarget.dataset.infotype].data
+        var updateData = {
+            data: {}
+        }
+        for(var e in curInfoData) {
+            if(e != 'verifyCode')
+                updateData['data'][e] = curInfoData[e].value
+        }
+        updateData['open_id'] = this.data.userWXInfo.openId
+        wx.request({
+            url: config.service.updateSeekerInfoUrl,
+            data: updateData,
+            success: function(res) {
+                util.showSuccess('update info successfully!')
+                //util.showSuccess(JSON.stringify(res))
+            }
+        })
     },
 
 
     //---------------Register Page functions -----------------//
-    getInputVal: function(opt) {
-        var curInfoType = opt.currentTarget.dataset.infotype
-        var curDataId = opt.currentTarget.dataset.id
-        var curInfoData = this.data.registerPage[curInfoType].data
-        var curKey = 'registerPage.' + curInfoType + '.data.' + curDataId
-        //var curBufInfo = 'registerPage.curInfo.data.' + curDataId
-        // get new value and set to corresponding info(not curInfo)
-        this.setData({
-            [curKey + '.value']: opt.detail.value
-            //[curBufInfo + '.value']: opt.detail.value
-        })
-    },
     goNextStep: function(opt) {
         var nextPageId = opt.currentTarget.dataset.nextpageid
         this.setData({
             'registerPage.curPageId': nextPageId,
-            'registerPage.curInfo': this.data.registerPage[nextPageId]
+            'registerPage.curInfo': this.data.registerPage.list[nextPageId]
         })
     },
     goPreStep: function(opt) {
         var prePageId = opt.currentTarget.dataset.prepageid
         this.setData({
             'registerPage.curPageId': prePageId,
-            'registerPage.curInfo': this.data.registerPage[prePageId]
+            'registerPage.curInfo': this.data.registerPage.list[prePageId]
         })
     },
     // set private info about photos
@@ -301,10 +290,10 @@ Page(extend({}, Tab, {
             sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
             success: function (res) {
                 // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-                var filesUrl = that.data.registerPage.privateInfo.data.files.concat(res.tempFilePaths)
+                var filesUrl = that.data.registerPage.list.privateInfo.data.life_photo.value.concat(res.tempFilePaths)
                 that.setData({
-                    'registerPage.privateInfo.data.files': filesUrl,
-                    'registerPage.curInfo.data.files': filesUrl
+                    'registerPage.list.privateInfo.data.life_photo.value': filesUrl,
+                    'registerPage.curInfo.data.life_photo.value': filesUrl
                 });
             }
         })
@@ -312,7 +301,7 @@ Page(extend({}, Tab, {
     previewImage: function(e){
         wx.previewImage({
             current: e.currentTarget.id, // 当前显示图片的http链接
-            urls: this.data.registerPage.privateInfo.data.files // 需要预览的图片http链接列表
+            urls: this.data.registerPage.list.privateInfo.data.life_photo.value // 需要预览的图片http链接列表
         })
     },
     getCurDatetime: function() {
@@ -326,7 +315,23 @@ Page(extend({}, Tab, {
         return Y+M+D+h+m+s;
     },
     generateRegisterInfo: function(opt) {
-        var curUserInfo = this.data.userInfo
+        var curUserInfo = this.data.userWXInfo
+        var userInfo = {}
+        var seekerInfo = {}
+        // get seeker info
+        var objKeys = Object.keys(opt.list)
+        for(var i=0;i<objKeys.length;i++) {
+            var info = opt.list[objKeys[i]].data
+            var fieldKeys = Object.keys(info)
+            for(var j=0;j<fieldKeys.length;j++) {
+                var fieldKey = fieldKeys[j]
+                var fieldObj = info[fieldKey]
+                if(this.data.nonRegInfo[fieldKey] == undefined)
+                    seekerInfo[fieldKey] = fieldObj.value
+            }
+        }
+        seekerInfo['open_id'] = curUserInfo.openId
+        // get user info
         var userInfo = {
             open_id: curUserInfo.openId,
             public_key: curUserInfo.openId + '12345',
@@ -338,32 +343,29 @@ Page(extend({}, Tab, {
             status: 0,
             role: 0
         }
-        var seekerInfo = {
-            open_id: curUserInfo.openId,
-            wechat: opt.identityInfo.data.wechat.value,
-            phone_num: opt.identityInfo.data.phoneNum.value,
-            life_photo: '',
-            age: opt.publicInfo.data.age.value,
-            height: opt.publicInfo.data.height.value,
-            requirement: 'heheda',
-            portrait: '',
-            self_introduction: 'yaoz is a good man',
-            reward: 500,
-            constellation: opt.publicInfo.data.constellation.value,
-            blood_type: opt.publicInfo.data.bloodType.value,
-            education: opt.publicInfo.data.education.value
-        }
         return {userInfo:userInfo,seekerInfo:seekerInfo}
     },
     submitRegister: function(opt) {
         var that = this
         var data = that.generateRegisterInfo(that.data.registerPage)
         wx.request({
-            url: config.service.registerSeekerUrl,
-            data: that.generateRegisterInfo(that.data.registerPage),
+            url: config.service.registerUserUrl,
+            data: data.userInfo,
             success: function(res) {
                 that.setData({
-                    registered: true
+                    //registered: true
+                })
+            }
+        })
+        wx.request({
+            url: config.service.registerSeekerUrl,
+            data: data.seekerInfo,
+            success: function(res) {
+                var registerData = that.data.registerPage.list
+                that.setData({
+                    'homePage.tabContent.list.myInfo.data.list.identityInfo.data': registerData.identityInfo.data,
+                    'homePage.tabContent.list.myInfo.data.list.publicInfo.data': registerData.publicInfo.data,
+                    'homePage.tabContent.list.myInfo.data.list.privateInfo.data': registerData.privateInfo.data
                 })
             }
         })

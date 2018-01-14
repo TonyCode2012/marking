@@ -69,7 +69,8 @@ Page({
                     }
                     wx.switchTab({
                         //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
-                        url: '../seeker/seeker'
+                        //url: '../seeker/seeker'
+                        url: '../delegator/delegator'
                     })
                     that.setData({
                         userInfo: result,
@@ -88,7 +89,8 @@ Page({
                                 util.showModel(JSON.stringify(e))
                             }
                             wx.switchTab({
-                                url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                                //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                                url: '../delegator/delegator'
                                 //url: '../seeker/register/regPrivateInfo?logInfo='+JSON.stringify(result)
                             })
                             that.setData({

@@ -15,7 +15,13 @@ function getInfo(ctx) {
     
         var data = urlParser.parse(ctx.originalUrl,true).query
         var openId = data.open_id
-        var queryStr = "select * from SeekerInfo where open_id='" + openId + "'"
+        var tableId = ''
+        switch(data.role) {
+            case 'user': tableId='User';break;
+            case 'seeker': tableId='SeekerInfo';break;
+            case 'delegator': tableId='DelegatorInfo';break;
+        }
+        var queryStr = "select * from " + tableId + " where open_id='" + openId + "'"
     
         connection.connect();
         // get info from User by open_id
@@ -24,7 +30,7 @@ function getInfo(ctx) {
             if (error) {
                 console.log(error);
                 retInfo = {
-                    msg: 'get seeker info SeekerInfo failed!',
+                    msg: 'get info failed!',
                     code: error.code,
                     errno: error.errno,
                     sqlMessage: error.sqlMessage,
@@ -32,13 +38,13 @@ function getInfo(ctx) {
                 }
             } else if(results.length == 0) {
                 retInfo = {
-                    msg: 'New user please register!',
+                    msg: 'New user, please register!',
                     status: 201
                 }
             } else {
                 retInfo = {
-                    msg: 'get seeker info from SeekerInfo successfully!',
-                    seekerInfo: results,
+                    msg: 'get info successfully!',
+                    data: results,
                     status: 200
                 }
             }
@@ -49,7 +55,7 @@ function getInfo(ctx) {
     })
 }
 
-module.exports = async ctx =>  {
+module.exports = async ctx => {
     var result = await getInfo(ctx)
     ctx.state.data = {
         result: result

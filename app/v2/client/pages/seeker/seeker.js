@@ -22,7 +22,6 @@ Page(extend({}, Tab, {
                                     title: '发出的推送'
                                 }
                             },
-                            id2Index: {},
                             activeIndex: 0,
                             sliderOffset: 0,
                             sliderLeft: 0,
@@ -47,12 +46,11 @@ Page(extend({}, Tab, {
                         title: '我的信息',
                         data: {
                             list: {
-                                identityInfo: { id: 'identityInfo', title: '身份信息',mode: 'show',isEditMod: false,data: {}},
-                                publicInfo: { id: 'publicInfo',title: '可公布信息',mode: 'show',isEditMod: false,data: {}},
-                                privateInfo: { id: 'privateInfo',title: '隐私信息',mode: 'show',isEditMod: false,data: {}},
-                                releaseInfo: { id: 'releaseInfo',title: '我的发布',mode: 'show',isEditMod: false,data: {}}
+                                identityInfo: { title: '身份信息',mode: 'show',isEditMod: false,data: {}},
+                                publicInfo: { title: '可公布信息',mode: 'show',isEditMod: false,data: {}},
+                                privateInfo: { title: '隐私信息',mode: 'show',isEditMod: false,data: {}},
+                                releaseInfo: { title: '我的发布',mode: 'show',isEditMod: false,data: {}}
                             },
-                            id2Index: {},
                             activeIndex: 0,
                             selectedId: 'identityInfo',
                             sliderOffset: 0,
@@ -62,7 +60,6 @@ Page(extend({}, Tab, {
                 },
                 selectedId: 'myPush',
                 scroll: true,
-                id2Index: {},
                 height: 45
             },
             loginInfo: {},
@@ -76,41 +73,39 @@ Page(extend({}, Tab, {
             curPageId: 'identityInfo',
             curInfo: {},
             list: {
-                identityInfo: {
-                    mode: 'register',
-                    data: {
-                        name: {id: 'name',title: '姓名', placeHolder: '请输入您的姓名', value: ''},
-                        gender: {id: 'gender',title: '性别', placeHolder: '请输入您的性别', value: ''},
-                        identity_num: {id: 'identity_num',title: '身份证号', placeHolder: '请输入您的身份证号', value: ''},
-                        wechat: {id: 'wechat',title: '微信号', placeHolder: '请输入您的微信号', value: ''},
-                        phone_num: {id: 'phone_num',title: '手机号', placeHolder: '请输入您的手机号', value: ''},
-                        verifyCode: {id: 'verifyCode',title: '验证码', placeHolder: '请输入您的验证码', value: ''}
-                    },
-                    title: '身份识别信息'
-                },
-                publicInfo: {
-                    mode: 'register',
-                    data: {
-                        age: {id: 'age',title: '年龄', placeHolder: '请输入您的年龄', value: ''},
-                        height: {id: 'height',title: '身高', placeHolder: '请输入您的身高', value: ''},
-                        education: {id: 'education',title: '学历', placeHolder: '请输入您的学历', value: ''},
-                        constellation: {id: 'constellation',title: '星座', placeHolder: '请输入您的星座', value: ''},
-                        blood_type: {id: 'blood_type',title: '血型', placeHolder: '请输入您的血型', value: ''}
-                    },
-                    title: '可公布信息'
-                },
-                privateInfo: {
-                    mode: 'register',
-                    data: {
-                        life_photo: {title:'生活照', placeHolder:'请上传您的生活照', value:[]}
-                    },
-                    title: '隐私信息'
-                }
+                identityInfo: {mode:'register', title:'身份识别信息', data:{}},
+                publicInfo: {mode:'register', title:'可公布信息', data:{}},
+                privateInfo: {mode:'register', title:'隐私信息', data:{}}
             }
         },
         registered: false,
         nonRegInfo: {verifyCode:'y'},
-        userWXInfo: {}
+        userWXInfo: {},
+        dataTpl: {
+            identityInfo: {
+                name: {title: '姓名', placeHolder: '请输入您的姓名', value: ''},
+                gender: {title: '性别', placeHolder: '请输入您的性别', value: ''},
+                identity_num: {title: '身份证号', placeHolder: '请输入您的身份证号', value: ''},
+                wechat: {title: '微信号', placeHolder: '请输入您的微信号', value: ''},
+                phone_num: {title: '手机号', placeHolder: '请输入您的手机号', value: ''},
+                verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: ''}
+            },
+            publicInfo: {
+                age: {title: '年龄', placeHolder: '请输入您的年龄', value: ''},
+                height: {title: '身高', placeHolder: '请输入您的身高', value: ''},
+                education: {title: '学历', placeHolder: '请输入您的学历', value: ''},
+                constellation: {title: '星座', placeHolder: '请输入您的星座', value: ''},
+                blood_type: {title: '血型', placeHolder: '请输入您的血型', value: ''}
+            },
+            privateInfo: {
+                life_photo: {title:'生活照', placeHolder:'请上传您的生活照', value:[]}
+            },
+            releaseInfo: {
+                self_introduction: {title:'自我介绍', type:'textarea', placeHolder:'请输入您的自我介绍', value:''},
+                requirement: {title:'我的要求', type:'textarea', placeHolder:'请输入您的要求', value:''},
+                reward: {title:'悬赏金额', placeHolder:'请输入您的悬赏金额', value:'', valueType:'人民币'}
+            }
+        }
     },
 
     onLoad: function (opt) {
@@ -126,7 +121,7 @@ Page(extend({}, Tab, {
         })
         // get user info if registered
         try {
-            // get login info from local cache
+            // get wechat login info from local cache
             var loginInfo = wx.getStorageSync('loginInfo')
             if(loginInfo){
                 var userInfo = loginInfo.data.data
@@ -134,24 +129,30 @@ Page(extend({}, Tab, {
                     'homePage.userWXInfo': userInfo,
                     'userWXInfo': userInfo
                 })
-                // check if this user is registered
+                // check if this seeker is registered
                 wx.request({
-                    url: config.service.getSeekerInfoUrl,
+                    url: config.service.getUserInfoUrl,
                     data: {
-                        open_id: userInfo.openId
+                        open_id: userInfo.openId,
+                        role: 'seeker'
                     },
                     success: function(res){
                         var result = res.data.data.result
+                        // get seeker info successfull
                         if(result.status == 200) {
-                            that.setMyInfoData(result.seekerInfo[0])
+                            that.setHomePage(result.data[0])
                             that.setData({
                                 //'homePage.loginInfo': loginInfo,
                                 //'homePage.seekerInfo': res.seekerInfo[0],
                                 registered: true
                             })
+                        } else {
+                            that.setRegisterPage()
                         }
                     }
                 })
+            } else {
+                util.showModel('get wechat login info failed!')
             }
         } catch(e) {
             util.showModel(JSON.stringify(e))
@@ -172,31 +173,63 @@ Page(extend({}, Tab, {
         //    }
         //});
     },
-    setMyInfoData: function(opt) {
-        var myInfoData = this.data.homePage.tabContent.list.myInfo
-        var identityInfo = myInfoData.data.list.identityInfo
-        var publicInfo = myInfoData.data.list.publicInfo
-        var privateInfo = myInfoData.data.list.privateInfo
-        // set identity info
-        identityInfo.data = {
-            name: {title: '姓名', placeHolder: '请输入您的姓名', value: opt.name},
-            gender: {title: '性别', placeHolder: '请输入您的性别', value: opt.gender},
-            identity_num: {title: '身份证号', placeHolder: '请输入您的身份证号', value: opt.identity_num},
-            wechat: {title: '微信号', placeHolder: '请输入您的微信号', value: opt.wechat},
-            phone_num: {title: '手机号', placeHolder: '请输入您的手机号', value: opt.phone_num},
-            verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: ''}
+    setRegisterPage: function() {
+        var registerTitle = 'registerPage.list.'
+        var registerPageList = this.data.registerPage.list
+        var keyArry = Object.keys(registerPageList)
+        for(var i=0;i<keyArry.length;i++) {
+            var field = keyArry[i]
+            var setKey = registerTitle + field
+            this.setData({
+                [setKey + '.data']: this.data.dataTpl[field]
+            })
         }
-        // set public info
-        publicInfo.data = {
-            age: {title: '年龄', placeHolder: '请输入您的年龄', value: opt.age},
-            height: {title: '身高', placeHolder: '请输入您的身高', value: opt.height},
-            education: {title: '学历', placeHolder: '请输入您的学历', value: opt.education},
-            constellation: {title: '星座', placeHolder: '请输入您的星座', value: opt.constellation},
-            blood_type: {title: '血型', placeHolder: '请输入您的血型', value: opt.blood_type}
+    },
+    setHomePage: function(opt) {
+        var homePageTitle = 'homePage.tabContent.list.myInfo.data.list.'
+        var homePageList = this.data.homePage.tabContent.list.myInfo.data.list
+        var keyArry = Object.keys(homePageList)
+        for(var i=0;i<keyArry.length;i++) {
+            var field = keyArry[i]
+            var setKey = homePageTitle + field
+            this.setData({
+                [setKey + '.data']: this.data.dataTpl[field]
+            })
+            var listData = homePageList[field].data
+            var listTitle = 'homePage.tabContent.list.myInfo.data.list.' + field + '.data.'
+            var listKeyArry = Object.keys(listData)
+            for(var j=0;j<listKeyArry.length;j++) {
+                var listField = listKeyArry[j]
+                var listSetKey = listTitle + listField
+                this.setData({
+                    [listSetKey + '.value']: opt[listField]
+                })
+            }
         }
-        this.setData({
-            'homePage.tabContent.list.myInfo': myInfoData
-        })
+        //var myInfoData = this.data.homePage.tabContent.list.myInfo
+        //var identityInfo = myInfoData.data.list.identityInfo
+        //var publicInfo = myInfoData.data.list.publicInfo
+        //var privateInfo = myInfoData.data.list.privateInfo
+        //// set identity info
+        //identityInfo.data = {
+        //    name: {title: '姓名', placeHolder: '请输入您的姓名', value: opt.name},
+        //    gender: {title: '性别', placeHolder: '请输入您的性别', value: opt.gender},
+        //    identity_num: {title: '身份证号', placeHolder: '请输入您的身份证号', value: opt.identity_num},
+        //    wechat: {title: '微信号', placeHolder: '请输入您的微信号', value: opt.wechat},
+        //    phone_num: {title: '手机号', placeHolder: '请输入您的手机号', value: opt.phone_num},
+        //    verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: ''}
+        //}
+        //// set public info
+        //publicInfo.data = {
+        //    age: {title: '年龄', placeHolder: '请输入您的年龄', value: opt.age},
+        //    height: {title: '身高', placeHolder: '请输入您的身高', value: opt.height},
+        //    education: {title: '学历', placeHolder: '请输入您的学历', value: opt.education},
+        //    constellation: {title: '星座', placeHolder: '请输入您的星座', value: opt.constellation},
+        //    blood_type: {title: '血型', placeHolder: '请输入您的血型', value: opt.blood_type}
+        //}
+        //this.setData({
+        //    'homePage.tabContent.list.myInfo': myInfoData
+        //})
     },
 
 
@@ -256,8 +289,9 @@ Page(extend({}, Tab, {
                 updateData['data'][e] = curInfoData[e].value
         }
         updateData['open_id'] = this.data.userWXInfo.openId
+        updateData['role'] = 'seeker'
         wx.request({
-            url: config.service.updateSeekerInfoUrl,
+            url: config.service.updateUserInfoUrl,
             data: updateData,
             success: function(res) {
                 util.showSuccess('update info successfully!')
@@ -343,22 +377,31 @@ Page(extend({}, Tab, {
             status: 0,
             role: 0
         }
-        return {userInfo:userInfo,seekerInfo:seekerInfo}
+        return {
+            userInfo: {
+                data: userInfo,
+                role: 'user'
+            },
+            seekerInfo: {
+                data: seekerInfo,
+                role: 'seeker'
+            }
+        }
     },
     submitRegister: function(opt) {
         var that = this
         var data = that.generateRegisterInfo(that.data.registerPage)
         wx.request({
-            url: config.service.registerUserUrl,
+            url: config.service.registerUrl,
             data: data.userInfo,
             success: function(res) {
                 that.setData({
-                    //registered: true
+                    registered: true
                 })
             }
         })
         wx.request({
-            url: config.service.registerSeekerUrl,
+            url: config.service.registerUrl,
             data: data.seekerInfo,
             success: function(res) {
                 var registerData = that.data.registerPage.list

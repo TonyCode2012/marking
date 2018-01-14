@@ -26,20 +26,14 @@ var config = {
         // 获取钱包地址接口
         //walletAddrUrl: `${host}/weapp/wallet`,
 
-        // 获取seeker信息
-        getSeekerInfoUrl: `${host}/weapp/getSeekerInfo`,
-
-        // 更新seeker信息
-        updateSeekerInfoUrl: `${host}/weapp/updateSeekerInfo`,
-
-        // 注册user用户
-        registerUserUrl: `${host}/weapp/registerUser`,
-
-        // 注册seeker用户
-        registerSeekerUrl: `${host}/weapp/registerSeeker`,
-
-        // 获取用户信息接口
+        // 获取User信息
         getUserInfoUrl: `${host}/weapp/getUserInfo`,
+
+        // 更新User信息
+        updateUserInfoUrl: `${host}/weapp/updateUserInfo`,
+
+        // 注册用户
+        registerUrl: `${host}/weapp/register`,
 
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,

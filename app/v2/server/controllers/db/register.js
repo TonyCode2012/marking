@@ -4,7 +4,7 @@ var urlParser = require('url')
 var queryString  = require("querystring");
 var util = require('./util')
 
-function registerUser(ctx) {
+function register(ctx) {
     return new Promise(function (resolve, reject) {
         var connection = mysql.createConnection({
             host     : config.host,
@@ -14,9 +14,16 @@ function registerUser(ctx) {
             database : config.db
         });
     
-        var data = urlParser.parse(ctx.originalUrl,true).query
-        var userInfo = util.getJSONKeyVal(data)
-        var userQuery = 'insert into User ' + userInfo.keyStr + ' values ' + userInfo.valStr
+        var args = urlParser.parse(ctx.originalUrl,true).query
+        var userInfo = util.getJSONKeyVal(JSON.parse(args.data))
+        var role = args.role
+        var tableId = ''
+        switch(role) {
+            case 'user': tableId='User';break;
+            case 'seeker': tableId='SeekerInfo';break;
+            case 'delegator': tableId='DelegatorInfo';break;
+        }
+        var userQuery = 'insert into ' + tableId + ' ' + userInfo.keyStr + ' values ' + userInfo.valStr
     
         connection.connect();
         console.log('user query is:' + userQuery)
@@ -28,7 +35,7 @@ function registerUser(ctx) {
             if (error) {
                 console.log(error);
                 retInfo = {
-                    msg: 'get seeker info SeekerInfo failed!',
+                    msg: 'get info failed!',
                     code: error.code,
                     errno: error.errno,
                     sqlMessage: error.sqlMessage,
@@ -36,12 +43,12 @@ function registerUser(ctx) {
                 }
             } else if(results.length == 0) {
                 retInfo = {
-                    msg: 'New user please register!',
+                    msg: 'New user, please register!',
                     status: 201
                 }
             } else {
                 retInfo = {
-                    msg: 'get seeker info from SeekerInfo successfully!',
+                    msg: 'get info successfully!',
                     seekerInfo: results,
                     status: 200
                 }
@@ -103,17 +110,9 @@ function registerSeeker(ctx) {
     })
 }
 
-module.exports = {
-    regUser: async function(ctx) {
-        var result = await registerUser(ctx)
-        ctx.state.data = {
-            result: result
-        }
-    },
-    regSeeker: async function(ctx) {
-        var result = await registerSeeker(ctx)
-        ctx.state.data = {
-            result: result
-        }
+module.exports = async ctx => {
+    var result = await register(ctx)
+    ctx.state.data = {
+        result: result
     }
 }

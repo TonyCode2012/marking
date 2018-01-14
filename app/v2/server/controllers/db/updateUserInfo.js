@@ -15,6 +15,12 @@ function updateInfo(ctx) {
         });
     
         var data = urlParser.parse(ctx.originalUrl,true).query
+        var tableId = ''
+        switch(data.role) {
+            case 'user': tableId='User';break;
+            case 'seeker': tableId='SeekerInfo';break;
+            case 'delegator': tableId='DelegatorInfo';break;
+        }
         var updateData = JSON.parse(data.data)
         var setStr = ''
         for(e in updateData) {
@@ -23,7 +29,7 @@ function updateInfo(ctx) {
             else setStr += (e + "='" + tmp + "',")
         }
         setStr = setStr.substring(0,setStr.length-1)
-        var queryStr = "update SeekerInfo set " +  setStr + " where open_id='" + data.open_id + "'"
+        var queryStr = "update " + tableId + " set " +  setStr + " where open_id='" + data.open_id + "'"
     
         connection.connect();
         // update SeekerInfo by open_id

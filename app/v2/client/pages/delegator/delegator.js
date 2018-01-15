@@ -98,19 +98,18 @@ Page(extend({}, Tab, {
             }
         }
     },
-
     onShareAppMessage: function (res) {
         if (res.from === 'button') {
           // 来自页面内转发按钮
           console.log(res.target)
         }
+        var openId = this.data.userWXInfo.openId
         return {
           title: '转发给',
-          path: '/pages/index/index?name=qilei',
+          path: '/pages/delegator/delegator?openId='+openId+'&role=seeker',
           success: function(res) {
             // 转发成功
             //util.showSuccess('转发成功')
-            //util.showSuccess(JSON.stringify(res))
           },
           fail: function(res) {
             // 转发失败

@@ -99,6 +99,25 @@ Page(extend({}, Tab, {
         }
     },
 
+    onShareAppMessage: function (res) {
+        if (res.from === 'button') {
+          // 来自页面内转发按钮
+          console.log(res.target)
+        }
+        return {
+          title: '转发给',
+          path: '/pages/index/index?name=qilei',
+          success: function(res) {
+            // 转发成功
+            //util.showSuccess('转发成功')
+            //util.showSuccess(JSON.stringify(res))
+          },
+          fail: function(res) {
+            // 转发失败
+            util.showSuccess('转发失败')
+          }
+        }
+    },
     onLoad: function (opt) {
         // set page info
         wx.setNavigationBarTitle({
@@ -358,15 +377,15 @@ Page(extend({}, Tab, {
     submitRegister: function(opt) {
         var that = this
         var data = that.generateRegisterInfo(that.data.registerPage)
-        wx.request({
-            url: config.service.registerUrl,
-            data: data.userInfo,
-            success: function(res) {
-                that.setData({
-                    registered: true
-                })
-            }
-        })
+        //wx.request({
+        //    url: config.service.registerUrl,
+        //    data: data.userInfo,
+        //    success: function(res) {
+        //        that.setData({
+        //            registered: true
+        //        })
+        //    }
+        //})
         wx.request({
             url: config.service.registerUrl,
             data: data.delegatorInfo,

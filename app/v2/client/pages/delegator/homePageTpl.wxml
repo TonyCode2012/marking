@@ -30,5 +30,6 @@
             <template is="{{index}}Tpl" data="{{...item.data}}"/>
         </view>
     </view>
+    <button class="weui-btn mini-btn" type="primary" bindtap="sendPush" size="mini" hidden="{{mode!='show'}}">编辑</button>
 </view>
 </template>

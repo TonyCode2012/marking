@@ -109,16 +109,15 @@ Page(extend({}, Tab, {
     },
 
     onLoad: function (opt) {
+        // show share menu
+        wx.showShareMenu({
+            withShareTicket: true
+        })
         // set page info
         wx.setNavigationBarTitle({
           title: '我要找对象'
         })
         var that = this;
-        // set register page info
-        var curRegPageId = this.data.registerPage.curPageId
-        that.setData({
-            'registerPage.curInfo': this.data.registerPage.list[curRegPageId]
-        })
         // get user info if registered
         try {
             // get wechat login info from local cache
@@ -140,12 +139,12 @@ Page(extend({}, Tab, {
                         var result = res.data.data.result
                         // get seeker info successfull
                         if(result.status == 200) {
-                            that.setHomePage(result.data[0])
                             that.setData({
                                 //'homePage.loginInfo': loginInfo,
                                 //'homePage.seekerInfo': res.seekerInfo[0],
                                 registered: true
                             })
+                            that.setHomePage(result.data[0])
                         } else {
                             that.setRegisterPage()
                         }
@@ -159,10 +158,6 @@ Page(extend({}, Tab, {
         }
         that.setData({
             title: opt.title
-        })
-        // show share menu
-        wx.showShareMenu({
-            withShareTicket: true
         })
         //wx.getSystemInfo({
         //    success: function(res) {
@@ -184,8 +179,14 @@ Page(extend({}, Tab, {
                 [setKey + '.data']: this.data.dataTpl[field]
             })
         }
+        // set register page info
+        var curRegPageId = this.data.registerPage.curPageId
+        this.setData({
+            'registerPage.curInfo': this.data.registerPage.list[curRegPageId]
+        })
     },
     setHomePage: function(opt) {
+        opt.life_photo = []
         var homePageTitle = 'homePage.tabContent.list.myInfo.data.list.'
         var homePageList = this.data.homePage.tabContent.list.myInfo.data.list
         var keyArry = Object.keys(homePageList)
@@ -206,30 +207,6 @@ Page(extend({}, Tab, {
                 })
             }
         }
-        //var myInfoData = this.data.homePage.tabContent.list.myInfo
-        //var identityInfo = myInfoData.data.list.identityInfo
-        //var publicInfo = myInfoData.data.list.publicInfo
-        //var privateInfo = myInfoData.data.list.privateInfo
-        //// set identity info
-        //identityInfo.data = {
-        //    name: {title: '姓名', placeHolder: '请输入您的姓名', value: opt.name},
-        //    gender: {title: '性别', placeHolder: '请输入您的性别', value: opt.gender},
-        //    identity_num: {title: '身份证号', placeHolder: '请输入您的身份证号', value: opt.identity_num},
-        //    wechat: {title: '微信号', placeHolder: '请输入您的微信号', value: opt.wechat},
-        //    phone_num: {title: '手机号', placeHolder: '请输入您的手机号', value: opt.phone_num},
-        //    verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: ''}
-        //}
-        //// set public info
-        //publicInfo.data = {
-        //    age: {title: '年龄', placeHolder: '请输入您的年龄', value: opt.age},
-        //    height: {title: '身高', placeHolder: '请输入您的身高', value: opt.height},
-        //    education: {title: '学历', placeHolder: '请输入您的学历', value: opt.education},
-        //    constellation: {title: '星座', placeHolder: '请输入您的星座', value: opt.constellation},
-        //    blood_type: {title: '血型', placeHolder: '请输入您的血型', value: opt.blood_type}
-        //}
-        //this.setData({
-        //    'homePage.tabContent.list.myInfo': myInfoData
-        //})
     },
 
 
@@ -244,6 +221,85 @@ Page(extend({}, Tab, {
         // get new value and set to corresponding info(not curInfo)
         this.setData({
             [curKey + '.value']: opt.detail.value
+        })
+    },
+    // set private info about photos
+    chooseImage: function (e) {
+        var that = this;
+        wx.chooseImage({
+            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+            success: function (res) {
+                // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+                var filesUrl = []
+                if(that.data.registered) {
+                    filesUrl = that.data.homePage.tabContent.list.myInfo.data.list.privateInfo.data.life_photo.value.concat(res.tempFilePaths)
+                    that.setData({
+                        'homePage.tabContent.list.myInfo.data.list.privateInfo.data.life_photo.value': filesUrl
+                    });
+                } else {
+                    filesUrl = that.data.registerPage.list.privateInfo.data.life_photo.value.concat(res.tempFilePaths)
+                    that.setData({
+                        'registerPage.list.privateInfo.data.life_photo.value': filesUrl,
+                        'registerPage.curInfo.data.life_photo.value': filesUrl
+                    });
+                }
+                // 上传图片
+                wx.uploadFile({
+                    url: config.service.uploadUrl,
+                    //filePath: filePath,
+                    header:{
+                        //"content-Type":"application/x-www-form-urlencoded"
+                        //"content-Type":"application/json"
+                        "content-Type":"multipart/form-data, boundary=AaB03x"
+                    },
+                    filePath: filesUrl[0],
+                    name: 'file',
+                    success: function(res){
+                        util.showSuccess('上传图片成功')
+                        console.log(res)
+                        res = JSON.parse(res.data)
+                        console.log(res)
+                        //that.setData({
+                        //    imgUrl: res.data.imgUrl
+                        //})
+                    },
+                    fail: function(e) {
+                        util.showModel('上传图片失败',e)
+                    }
+                })
+            }
+        })
+    },
+    // upload picture
+    //doUpload: function () {
+    savePrivateInfo: function () {
+        var that = this
+        util.showBusy('正在上传')
+        //var filePath = res.tempFilePaths[0]
+        var filePath = []
+        if(that.data.registered) {
+            filePath = that.data.homePage.tabContent.list.myInfo.data.list.privateInfo.data.life_photo.value[0]
+        } else {
+            filePath = that.data.registerPage.list.privateInfo.life_photo.value
+        }
+        // 上传图片
+        wx.uploadFile({
+            url: config.service.uploadUrl,
+            filePath: filePath,
+            name: 'file',
+            success: function(res){
+                util.showSuccess('上传图片成功')
+                console.log(res)
+                res = JSON.parse(res.data)
+                console.log(res)
+                //that.setData({
+                //    imgUrl: res.data.imgUrl
+                //})
+            },
+            fail: function(e) {
+                util.showModel('上传图片失败')
+            }
         })
     },
 
@@ -316,37 +372,11 @@ Page(extend({}, Tab, {
             'registerPage.curInfo': this.data.registerPage.list[prePageId]
         })
     },
-    // set private info about photos
-    chooseImage: function (e) {
-        var that = this;
-        wx.chooseImage({
-            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-            sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-            success: function (res) {
-                // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-                var filesUrl = that.data.registerPage.list.privateInfo.data.life_photo.value.concat(res.tempFilePaths)
-                that.setData({
-                    'registerPage.list.privateInfo.data.life_photo.value': filesUrl,
-                    'registerPage.curInfo.data.life_photo.value': filesUrl
-                });
-            }
-        })
-    },
     previewImage: function(e){
         wx.previewImage({
             current: e.currentTarget.id, // 当前显示图片的http链接
             urls: this.data.registerPage.list.privateInfo.data.life_photo.value // 需要预览的图片http链接列表
         })
-    },
-    getCurDatetime: function() {
-        var date = new Date();//如果date为13位不需要乘1000
-        var Y = date.getFullYear() + '-';
-        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-        var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
-        var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
-        var m = (date.getMinutes() <10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-        var s = (date.getSeconds() <10 ? '0' + date.getSeconds() : date.getSeconds());
-        return Y+M+D+h+m+s;
     },
     generateRegisterInfo: function(opt) {
         var curUserInfo = this.data.userWXInfo
@@ -365,50 +395,21 @@ Page(extend({}, Tab, {
             }
         }
         seekerInfo['open_id'] = curUserInfo.openId
-        // get user info
-        var userInfo = {
-            open_id: curUserInfo.openId,
-            public_key: curUserInfo.openId + '12345',
-            chain_addr: curUserInfo.openId + '98765',
-            balance: 100,
-            gender: curUserInfo.gender==1?'男':'女',
-            register_time: this.getCurDatetime(),
-            identity_hash: curUserInfo.openId + 'yaoz',
-            status: 0,
-            role: 0
-        }
-        return {
-            userInfo: {
-                data: userInfo,
-                role: 'user'
-            },
-            seekerInfo: {
-                data: seekerInfo,
-                role: 'seeker'
-            }
-        }
+        return { data: seekerInfo,role: 'seeker' }
     },
     submitRegister: function(opt) {
         var that = this
         var data = that.generateRegisterInfo(that.data.registerPage)
         wx.request({
             url: config.service.registerUrl,
-            data: data.userInfo,
-            success: function(res) {
-                that.setData({
-                    registered: true
-                })
-            }
-        })
-        wx.request({
-            url: config.service.registerUrl,
-            data: data.seekerInfo,
+            data: data,
             success: function(res) {
                 var registerData = that.data.registerPage.list
                 that.setData({
                     'homePage.tabContent.list.myInfo.data.list.identityInfo.data': registerData.identityInfo.data,
                     'homePage.tabContent.list.myInfo.data.list.publicInfo.data': registerData.publicInfo.data,
-                    'homePage.tabContent.list.myInfo.data.list.privateInfo.data': registerData.privateInfo.data
+                    'homePage.tabContent.list.myInfo.data.list.privateInfo.data': registerData.privateInfo.data,
+                    registered: true
                 })
             }
         })

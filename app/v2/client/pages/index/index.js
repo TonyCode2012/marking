@@ -16,15 +16,15 @@ Page({
             withShareTicket: true
         })
         // get opening share info
-        if(opt.scene == 1044) {
-            wx.getShareInfo({
-                shareTicket: opt.shareTicket,
-                success: function(res) {
-                    var encryptedData = res.encryptedData;
-                    var iv = res.iv;
-                }
-            })
-        }
+        //if(opt.scene == 1044) {
+        //    wx.getShareInfo({
+        //        shareTicket: opt.shareTicket,
+        //        success: function(res) {
+        //            var encryptedData = res.encryptedData;
+        //            var iv = res.iv;
+        //        }
+        //    })
+        //}
     },
     onShareAppMessage: function (res) {
         if (res.from === 'button') {
@@ -33,10 +33,10 @@ Page({
         }
         return {
           title: '转发给',
-          path: '/pages/index/index?name=qilei',
+          path: '/pages/index/index?openId=' + openId,
           success: function(res) {
             // 转发成功
-            //util.showSuccess('转发成功')
+            util.showSuccess('转发成功')
             //util.showSuccess(JSON.stringify(res))
           },
           fail: function(res) {
@@ -55,61 +55,108 @@ Page({
         // 调用登录接口
         qcloud.login({
             success(result) {
-                //wx.request({
-                //    url: config.service.walletAddrUrl,
-                //    success: function(result) {
-                //        util.showSuccess(JSON.stringify(result))
-                //    }
-                //})
-                if (result) {
-                    try {
-                        wx.setStorageSync('loginInfo',result)
-                    } catch(e) {
-                        util.showModel(JSON.stringify(e))
-                    }
-                    wx.switchTab({
-                        //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
-                        //url: '../seeker/seeker'
-                        url: '../delegator/delegator'
-                    })
-                    that.setData({
-                        userInfo: result,
-                        logged: true
-                    })
-                } else {
-                    // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
-                    qcloud.request({
-                        url: config.service.requestUrl,
-                        login: true,
-                        success(result) {
-                            //util.showSuccess('登录成功')
-                            try {
-                                wx.setStorageSync('loginInfo',result)
-                            } catch(e) {
-                                util.showModel(JSON.stringify(e))
-                            }
-                            wx.switchTab({
-                                //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
-                                url: '../delegator/delegator'
-                                //url: '../seeker/register/regPrivateInfo?logInfo='+JSON.stringify(result)
-                            })
-                            that.setData({
-                                userInfo: result.data.data,
-                                logged: true
-                            })
-                        },
-
-                        fail(error) {
-                            util.showModel('请求失败', error)
-                            console.log('request fail', error)
+                qcloud.request({
+                    url: config.service.requestUrl,
+                    login: true,
+                    success(result) {
+                        //util.showSuccess('登录成功')
+                        try {
+                            wx.setStorageSync('loginInfo',result)
+                        } catch(e) {
+                            util.showModel(JSON.stringify(e))
                         }
-                    })
-                }
+                        that.registerUser(result.data.data)
+                        wx.switchTab({
+                            //url: '../seeker/register/regPrivateInfo?logInfo='+JSON.stringify(result)
+                            //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                            url: '../delegator/delegator'
+                        })
+                        that.setData({
+                            userInfo: result.data.data,
+                            logged: true
+                        })
+                    },
+                    fail(error) {
+                        util.showModel('请求失败', error)
+                        console.log('request fail', error)
+                    }
+                })
+                //if (result) {
+                //    try {
+                //        wx.setStorageSync('loginInfo',result)
+                //    } catch(e) {
+                //        util.showModel(JSON.stringify(e))
+                //    }
+                //    that.registerUser(result.data.data)
+                //    that.setData({
+                //        userInfo: result,
+                //        logged: true
+                //    })
+                //    wx.switchTab({
+                //        //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                //        //url: '../seeker/seeker'
+                //        url: '../delegator/delegator'
+                //    })
+                //} else {
+                //    // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
+                //    qcloud.request({
+                //        url: config.service.requestUrl,
+                //        login: true,
+                //        success(result) {
+                //            //util.showSuccess('登录成功')
+                //            try {
+                //                wx.setStorageSync('loginInfo',result)
+                //            } catch(e) {
+                //                util.showModel(JSON.stringify(e))
+                //            }
+                //            //registerUser(result.data.data)
+                //            wx.switchTab({
+                //                //url: '../seeker/seeker?logInfo='+JSON.stringify(result)
+                //                url: '../delegator/delegator'
+                //                //url: '../seeker/register/regPrivateInfo?logInfo='+JSON.stringify(result)
+                //            })
+                //            that.setData({
+                //                userInfo: result.data.data,
+                //                logged: true
+                //            })
+                //        },
+//
+                //        fail(error) {
+                //            util.showModel('请求失败', error)
+                //            console.log('request fail', error)
+                //        }
+                //    })
+                //}
             },
 
             fail(error) {
                 util.showModel('登录失败', error)
                 console.log('登录失败', error)
+            }
+        })
+    },
+
+    registerUser: function(opt) {
+        var openId = opt.openId
+        var userInfo = {
+            data: {
+                open_id: openId,
+                public_key: openId + '12345',
+                chain_addr: openId + '98765',
+                balance: 100,
+                //gender: gender==1?'男':'女',
+                register_time: util.getCurDatetime(),
+                identity_hash: openId + 'yaoz',
+                status: 0,
+                role: 0
+            },
+            role: 'user'
+        }
+        wx.request({
+            url: config.service.registerUrl,
+            data: userInfo,
+            success: function(res) {
+                //util.showSuccess('Register user successfully!')
             }
         })
     },

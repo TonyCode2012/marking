@@ -148,7 +148,7 @@
         <button class="weui-btn mini-btn" type="primary" bindtap="submitRegister" size="mini" style="margin-left:30%" hidden="{{mode!='register'}}">保存并提交</button>
         <button class="weui-btn mini-btn" type="primary" data-infotype="privateInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
         <button class="weui-btn mini-btn" type="primary" data-infotype="privateInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
-        <button class="weui-btn mini-btn" type="primary" data-infotype="privateInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="privateInfo" bindtap="savePrivateInfo" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
     </view>
 </view>
 </template>

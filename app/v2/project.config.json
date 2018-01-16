@@ -28,7 +28,7 @@
 					"id": 0,
 					"name": "分享测试",
 					"pathName": "pages/index/index",
-					"query": "name=qilei&openId=12345",
+					"query": "openId=12345&role=seeker",
 					"scene": "1044",
 					"shareInfo": {
 						"groupName": "测试模拟群0",

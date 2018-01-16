@@ -12,8 +12,23 @@ Page({
     },
 
     onShow: function(opt) {
+        // 获取登录场景值
         var appInstance = getApp()
-        console.log(appInstance.globalData)
+        var loginAppInfo = appInstance.data.loginAppInfo
+        if(loginAppInfo.scene == 1044) {
+            // 转发登录场景
+            this.login({loginAppInfo:loginAppInfo},() => {
+                if(loginAppInfo.query.role == 'seeker') {
+                    wx.switchTab({
+                        url: '../seeker/seeker'
+                    })
+                } else {
+                    wx.switchTab({
+                        url: '../delegator/delegator'
+                    })
+                }
+            })
+        }
     },
     onLoad: function(opt) {
         wx.showShareMenu({
@@ -86,7 +101,7 @@ Page({
         }
     },
     // 用户登录示例
-    login: function() {
+    login: function(args,callback) {
         if (this.data.logged) return
 
         util.showBusy('正在登录')
@@ -96,50 +111,59 @@ Page({
         qcloud.login({
             success(result) {
                 if(result) {
-                    if(result.code) {
-                        wx.request({
-                            url: 'https://api.weixin.qq.com/sns/jscode2session',
-                            data: {
-                                appid: 'wx8727802679966793',
-                                secret: '20a3bf08c37e5006e37e409797a6cd67',
-                                js_code: result.code,
-                                grant_type: 'authorization_code'
-                            },
-                            success: function(result) {
-                                opt['sessionInfo'] = result
-                                getReceiverInfo(opt)
-                            }
-                        })
-                    }
+                    //if(result.code) {
+                    //    wx.request({
+                    //        url: 'https://api.weixin.qq.com/sns/jscode2session',
+                    //        data: {
+                    //            appid: 'wx8727802679966793',
+                    //            secret: '20a3bf08c37e5006e37e409797a6cd67',
+                    //            js_code: result.code,
+                    //            grant_type: 'authorization_code'
+                    //        },
+                    //        success: function(result) {
+                    //            var opt = {
+                    //                sessionInfo: result
+                    //            }
+                    //            // 获取转发到的微信组群的信息
+                    //            that.getReceiverInfo(opt)
+                    //            // 在首次登录的时候就行用户的注册
+                    //            //that.registerUser(result.data.data)
+                    //        }
+                    //    })
+                    //}
+                    // 在首次登录的时候就行用户的注册
+                    that.registerUser(result,callback)
+                    // 保存登录获取的用户微信信息
                     try {
                         wx.setStorageSync('loginInfo',result)
                     } catch(e) {
-                        util.showModel(JSON.stringify(e))
+                        util.showModel('set login info failed!',JSON.stringify(e))
                     }
-                    wx.switchTab({
-                        url: '../delegator/delegator'
-                    })
+                    // 根据场景值判断是否进行转发
+                    if(args.loginAppInfo == undefined) {
+                        wx.switchTab({
+                            url: '../delegator/delegator'
+                        })
+                    }
                 } else {
                     // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
                     qcloud.request({
                         url: config.service.requestUrl,
                         login: true,
                         success(result) {
-                            //util.showSuccess('登录成功')
+                            util.showSuccess('登录成功')
+                            // 保存登录获取的用户微信信息
                             try {
                                 wx.setStorageSync('loginInfo',result)
                             } catch(e) {
-                                util.showModel(JSON.stringify(e))
+                                util.showModel('set login info failed!',JSON.stringify(e))
                             }
-                            //that.registerUser(result.data.data)
-                            wx.switchTab({
-                                //url: '../seeker/register/regPrivateInfo?logInfo='+JSON.stringify(result)
-                                url: '../delegator/delegator'
-                            })
-                            that.setData({
-                                userInfo: result.data.data,
-                                logged: true
-                            })
+                            if(args.loginAppInfo == undefined) {
+                                wx.switchTab({
+                                    url: '../delegator/delegator'
+                                })
+                            }
+                            callback()
                         },
                         fail(error) {
                             util.showModel('请求失败', error)
@@ -156,7 +180,7 @@ Page({
         })
     },
 
-    registerUser: function(opt) {
+    registerUser: function(opt,callback) {
         var openId = opt.openId
         var userInfo = {
             data: {
@@ -176,7 +200,11 @@ Page({
             url: config.service.registerUrl,
             data: userInfo,
             success: function(res) {
+                callback()
                 //util.showSuccess('Register user successfully!')
+            },
+            fail: function(res) {
+                callback()
             }
         })
     },

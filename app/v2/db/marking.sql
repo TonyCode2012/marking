@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 14/01/2018 23:48:47
+ Date: 16/01/2018 23:40:11
 */
 
 SET NAMES utf8mb4;
@@ -185,6 +185,6 @@ CREATE TABLE `cSessionInfo`  (
 -- ----------------------------
 -- Records of cSessionInfo
 -- ----------------------------
-INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'e247af0b-c986-49b3-80e9-9566ebf5fe29', '0d423ce129af8253d19908dc26059914e5afe431', '2018-01-14 23:39:34', '2018-01-14 23:39:34', '9BwhU202pjTKrgHgEqSRiw==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1515944374,\"appid\":\"wx8727802679966793\"}}');
+INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', '63f14ddc-5d57-4538-b5ea-5332a943f54f', 'ac5af0db9b6867f3b234ff7a86984aea0a5fef35', '2018-01-16 22:57:35', '2018-01-16 22:57:35', 'YfuEiTYMcwVfsqKHZP4Tvw==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1516114654,\"appid\":\"wx8727802679966793\"}}');
 
 SET FOREIGN_KEY_CHECKS = 1;

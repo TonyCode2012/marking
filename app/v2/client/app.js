@@ -5,47 +5,48 @@ var util = require('./utils/util.js')
 
 App({
     data: {
-        inviteSceneInfo: {}
+        loginAppInfo: {}
     },
 
     onLaunch: function (opt) {
-        this.data.inviteSceneInfo = opt
+        // 获取用户登录app的信息，进行后续的场景判断
+        this.data.loginAppInfo = opt
         qcloud.setLoginUrl(config.service.loginUrl)
-        var getReceiverInfo = options => {
-            if(options.scene == 1044) {
-                var sessionInfo = options.sessionInfo.data
-                wx.getShareInfo({
-                    shareTicket: options.shareTicket,
-                    success: function(res) {
-                        var encryptedData = res.encryptedData;
-                        var iv = res.iv;
-                        wx.request({
-                            url: config.service.decryptUrl,
-                            //method: 'POST',
-                            header:{
-                                //"content-Type":"application/x-www-form-urlencoded"
-                                "content-Type":"application/json"
-                            },
-                            data: {
-                                "iv": iv,
-                                "session_key": sessionInfo.session_key,
-                                "appId":'wx8727802679966793',
-                                "encryptedData": encryptedData
-                            }, 
-                            //dataType:"JSON",
-                            success (result) {
-                                var testRes = result;
-                                //util.showSuccess(JSON.stringify(result))
-                            },
-                            fail (error) {
-                                util.showModel('请求失败', error);
-                                console.log('request fail', error);
-                            }
-                        })
-                    }
-                })
-            }
-        }
+        //var getReceiverInfo = options => {
+        //    if(options.scene == 1044) {
+        //        var sessionInfo = options.sessionInfo.data
+        //        wx.getShareInfo({
+        //            shareTicket: options.shareTicket,
+        //            success: function(res) {
+        //                var encryptedData = res.encryptedData;
+        //                var iv = res.iv;
+        //                wx.request({
+        //                    url: config.service.decryptUrl,
+        //                    //method: 'POST',
+        //                    header:{
+        //                        //"content-Type":"application/x-www-form-urlencoded"
+        //                        "content-Type":"application/json"
+        //                    },
+        //                    data: {
+        //                        "iv": iv,
+        //                        "session_key": sessionInfo.session_key,
+        //                        "appId":'wx8727802679966793',
+        //                        "encryptedData": encryptedData
+        //                    }, 
+        //                    //dataType:"JSON",
+        //                    success (result) {
+        //                        var testRes = result;
+        //                        //util.showSuccess(JSON.stringify(result))
+        //                    },
+        //                    fail (error) {
+        //                        util.showModel('请求失败', error);
+        //                        console.log('request fail', error);
+        //                    }
+        //                })
+        //            }
+        //        })
+        //    }
+        //}
 
         // get opening share info
         //wx.login({

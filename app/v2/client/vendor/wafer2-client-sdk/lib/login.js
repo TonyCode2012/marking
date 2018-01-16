@@ -108,6 +108,8 @@ var login = function login(options) {
 
                 // 成功地响应会话信息
                 if (data && data.code === 0 && data.data.skey) {
+                    // 获取user的openId
+                    userInfo.openId = data.data.userinfo.openId
                     var res = data.data
                     if (res.userinfo) {
                         Session.set(res.skey);

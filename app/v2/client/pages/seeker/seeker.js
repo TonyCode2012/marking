@@ -348,7 +348,7 @@ Page(extend({}, Tab, {
         wx.request({
             url: config.service.updateUserInfoUrl,
             data: {
-                data:{ publicRelease: 1 },
+                data:{ is_public: 1 },
                 open_id: openId,
                 role: 'seeker'
             },

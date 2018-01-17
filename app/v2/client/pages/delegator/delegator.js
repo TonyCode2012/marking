@@ -219,6 +219,17 @@ Page(extend({}, Tab, {
 
 
     //--------------- Home Page functions -----------------//
+    /*从数据库获取相关数据*/
+    getSeekerInfo() {
+        wx.request({
+            url: config.service.getDTaskInfoUrl,
+            data: {
+                delegator_openId: '12345',
+            },
+            success: function(res) {
+            }
+        })
+    },
     handleZanTabChange(e) {
       var componentId = e.componentId;
       var selectedId = e.selectedId;
@@ -271,7 +282,7 @@ Page(extend({}, Tab, {
     },
 
 
-    //---------------Register Page functions -----------------//
+    //--------------- Register Page functions -----------------//
     goNextStep: function(opt) {
         var nextPageId = opt.currentTarget.dataset.nextpageid
         this.setData({

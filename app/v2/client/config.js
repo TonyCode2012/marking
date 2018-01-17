@@ -35,6 +35,9 @@ var config = {
         // 注册用户
         registerUrl: `${host}/weapp/register`,
 
+        /*****获取红娘相关信息*****/
+        getDTaskInfoUrl: `${host}/weapp/getDTaskInfo`,
+
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,
 

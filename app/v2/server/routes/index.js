@@ -27,7 +27,8 @@ router.get('/decrypt', controllers.decrypt)
 
 // --- 数据库操作 --- //
 router.get('/register', dbControllers.register)
-router.get('/getUserInfo', dbControllers.getUserInfo)
+router.get('/getUserInfo', dbControllers.getInfo.getUserInfo)
+router.get('/getDTaskInfo', dbControllers.getInfo.getDTaskInfo)
 router.get('/updateUserInfo', dbControllers.updateUserInfo)
 
 // --- 获取区块链钱包地址 Demo --- //

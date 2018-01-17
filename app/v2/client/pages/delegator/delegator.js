@@ -35,7 +35,8 @@ Page(extend({}, Tab, {
                     },
                     myTask:{
                         id: 'myTask',
-                        title: '我的任务'
+                        title: '我的任务',
+                        data: {}
                     },
                     myInfo: {
                         id: 'myInfo',
@@ -57,6 +58,7 @@ Page(extend({}, Tab, {
             },
             loginInfo: {},
             delegatorInfo: {},
+            userWXInfo: {},
             userInfo: {},
             title: '',
             toView: 'red' ,
@@ -123,43 +125,26 @@ Page(extend({}, Tab, {
           title: '我是红娘'
         })
         var that = this;
-        // get user info if registered
+        // 获取转发邀请的用户信息
         try {
-            // get wechat login info from local cache
-            var loginInfo = wx.getStorageSync('loginInfo')
-            if(loginInfo){
-                var userInfo = loginInfo.data.data
+            var roleUserInfo = wx.getStorageSync('roleUserInfo')
+            var wxUserInfo = wx.getStorageSync('wxUserInfo')
+            wxUserInfo = wxUserInfo.data.data
+            if(roleUserInfo && roleUserInfo.registered){
+                that.setHomePage(roleUserInfo.data)
                 that.setData({
-                    'homePage.userWXInfo': userInfo,
-                    'userWXInfo': userInfo
-                })
-                // check if this user is registered
-                wx.request({
-                    url: config.service.getUserInfoUrl,
-                    data: {
-                        open_id: userInfo.openId,
-                        role: 'delegator'
-                    },
-                    success: function(res){
-                        var result = res.data.data.result
-                        // get delegator info successfull
-                        if(result.status == 200) {
-                            that.setHomePage(result.data[0])
-                            that.setData({
-                                //'homePage.loginInfo': loginInfo,
-                                //'homePage.delegatorInfo': res.delegatorInfo[0],
-                                registered: true
-                            })
-                        } else {
-                            that.setRegisterPage()
-                        }
-                    }
+                    'homePage.userWXInfo': wxUserInfo,
+                    'registered': true
                 })
             } else {
-                util.showModel('get wechat login info failed!')
+                that.setRegisterPage()
             }
+            that.setData({
+                'userWXInfo': wxUserInfo
+            })
         } catch(e) {
-            util.showModel(JSON.stringify(e))
+            that.setRegisterPage()
+            util.showModel('get role user info failed!',JSON.stringify(e))
         }
         that.setData({
             title: opt.title

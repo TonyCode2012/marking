@@ -65,6 +65,8 @@ Page(extend({}, Tab, {
             loginInfo: {},
             seekerInfo: {},
             userInfo: {},
+            wxUserInfo: {},
+            transSceneInfo: {},
             title: '',
             toView: 'red' ,
             scrollTop: 100
@@ -80,7 +82,7 @@ Page(extend({}, Tab, {
         },
         registered: false,
         nonRegInfo: {verifyCode:'y'},
-        userWXInfo: {},
+        wxUserInfo: {},
         dataTpl: {
             identityInfo: {
                 name: {title: '姓名', placeHolder: '请输入您的姓名', value: ''},
@@ -109,52 +111,39 @@ Page(extend({}, Tab, {
     },
 
     onLoad: function (opt) {
-        // show share menu
+        // 显示分享按钮
         wx.showShareMenu({
             withShareTicket: true
         })
-        // set page info
+        // 设置页面主题
         wx.setNavigationBarTitle({
           title: '我要找对象'
         })
         var that = this;
-        // get user info if registered
+        // 获取转发邀请的用户信息
         try {
-            // get wechat login info from local cache
-            var loginInfo = wx.getStorageSync('loginInfo')
-            if(loginInfo){
-                var userInfo = loginInfo.data.data
+            var roleUserInfo = wx.getStorageSync('roleUserInfo')
+            var wxUserInfo = wx.getStorageSync('wxUserInfo')
+            var transSceneInfo = wx.getStorageSync('transSceneInfo')
+            wxUserInfo = wxUserInfo.data.data
+            if(roleUserInfo && roleUserInfo.registered){
+                that.setHomePage(roleUserInfo.data)
                 that.setData({
-                    'homePage.userWXInfo': userInfo,
-                    'userWXInfo': userInfo
+                    'homePage.wxUserInfo': wxUserInfo,
+                    'homePage.transSceneInfo': transSceneInfo,
+                    'registered': true
                 })
-                // check if this seeker is registered
-                wx.request({
-                    url: config.service.getUserInfoUrl,
-                    data: {
-                        open_id: userInfo.openId,
-                        role: 'seeker'
-                    },
-                    success: function(res){
-                        var result = res.data.data.result
-                        // get seeker info successfull
-                        if(result.status == 200) {
-                            that.setData({
-                                //'homePage.loginInfo': loginInfo,
-                                //'homePage.seekerInfo': res.seekerInfo[0],
-                                registered: true
-                            })
-                            that.setHomePage(result.data[0])
-                        } else {
-                            that.setRegisterPage()
-                        }
-                    }
-                })
+                if(transSceneInfo.scene == 1044) 
+                    that.addFriendQeq()
             } else {
-                util.showModel('get wechat login info failed!')
+                that.setRegisterPage()
             }
+            that.setData({
+                'wxUserInfo': wxUserInfo
+            })
         } catch(e) {
-            util.showModel(JSON.stringify(e))
+            that.setRegisterPage()
+            util.showModel('get user info failed!',JSON.stringify(e))
         }
         that.setData({
             title: opt.title
@@ -179,7 +168,7 @@ Page(extend({}, Tab, {
                 [setKey + '.data']: this.data.dataTpl[field]
             })
         }
-        // set register page info
+        // 设置注册页面的当前页面
         var curRegPageId = this.data.registerPage.curPageId
         this.setData({
             'registerPage.curInfo': this.data.registerPage.list[curRegPageId]
@@ -210,7 +199,7 @@ Page(extend({}, Tab, {
     },
 
 
-    //---------------both Page functions -----------------//
+    //--------------- both Page functions -----------------//
     getInputVal: function(opt) {
         var curInfoType = opt.currentTarget.dataset.infotype
         var mode = opt.currentTarget.dataset.mode
@@ -272,7 +261,6 @@ Page(extend({}, Tab, {
         })
     },
     // upload picture
-    //doUpload: function () {
     savePrivateInfo: function () {
         var that = this
         util.showBusy('正在上传')
@@ -344,7 +332,7 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        updateData['open_id'] = this.data.userWXInfo.openId
+        updateData['open_id'] = this.data.wxUserInfo.openId
         updateData['role'] = 'seeker'
         wx.request({
             url: config.service.updateUserInfoUrl,
@@ -354,6 +342,54 @@ Page(extend({}, Tab, {
                 //util.showSuccess(JSON.stringify(res))
             }
         })
+    },
+    releaseInfoBtn: function(opt) {
+        var openId = this.data.wxUserInfo.openId
+        wx.request({
+            url: config.service.updateUserInfoUrl,
+            data: {
+                data:{ publicRelease: 1 },
+                open_id: openId,
+                role: 'seeker'
+            },
+            success: function(res) {
+                util.showSuccess('update info successfully!')
+                //util.showSuccess(JSON.stringify(res))
+            }
+        })
+    },
+    addFriendQeq: function() {
+        var that = this
+        wx.showModal({
+            title: '代理人请提醒',
+            content: '您的好友想成为您的代理人，是否同意？',
+            confirmText: "同意",
+            cancelText: "拒绝",
+            success: function (res) {
+                console.log(res);
+                if (res.confirm) {
+                    var seekerId= that.data.homePage.wxUserInfo.openId
+                    var delegatorId = that.data.homePage.transSceneInfo.query.openId
+                    // 将转发者作为当前seeker的delegator在关系表中进行注册
+                    var relationData = {
+                        delegator_openId: delegatorId,
+                        seeker_openId: seekerId,
+                        delegationship_id: delegatorId+seekerId
+                    }
+                    wx.request({
+                        url: config.service.registerUrl,
+                        data: {
+                            data: relationData,
+                            role: 'delegationShip'
+                        },
+                        success: function(res) {
+                            util.showSuccess('添加好友成功!')
+                        }
+                    })
+                }else{
+                }
+            }
+        });
     },
 
 
@@ -379,7 +415,7 @@ Page(extend({}, Tab, {
         })
     },
     generateRegisterInfo: function(opt) {
-        var curUserInfo = this.data.userWXInfo
+        var curUserInfo = this.data.wxUserInfo
         var userInfo = {}
         var seekerInfo = {}
         // get seeker info

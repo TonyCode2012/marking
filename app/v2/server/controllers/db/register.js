@@ -22,6 +22,7 @@ function register(ctx) {
             case 'user': tableId='User';break;
             case 'seeker': tableId='SeekerInfo';break;
             case 'delegator': tableId='DelegatorInfo';break;
+            case 'delegationShip': tableId='DelegationShip';break;
         }
         var userQuery = 'insert into ' + tableId + ' ' + userInfo.keyStr + ' values ' + userInfo.valStr
     
@@ -35,69 +36,15 @@ function register(ctx) {
             if (error) {
                 console.log(error);
                 retInfo = {
-                    msg: 'get info failed!',
+                    msg: 'register ' + role + ' failed!',
                     code: error.code,
                     errno: error.errno,
                     sqlMessage: error.sqlMessage,
                     status: 400
                 }
-            } else if(results.length == 0) {
-                retInfo = {
-                    msg: 'New user, please register!',
-                    status: 201
-                }
             } else {
                 retInfo = {
-                    msg: 'get info successfully!',
-                    seekerInfo: results,
-                    status: 200
-                }
-            }
-            resolve(retInfo)
-        });
-        
-        connection.end();
-        
-    })
-}
-
-function registerSeeker(ctx) {
-    return new Promise(function (resolve, reject) {
-        var connection = mysql.createConnection({
-            host     : config.host,
-            port     : config.port,
-            user     : config.user,
-            password : config.pass,
-            database : config.db
-        });
-    
-        var data = urlParser.parse(ctx.originalUrl,true).query
-        var seekerInfo = util.getJSONKeyVal(data)
-        var seekerQuery = 'insert into SeekerInfo '  + seekerInfo.keyStr + ' values ' + seekerInfo.valStr
-    
-        connection.connect();
-        console.log('seeker query is:' + seekerQuery)
-        var retInfo = {}
-        // insert info into SeekerInfo table
-        connection.query(seekerQuery, function (error, results, fields) {
-            var retInfo = {}
-            if (error) {
-                console.log(error);
-                retInfo = {
-                    msg: 'get seeker info SeekerInfo failed!',
-                    code: error.code,
-                    errno: error.errno,
-                    sqlMessage: error.sqlMessage,
-                    status: 400
-                }
-            } else if(results.length == 0) {
-                retInfo = {
-                    msg: 'New user please register!',
-                    status: 201
-                }
-            } else {
-                retInfo = {
-                    msg: 'get seeker info from SeekerInfo successfully!',
+                    msg: 'register ' + role + ' successfully!',
                     seekerInfo: results,
                     status: 200
                 }

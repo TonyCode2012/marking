@@ -181,7 +181,8 @@
             <button class="weui-btn mini-btn" type="primary" bindtap="showTopTips" size="mini" style="margin-left:30%" hidden="{{mode!='register'}}">提交</button>
             <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
             <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
-            <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
+            <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:15%">保存</button>
+            <button class="weui-btn mini-btn" type="primary" data-infotype="releaseInfo" bindtap="releaseInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:15%">发布</button>
         </view>
     </view>
 </template>

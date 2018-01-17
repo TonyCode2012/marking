@@ -34,16 +34,6 @@ Page({
         wx.showShareMenu({
             withShareTicket: true
         })
-        // get opening share info
-        //if(opt.scene == 1044) {
-        //    wx.getShareInfo({
-        //        shareTicket: opt.shareTicket,
-        //        success: function(res) {
-        //            var encryptedData = res.encryptedData;
-        //            var iv = res.iv;
-        //        }
-        //    })
-        //}
     },
     // 转发应该设置在客户或者红娘页面
     onShareAppMessage: function (res) {
@@ -57,7 +47,6 @@ Page({
           success: function(res) {
             // 转发成功
             util.showSuccess('转发成功')
-            //util.showSuccess(JSON.stringify(res))
           },
           fail: function(res) {
             // 转发失败
@@ -131,19 +120,29 @@ Page({
                     //        }
                     //    })
                     //}
-                    // 在首次登录的时候就行用户的注册
-                    that.registerUser(result,callback)
+                    // 首次登陆时,进行用户注册并获取(seeker/delegator)信息
+                    // 场景判断,若为转发登陆场景设置相关参数
+                    if(args.loginAppInfo && args.loginAppInfo.scene == 1044) {
+                        result['role'] = args.loginAppInfo.query.role
+                        result['scene'] = args.loginAppInfo.scene
+                        that.regAndGetUser(result,callback)
+                        try {
+                            wx.setStorageSync('transSceneInfo',args.loginAppInfo)
+                        } catch(e) {
+                            util.showModel('set login info failed!',JSON.stringify(e))
+                        }
+                    } else {
+                        that.regAndGetUser(result,() => {
+                            wx.switchTab({
+                                url: '../delegator/delegator'
+                            })
+                        })
+                    }
                     // 保存登录获取的用户微信信息
                     try {
-                        wx.setStorageSync('loginInfo',result)
+                        wx.setStorageSync('wxUserInfo',result)
                     } catch(e) {
                         util.showModel('set login info failed!',JSON.stringify(e))
-                    }
-                    // 根据场景值判断是否进行转发
-                    if(args.loginAppInfo == undefined) {
-                        wx.switchTab({
-                            url: '../delegator/delegator'
-                        })
                     }
                 } else {
                     // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
@@ -154,7 +153,8 @@ Page({
                             util.showSuccess('登录成功')
                             // 保存登录获取的用户微信信息
                             try {
-                                wx.setStorageSync('loginInfo',result)
+                                wx.setStorageSync('transSceneInfo',args.loginAppInfo)
+                                wx.setStorageSync('wxUserInfo',result)
                             } catch(e) {
                                 util.showModel('set login info failed!',JSON.stringify(e))
                             }
@@ -162,8 +162,13 @@ Page({
                                 wx.switchTab({
                                     url: '../delegator/delegator'
                                 })
+                            } else if(args.loginAppInfo.scene == 1044){
+                                var role = args.loginAppInfo.query.role
+                                var url = '../'+role+'/'+role
+                                wx.switchTab({
+                                    url: url
+                                })
                             }
-                            callback()
                         },
                         fail(error) {
                             util.showModel('请求失败', error)
@@ -180,7 +185,7 @@ Page({
         })
     },
 
-    registerUser: function(opt,callback) {
+    regAndGetUser: function(opt,callback) {
         var openId = opt.openId
         var userInfo = {
             data: {
@@ -200,11 +205,44 @@ Page({
             url: config.service.registerUrl,
             data: userInfo,
             success: function(res) {
-                callback()
-                //util.showSuccess('Register user successfully!')
+                if(res.data.data.result.errno == 1062) {
+                    // 如果重复注册，说明之前用户已经注册过,则尝试获取对应用户(seeker/delegator)的信息
+                    var role = (opt.role == undefined)?'seeker':opt.role    // 进行场景判断
+                    wx.request({
+                        url: config.service.getUserInfoUrl,
+                        data: {
+                            open_id: openId,
+                            role: role
+                        },
+                        success: function(res){
+                            var result = res.data.data.result
+                            var roleUserInfo = {}
+                            // 获取seeker或者delegator信息
+                            if(result.status == 200) {
+                                roleUserInfo = {
+                                    data: result.data[0],
+                                    registered: true
+                                }
+                            } else {
+                                roleUserInfo = {
+                                    registered: false
+                                }
+                            }
+                            try {
+                                wx.setStorageSync('roleUserInfo',roleUserInfo)
+                            } catch(e) {
+                                util.showModel('set role user info failed!',JSON.stringify(e))
+                            }
+                            callback()
+                        },
+                        fail: function(res) {
+                            util.showModel('get user info failed!',JSON.stringify(res))
+                        }
+                    })
+                }
             },
             fail: function(res) {
-                callback()
+                util.showModel('register user failed!',JSON.stringify(res))
             }
         })
     },

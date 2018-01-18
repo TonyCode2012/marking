@@ -36,7 +36,9 @@ Page(extend({}, Tab, {
                     myTask:{
                         id: 'myTask',
                         title: '我的任务',
-                        data: {}
+                        data: {
+                            list: []
+                        }
                     },
                     myInfo: {
                         id: 'myInfo',
@@ -146,6 +148,8 @@ Page(extend({}, Tab, {
             that.setRegisterPage()
             util.showModel('get role user info failed!',JSON.stringify(e))
         }
+        // 获取红娘任务
+        that.getSeekerInfo()
         that.setData({
             title: opt.title
         })
@@ -221,11 +225,25 @@ Page(extend({}, Tab, {
     //--------------- Home Page functions -----------------//
     /*从数据库获取相关数据*/
     getSeekerInfo() {
+        var that = this
         wx.request({
             url: config.service.getDTaskInfoUrl,
             data: {
                 delegator_openId: '12345',
             },
+            success: function(res) {
+                var data = res.data.data.result.data
+                that.setData({
+                    'homePage.tabContent.list.myTask.data.list': data
+                })
+                //util.showSuccess('成功')
+            }
+        })
+    },
+    goTaskDetail(opt) {
+        var data = opt.currentTarget.dataset.item
+        wx.navigateTo({
+            url: './seekerDetail?data='+JSON.stringify(data),
             success: function(res) {
             }
         })
@@ -346,44 +364,17 @@ Page(extend({}, Tab, {
             }
         }
         delegatorInfo['open_id'] = curUserInfo.openId
-        // get user info
-        var userInfo = {
-            open_id: curUserInfo.openId,
-            public_key: curUserInfo.openId + '12345',
-            chain_addr: curUserInfo.openId + '98765',
-            balance: 100,
-            gender: curUserInfo.gender==1?'男':'女',
-            register_time: this.getCurDatetime(),
-            identity_hash: curUserInfo.openId + 'yaoz',
-            status: 0,
-            role: 0
-        }
         return {
-            userInfo: {
-                data: userInfo,
-                role: 'user'
-            },
-            delegatorInfo: {
-                data: delegatorInfo,
-                role: 'delegator'
-            }
+            data: delegatorInfo,
+            role: 'delegator'
         }
     },
     submitRegister: function(opt) {
         var that = this
         var data = that.generateRegisterInfo(that.data.registerPage)
-        //wx.request({
-        //    url: config.service.registerUrl,
-        //    data: data.userInfo,
-        //    success: function(res) {
-        //        that.setData({
-        //            registered: true
-        //        })
-        //    }
-        //})
         wx.request({
             url: config.service.registerUrl,
-            data: data.delegatorInfo,
+            data: data,
             success: function(res) {
                 var registerData = that.data.registerPage.list
                 that.setData({
@@ -393,10 +384,3 @@ Page(extend({}, Tab, {
         })
     }
 }));
-
-
-
-
-
-
-

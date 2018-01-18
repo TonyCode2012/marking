@@ -4,7 +4,43 @@ var urlParser = require('url')
 var queryString  = require("querystring");
 
 
-var getUserInfo = function(ctx) {
+var connection = mysql.createConnection({
+    host     : config.host,
+    port     : config.port,
+    user     : config.user,
+    password : config.pass,
+    database : config.db
+});
+
+connection.connect();
+
+var getUserInfo = async function(ctx) {
+
+
+    var result = await getUserInfo_r(ctx)
+
+    //connection.end();
+
+    ctx.state.data = {
+        result: result
+    }
+}
+
+var getDTaskInfo = async function(ctx) {
+
+    //connection.connect();
+
+    var data = await getDTaskInfo_r(ctx,connection)
+    var result = await getSeekerInfo_r(data,connection)
+
+    //connection.end();
+
+    ctx.state.data = {
+        result: result
+    }
+}
+
+function getUserInfo_r(ctx,connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
 
@@ -17,25 +53,31 @@ var getUserInfo = function(ctx) {
         }
         var queryStr = "select * from " + tableId + " where open_id='" + openId + "'"
 
-        getUserInfo_r(queryStr)
+        queryFromDB(resolve, reject, queryStr,connection)
     })
 }
 
-var getDTaskInfo = function(ctx) {
+function getDTaskInfo_r(ctx,connection) {
     return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var queryStr = "select * from DelegationShip where delegator_openId='" + data.delegator_openId + "'"
+
+        queryFromDB(resolve, reject, queryStr,connection)
     })
 }
 
-function getUserInfo_r(queryStr) {
-    var connection = mysql.createConnection({
-        host     : config.host,
-        port     : config.port,
-        user     : config.user,
-        password : config.pass,
-        database : config.db
-    });
+function getSeekerInfo_r(data, connection) {
+    return new Promise(function (resolve, reject) {
+        var idArry = data.data
+        for(var i=0;i<idArry.length;i++) {
+            var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "'"
+            queryFromDB(resolve, reject, queryStr, connection)
+        }
 
-    connection.connect();
+    })
+}
+
+function queryFromDB(resolve, reject, queryStr, connection) {
     // get info from User by open_id
     connection.query(queryStr, function (error, results, fields) {
         var retInfo = {}
@@ -50,7 +92,7 @@ function getUserInfo_r(queryStr) {
             }
         } else if(results.length == 0) {
             retInfo = {
-                msg: 'New user, please register!',
+                msg: 'no record found!',
                 status: 201
             }
         } else {
@@ -63,20 +105,9 @@ function getUserInfo_r(queryStr) {
         resolve(retInfo)
     });
     
-    connection.end();
 }
 
 module.exports = {
-    getUserInfo: async function(ctx) {
-        var result = await getUserInfo(ctx)
-        ctx.state.data = {
-            result: result
-        }
-    },
-    getDTaskInfo: async function(ctx) {
-        var result = await getDTaskInfo(ctx)
-        ctx.state.data = {
-            result: result
-        }
-    }
+    getUserInfo: getUserInfo,
+    getDTaskInfo: getDTaskInfo 
 }

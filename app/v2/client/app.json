@@ -6,6 +6,7 @@
     "pages/seeker/register/regPersonalInfo",
     "pages/seeker/register/pictureUploader",
     "pages/delegator/delegator",
+    "pages/delegator/seekerDetail",
     "pages/addCgi/addCgi"
   ],
   "window":{

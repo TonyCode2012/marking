@@ -1,0 +1,37 @@
+<view class="page">
+    <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__bd">
+            <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+                <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                    <image class="weui-media-box__thumb" src="{{portrait}}" />
+                </view>
+                <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                    <view class="weui-media-box__title">{{userWXInfo.nickName}}</view>
+                    <view class="weui-media-box__desc">keep fighting</view>
+                </view>
+            </navigator>
+        </view>
+    </view>
+    <!--view hidden="{{mode!='register'}}">{{title}}</view>
+    <view class="weui-cells__title"></view-->
+    <view class="weui-cells weui-cells_after-title">
+        <view wx:for="{{list}}" wx:key="*this" class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+                <view class="weui-label">{{item.title}}</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" data-id="{{index}}" data-infotype="publicInfo" data-mode="{{mode}}" disabled=""
+                    value="{{item.value}}" bindinput="" placeholder=""/>
+            </view>
+        </view>
+    </view>
+    <view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view>
+    <view class="weui-btn-area" style="text-align:center">
+        <button class="weui-btn mini-btn" type="primary" data-prepageid="identityInfo" bindtap="goPreStep" size="mini" hidden="{{mode!='register'}}">上一步</button>
+        <button class="weui-btn mini-btn" type="primary" data-nextpageid="privateInfo" bindtap="goNextStep" size="mini" style="margin-left:30%" hidden="{{mode!='register'}}">保存并下一步</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
+        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
+    </view>
+</view>
+

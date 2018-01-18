@@ -14,24 +14,23 @@
     </view>
     <!--view hidden="{{mode!='register'}}">{{title}}</view>
     <view class="weui-cells__title"></view-->
-    <view class="weui-cells weui-cells_after-title">
-        <view wx:for="{{list}}" wx:key="*this" class="weui-cell weui-cell_input">
+    <view wx:for="{{list}}" class="weui-cells weui-cells_after-title">
+        <view class="weui-cells__title">{{item.title}}</view>
+        <view wx:for="{{item.data}}" wx:for-item="sitem" wx:key="*this" class="{{sitem.type=='textarea'?'weui-cell':'weui-cell weui-cell_input'}}">
             <view class="weui-cell__hd">
-                <view class="weui-label">{{item.title}}</view>
+                <view class="weui-label">{{sitem.title}}</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" data-id="{{index}}" data-infotype="publicInfo" data-mode="{{mode}}" disabled=""
-                    value="{{item.value}}" bindinput="" placeholder=""/>
+                <input wx:if="{{sitem.type!='textarea'}}" class="weui-input" disabled="true" value="{{sitem.value}}"/>
+                <textarea wx:else class="weui-textarea" data-id="{{index}}" data-infotype="releaseInfo" data-mode="{{mode}}" bindinput="getInputVal"
+                    value="{{sitem.value}}" placeholder="{{sitem.placeHolder}}" disabled="{{mode=='show'}}" style="height: 3.3em" />
+                <view wx:if="{{sitem.type=='textarea'}}" class="weui-textarea-counter">0/200</view>
             </view>
         </view>
     </view>
-    <view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view>
+    <!--view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view-->
     <view class="weui-btn-area" style="text-align:center">
-        <button class="weui-btn mini-btn" type="primary" data-prepageid="identityInfo" bindtap="goPreStep" size="mini" hidden="{{mode!='register'}}">上一步</button>
-        <button class="weui-btn mini-btn" type="primary" data-nextpageid="privateInfo" bindtap="goNextStep" size="mini" style="margin-left:30%" hidden="{{mode!='register'}}">保存并下一步</button>
-        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="editMyInfoBtn" size="mini" hidden="{{mode!='show'}}">编辑</button>
-        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="cancelMyInfoBtn" size="mini" hidden="{{mode!='edit'}}">取消</button>
-        <button class="weui-btn mini-btn" type="primary" data-infotype="publicInfo" bindtap="saveMyInfoBtn" size="mini" hidden="{{mode!='edit'}}" style="margin-left:30%">保存</button>
+        <button class="weui-btn mini-btn" type="primary" bindtap="{{released?'cancelRelease':'release'}}" size="mini">{{released?'取消发布':'发布'}}</button>
     </view>
 </view>
 

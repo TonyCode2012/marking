@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 18/01/2018 18:50:44
+ Date: 19/01/2018 18:45:22
 */
 
 SET NAMES utf8mb4;
@@ -55,7 +55,7 @@ CREATE TABLE `DelegationShip` (
   `delegationship_id` varchar(80) NOT NULL,
   `delegator_openId` varchar(40) NOT NULL,
   `seeker_openId` varchar(40) NOT NULL,
-  `is_public` tinyint(1) NOT NULL DEFAULT '0',
+  `is_release` tinyint(1) NOT NULL DEFAULT '0',
   `status` int(1) DEFAULT '0',
   PRIMARY KEY (`delegationship_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -65,6 +65,15 @@ CREATE TABLE `DelegationShip` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM1', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM2', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM2', 1, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM3', '123451', 'oHEkW0dNJwwjb3ete07iObpWGFcM3', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM4', '123452', 'oHEkW0dNJwwjb3ete07iObpWGFcM4', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM5', '123453', 'oHEkW0dNJwwjb3ete07iObpWGFcM5', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM6', '123454', 'oHEkW0dNJwwjb3ete07iObpWGFcM6', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM7', '123455', 'oHEkW0dNJwwjb3ete07iObpWGFcM7', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM8', '123456', 'oHEkW0dNJwwjb3ete07iObpWGFcM8', 0, 0);
+INSERT INTO `DelegationShip` VALUES ('12345oHEkW0dNJwwjb3ete07iObpWGFcM9', '123457', 'oHEkW0dNJwwjb3ete07iObpWGFcM9', 1, 0);
 COMMIT;
 
 -- ----------------------------
@@ -155,6 +164,15 @@ CREATE TABLE `SeekerInfo` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volubility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM1', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM2', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM3', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM4', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM5', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM6', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM7', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM8', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM9', 'yaoz', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
 COMMIT;
 
 -- ----------------------------
@@ -201,7 +219,7 @@ CREATE TABLE `cSessionInfo` (
 -- Records of cSessionInfo
 -- ----------------------------
 BEGIN;
-INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'a78bf782-84aa-4b3b-89d2-5e0cd42e3770', 'f182379403dee1da7877e4bc6aac9caf4d608627', '2018-01-18 17:58:48', '2018-01-18 17:58:48', 'JWv5tEYFPyYSpBLNvflEhw==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1516269269,\"appid\":\"wx8727802679966793\"}}');
+INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', '30ac07da-2d0c-4570-9cd3-cae857a5fdee', 'b6a720c98b56023903ea883611d93caed38af9d4', '2018-01-19 18:08:35', '2018-01-19 18:08:35', 'Ujt53Dxm/lS5OlM/JZJzOA==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1516356253,\"appid\":\"wx8727802679966793\"}}');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

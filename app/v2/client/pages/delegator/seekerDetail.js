@@ -32,13 +32,18 @@ Page({
             }
         },
         portrait:"",
+        seekerOpenId:"",
+        delegatorOpenId:"",
         released: false
     },
 
     onLoad: function(opt) {
         var data = JSON.parse(opt.data)
         this.setData({
-            portrait: data.wx_portraitAddr
+            portrait: data.wx_portraitAddr,
+            seekerOpenId: data.seeker_openId,
+            delegatorOpenId: data.delegator_openId,
+            released: data.is_release==0?false:true
         })
         this.setPageData(data)
         //util.showSuccess(JSON.stringify(opt))
@@ -60,16 +65,38 @@ Page({
             }
         }
     },
+    // 发布与取消发布
     release: function(opt) {
         util.showSuccess('发布成功')
-        this.setData({
-            released: true
+        var that = this
+        wx.request({
+            url: config.service.pushSeekerUrl,
+            data: {
+                id: '12345' +  that.data.seekerOpenId
+            },
+            success: function(res) {
+                that.setData({
+                    released: true
+                })
+            }
         })
     },
     cancelRelease: function(opt) {
         util.showSuccess('取消发布成功')
-        this.setData({
-            released: false
+        var that = this
+        wx.request({
+            url: config.service.cancelPushSeekerUrl,
+            data: {
+                id: '12345' +  that.data.seekerOpenId
+            },
+            success: function(res) {
+                that.setData({
+                    released: false
+                })
+            }
         })
+    },
+    // 推送客户
+    pushSeeker: function(opt) {
     }
 })

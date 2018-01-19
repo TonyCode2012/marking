@@ -31,7 +31,10 @@ Page(extend({}, Tab, {
                     },
                     messageList: {
                         id: 'messageList',
-                        title: '信息发布榜'
+                        title: '信息发布榜',
+                        data: {
+                            list: []
+                        }
                     },
                     myTask:{
                         id: 'myTask',
@@ -60,7 +63,7 @@ Page(extend({}, Tab, {
             },
             loginInfo: {},
             delegatorInfo: {},
-            userWXInfo: {},
+            wxUserInfo: {},
             userInfo: {},
             title: '',
             toView: 'red' ,
@@ -75,7 +78,7 @@ Page(extend({}, Tab, {
         },
         registered: false,
         nonRegInfo: {verifyCode:'y'},
-        userWXInfo: {},
+        wxUserInfo: {},
         dataTpl: {
             identityInfo: {
                 name: {title: '姓名', placeHolder: '请输入您的姓名', value: ''},
@@ -107,7 +110,7 @@ Page(extend({}, Tab, {
           // 来自页面内转发按钮
           console.log(res.target)
         }
-        var openId = this.data.userWXInfo.openId
+        var openId = this.data.wxUserInfo.openId
         return {
           title: '转发给',
           path: '/pages/delegator/delegator?openId='+openId+'&role=seeker',
@@ -135,21 +138,22 @@ Page(extend({}, Tab, {
             if(roleUserInfo && roleUserInfo.registered){
                 that.setHomePage(roleUserInfo.data)
                 that.setData({
-                    'homePage.userWXInfo': wxUserInfo,
+                    'homePage.wxUserInfo': wxUserInfo,
                     'registered': true
                 })
             } else {
                 that.setRegisterPage()
             }
             that.setData({
-                'userWXInfo': wxUserInfo
+                'wxUserInfo': wxUserInfo
             })
         } catch(e) {
             that.setRegisterPage()
             util.showModel('get role user info failed!',JSON.stringify(e))
         }
-        // 获取红娘任务
-        that.getSeekerInfo()
+        // 初始化信息
+        that.getSeekerInfo()    // 获取红娘任务
+        that.getMessageList()   // 获取信息发布榜信息
         that.setData({
             title: opt.title
         })
@@ -232,22 +236,38 @@ Page(extend({}, Tab, {
                 delegator_openId: '12345',
             },
             success: function(res) {
-                var data = res.data.data.result.data
+                var data = res.data.data.result
                 that.setData({
                     'homePage.tabContent.list.myTask.data.list': data
                 })
-                //util.showSuccess('成功')
             }
         })
     },
+    // 获取当前代理人代理的seeker信息
     goTaskDetail(opt) {
         var data = opt.currentTarget.dataset.item
+        data['seeker_openId'] = data['open_id']
+        data['delegator_openId'] =  this.data.wxUserInfo.openId
         wx.navigateTo({
             url: './seekerDetail?data='+JSON.stringify(data),
             success: function(res) {
             }
         })
     },
+    // 获取信息发布榜信息
+    getMessageList() {
+        var that = this
+        wx.request({
+            url: config.service.getMessageListUrl,
+            success: function(res) {
+                var data = res.data.data.result
+                that.setData({
+                    'homePage.tabContent.list.messageList.data.list': data
+                })
+            }
+        })
+    },
+    /*有关页面的操作*/
     handleZanTabChange(e) {
       var componentId = e.componentId;
       var selectedId = e.selectedId;
@@ -287,7 +307,7 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        updateData['open_id'] = this.data.userWXInfo.openId
+        updateData['open_id'] = this.data.wxUserInfo.openId
         updateData['role'] = 'delegator'
         wx.request({
             url: config.service.updateUserInfoUrl,
@@ -348,7 +368,7 @@ Page(extend({}, Tab, {
         return Y+M+D+h+m+s;
     },
     generateRegisterInfo: function(opt) {
-        var curUserInfo = this.data.userWXInfo
+        var curUserInfo = this.data.wxUserInfo
         var userInfo = {}
         var delegatorInfo = {}
         // get delegator info

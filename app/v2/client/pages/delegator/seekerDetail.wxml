@@ -22,8 +22,8 @@
             </view>
             <view class="weui-cell__bd">
                 <input wx:if="{{sitem.type!='textarea'}}" class="weui-input" disabled="true" value="{{sitem.value}}"/>
-                <textarea wx:else class="weui-textarea" data-id="{{index}}" data-infotype="releaseInfo" data-mode="{{mode}}" bindinput="getInputVal"
-                    value="{{sitem.value}}" placeholder="{{sitem.placeHolder}}" disabled="{{mode=='show'}}" style="height: 3.3em" />
+                <textarea wx:else class="weui-textarea" bindinput="getInputVal" value="{{sitem.value}}" 
+                    placeholder="{{sitem.placeHolder}}" disabled="true" style="height: 3.3em" />
                 <view wx:if="{{sitem.type=='textarea'}}" class="weui-textarea-counter">0/200</view>
             </view>
         </view>
@@ -31,6 +31,6 @@
     <!--view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view-->
     <view class="weui-btn-area" style="text-align:center">
         <button class="weui-btn mini-btn" type="primary" bindtap="{{released?'cancelRelease':'release'}}" size="mini">{{released?'取消发布':'发布'}}</button>
+        <button class="weui-btn mini-btn" type="primary" bindtap="pushSeeker" size="mini" style="margin-left:30%">推送</button>
     </view>
 </view>
-

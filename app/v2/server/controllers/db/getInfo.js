@@ -14,12 +14,27 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
+var getMessageList = async function(ctx) {
+
+    var data = await getMessageList_r(connection)
+    var idArry = data.data
+    var resArry = []
+    for(var i=0;i<idArry.length;i++) {
+        var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
+        var result = await getSeekerInfo_r(queryStr,connection)
+        if(result.data) {
+            resArry.push(result.data[0])
+        }
+    }
+
+    ctx.state.data = {
+        result: resArry
+    }
+}
+
 var getUserInfo = async function(ctx) {
 
-
-    var result = await getUserInfo_r(ctx)
-
-    //connection.end();
+    var result = await getUserInfo_r(ctx,connection)
 
     ctx.state.data = {
         result: result
@@ -28,19 +43,24 @@ var getUserInfo = async function(ctx) {
 
 var getDTaskInfo = async function(ctx) {
 
-    //connection.connect();
-
     var data = await getDTaskInfo_r(ctx,connection)
-    var result = await getSeekerInfo_r(data,connection)
-
-    //connection.end();
+    var idArry = data.data
+    var resArry = []
+    for(var i=0;i<idArry.length;i++) {
+        var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "'"
+        var result = await getSeekerInfo_r(queryStr,connection)
+        if(result.data) {
+            result.data[0]['is_release'] = idArry[i]['is_release']
+            resArry.push(result.data[0])
+        }
+    }
 
     ctx.state.data = {
-        result: result
+        result: resArry
     }
 }
 
-function getUserInfo_r(ctx,connection) {
+function getUserInfo_r(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
 
@@ -66,14 +86,17 @@ function getDTaskInfo_r(ctx,connection) {
     })
 }
 
-function getSeekerInfo_r(data, connection) {
+function getSeekerInfo_r(queryStr, connection) {
     return new Promise(function (resolve, reject) {
-        var idArry = data.data
-        for(var i=0;i<idArry.length;i++) {
-            var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "'"
-            queryFromDB(resolve, reject, queryStr, connection)
-        }
 
+        queryFromDB(resolve, reject, queryStr, connection)
+    })
+}
+
+function getMessageList_r(connection) {
+    return new Promise(function (resolve, reject) {
+        var queryStr = "select * from DelegationShip where is_release='1'"
+        queryFromDB(resolve, reject, queryStr, connection)
     })
 }
 
@@ -109,5 +132,6 @@ function queryFromDB(resolve, reject, queryStr, connection) {
 
 module.exports = {
     getUserInfo: getUserInfo,
-    getDTaskInfo: getDTaskInfo 
+    getDTaskInfo: getDTaskInfo,
+    getMessageList: getMessageList
 }

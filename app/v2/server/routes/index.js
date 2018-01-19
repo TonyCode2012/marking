@@ -29,7 +29,10 @@ router.get('/decrypt', controllers.decrypt)
 router.get('/register', dbControllers.register)
 router.get('/getUserInfo', dbControllers.getInfo.getUserInfo)
 router.get('/getDTaskInfo', dbControllers.getInfo.getDTaskInfo)
-router.get('/updateUserInfo', dbControllers.updateUserInfo)
+router.get('/getMessageList', dbControllers.getInfo.getMessageList)
+router.get('/updateUserInfo', dbControllers.updateInfo.updateInfo)
+router.get('/pushSeekerInfo', dbControllers.updateInfo.pushSeekerInfo)
+router.get('/cancelPushSeekerInfo', dbControllers.updateInfo.cancelPushSeekerInfo)
 
 // --- 获取区块链钱包地址 Demo --- //
 // 图片上传接口，小程序端可以直接将 url 填入 wx.uploadFile 中

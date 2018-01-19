@@ -37,6 +37,10 @@ var config = {
 
         /*****获取红娘相关信息*****/
         getDTaskInfoUrl: `${host}/weapp/getDTaskInfo`,
+        pushSeekerUrl: `${host}/weapp/pushSeekerInfo`,
+        cancelPushSeekerUrl: `${host}/weapp/cancelPushSeekerInfo`,
+        // 获取信息发布榜信息
+        getMessageListUrl: `${host}/weapp/getMessageList`,
 
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,

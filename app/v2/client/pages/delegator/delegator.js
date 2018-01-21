@@ -243,17 +243,6 @@ Page(extend({}, Tab, {
             }
         })
     },
-    // 获取当前代理人代理的seeker信息
-    goTaskDetail(opt) {
-        var data = opt.currentTarget.dataset.item
-        data['seeker_openId'] = data['open_id']
-        data['delegator_openId'] =  this.data.wxUserInfo.openId
-        wx.navigateTo({
-            url: './seekerDetail?data='+JSON.stringify(data),
-            success: function(res) {
-            }
-        })
-    },
     // 获取信息发布榜信息
     getMessageList() {
         var that = this
@@ -264,6 +253,31 @@ Page(extend({}, Tab, {
                 that.setData({
                     'homePage.tabContent.list.messageList.data.list': data
                 })
+            }
+        })
+    },
+    // 跳转到当前代理人代理的seeker页面
+    goTaskDetail(opt) {
+        var data = opt.currentTarget.dataset.item
+        var index = opt.currentTarget.dataset.index
+        data['seeker_openId'] = data['open_id']
+        data['delegator_openId'] =  this.data.wxUserInfo.openId
+        wx.navigateTo({
+            url: './seekerDetail?type=seekerInfo&data='+JSON.stringify(data)+'&index='+index,
+            success: function(res) {
+            }
+        })
+    },
+    // 跳转到当前选择信息页面
+    goMessageDetail(opt) {
+        var data = opt.currentTarget.dataset.item
+        var index = opt.currentTarget.dataset.index
+        data['seeker_openId'] = data['open_id']     // 发布信息的seeker id
+        data['SD_openId'] = data['delegator_openId']    // 发布信息的seeker的红娘id
+        data['delegator_openId'] =  this.data.wxUserInfo.openId     // 当前红娘id
+        wx.navigateTo({
+            url: './seekerDetail?type=messageList&data='+JSON.stringify(data)+'&index='+index,
+            success: function(res) {
             }
         })
     },
@@ -278,8 +292,9 @@ Page(extend({}, Tab, {
     },
     // functions related about myinfo navigate page
     tabClick: function (opt) {
-        var curData = 'homePage.tabContent.list.myInfo.data'
         var selectedId = opt.currentTarget.dataset.infotype
+        var tabName = opt.currentTarget.dataset.tabname
+        var curData = 'homePage.tabContent.list.' + tabName + '.data'
         this.setData({
             [curData + '.sliderOffset']: opt.currentTarget.offsetLeft,
             [curData + '.activeIndex']: opt.currentTarget.id,
@@ -314,7 +329,6 @@ Page(extend({}, Tab, {
             data: updateData,
             success: function(res) {
                 util.showSuccess('update info successfully!')
-                //util.showSuccess(JSON.stringify(res))
             }
         })
     },

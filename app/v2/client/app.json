@@ -7,6 +7,7 @@
     "pages/seeker/register/pictureUploader",
     "pages/delegator/delegator",
     "pages/delegator/seekerDetail",
+    "pages/delegator/send2Seeker",
     "pages/addCgi/addCgi"
   ],
   "window":{

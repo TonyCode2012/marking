@@ -1,60 +1,129 @@
-var sliderWidth = 96; // 需要设置slider的宽度，用于计算中间位置
 var util = require('../../utils/util.js')
 var config = require('../../config')
 const { Tab, extend } = require('../../zanui-style/index');
 
 Page({
     data: {
-        list: {
-            basicInfo: {
-                title: "基本信息",
-                data: {
-                    name:{ title:"姓名", value:"" },
-                    age:{ title:"年龄", value:"" },
-                    gender:{ title:"性别", value:"" },
-                    height:{ title:"身高", value:"" },
-                    weight:{ title:"体重", value:"" },
-                    education:{ title:"文凭", value:"" },
-                    constellation:{ title:"星座", value:"" },
-                    blood_type:{ title:"血型", value:"" },
+        seekerInfo: {
+            list: {
+                basicInfo: {
+                    title: "基本信息",
+                    data: {}
+                },
+                reqInfo:{
+                    title: "征婚信息",
+                    data: {}
                 }
             },
-            reqInfo:{
-                title: "征婚信息",
-                data: {
-                    //portait:{ title:"头像", value:"" },
-                    //wx_portraitAddr:{ title:"微信头像", value:"" },
-                    requirement:{ title:"征婚要求", type:"textarea", value:"" },
-                    self_introduction:{ title:"自我介绍", type:"textarea", value:"" },
-                    reward:{ title:"报酬", value:"" },
-                    advance:{ title:"预付", value:"" }
+            type:'seekerInfo',
+            portrait:"",
+            seekerOpenId:"",
+            delegatorOpenId:"",
+            prePage: {},
+            prePageIndex: 0,
+            released: false
+        },
+        messageList: {
+            list: {
+                basicInfo: {
+                    title: "基本信息",
+                    data: {}
+                },
+                reqInfo:{
+                    title: "征婚信息",
+                    data: {}
                 }
+            },
+            type:'messageList',
+            portrait:"",
+            seekerOpenId:"",
+            delegatorOpenId:"",
+            prePage: {},
+            prePageIndex: 0,
+            released: false
+        },
+        dataTpl: {
+            basicInfo: {
+                name:{ title:"姓名", value:"" },
+                age:{ title:"年龄", value:"" },
+                gender:{ title:"性别", value:"" },
+                height:{ title:"身高", value:"" },
+                weight:{ title:"体重", value:"" },
+                education:{ title:"文凭", value:"" },
+                constellation:{ title:"星座", value:"" },
+                blood_type:{ title:"血型", value:"" },
+            },
+            reqInfo: {
+                requirement:{ title:"征婚要求", type:"textarea", value:"" },
+                self_introduction:{ title:"自我介绍", type:"textarea", value:"" },
+                reward:{ title:"报酬", show:true, value:"" },
+                advance:{ title:"预付", show:true, value:"" }
             }
         },
-        portrait:"",
-        seekerOpenId:"",
-        delegatorOpenId:"",
-        released: false
+        type: ''
+    },
+    handleZanSelectChange({ componentId, value }) {
+        this.setData({
+            [`checked.${componentId}`]: value
+        });
     },
 
     onLoad: function(opt) {
         var data = JSON.parse(opt.data)
+        var index = opt.index
+        var type = opt.type
         this.setData({
-            portrait: data.wx_portraitAddr,
-            seekerOpenId: data.seeker_openId,
-            delegatorOpenId: data.delegator_openId,
-            released: data.is_release==0?false:true
+            type: type
         })
+        this.prepareTpl(type)
+        // 获取上一个页面的数据引用
+        var pages = getCurrentPages()
+        var prePage = pages[pages.length-2]
+
+        if(type == 'seekerInfo') {
+            this.setData({
+                'seekerInfo.portrait': data.wx_portraitAddr,
+                'seekerInfo.seekerOpenId': data.seeker_openId,
+                'seekerInfo.delegatorOpenId': data.delegator_openId,
+                'seekerInfo.released': data.is_release==0?false:true,
+                'seekerInfo.prePageIndex': index,
+                'seekerInfo.prePage': prePage
+            })
+        } else if(type == 'messageList') {
+            this.setData({
+                'messageList.portrait': data.wx_portraitAddr,
+                'messageList.seekerOpenId': data.seeker_openId,
+                'messageList.SDOpenId': data.SD_openId,
+                'messageList.delegatorOpenId': data.delegator_openId,
+                'messageList.prePageIndex': index,
+                'messageList.prePage': prePage
+            })
+        } else {
+            util.showModel('请给出正确的跳转参数!','error')
+        }
+        data['type'] = type
         this.setPageData(data)
-        //util.showSuccess(JSON.stringify(opt))
+    },
+    prepareTpl: function(type) {
+        // type的值:seekerInfo或者messageList
+        var dataList = this.data[type].list
+        var keyArry = Object.keys(dataList)
+        for(var i=0;i<keyArry.length;i++) {
+            var key = keyArry[i]
+            var title = type + '.list.' + key
+            this.setData({
+                [title + '.data']: this.data.dataTpl[key]
+            })
+        }
     },
     setPageData: function(data) {
-        var dataList = this.data.list
+        var type = data.type    // type的值:seekerInfo或者messageList
+        var dataList = this.data[type].list
         var keyArry = Object.keys(dataList)
         for(var i=0;i<keyArry.length;i++) {
             var key = keyArry[i]
             var val = dataList[key].data
-            var title = 'list.' + key + '.data.'
+            var title = type + '.list.' + key + '.data.'
             var valKeyArry = Object.keys(val)
             for(var j=0;j<valKeyArry.length;j++){
                 var valKey = valKeyArry[j]
@@ -64,39 +133,64 @@ Page({
                 })
             }
         }
+        // 如果是信息榜信息则将“报酬”和“预付”隐藏掉
+        if(type=='messageList') {
+            this.setData({
+                'messageList.list.reqInfo.data.reward.show': false,
+                'messageList.list.reqInfo.data.advance.show': false
+            })
+        }
     },
     // 发布与取消发布
     release: function(opt) {
-        util.showSuccess('发布成功')
         var that = this
         wx.request({
             url: config.service.pushSeekerUrl,
             data: {
-                id: '12345' +  that.data.seekerOpenId
+                id: '12345' +  that.data.seekerInfo.seekerOpenId
             },
             success: function(res) {
+                util.showSuccess('发布成功')
+                var index = that.data.seekerInfo.prePageIndex
+                that.data.prePage.setData({
+                    ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 1
+                })
                 that.setData({
-                    released: true
+                    'data.released': true
                 })
             }
         })
     },
     cancelRelease: function(opt) {
-        util.showSuccess('取消发布成功')
         var that = this
         wx.request({
             url: config.service.cancelPushSeekerUrl,
             data: {
-                id: '12345' +  that.data.seekerOpenId
+                id: '12345' +  that.data.seekerInfo.seekerOpenId
             },
             success: function(res) {
+                util.showSuccess('取消发布成功')
+                var index = that.data.seekerInfo.prePageIndex
+                that.data.prePage.setData({
+                    ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 0
+                })
                 that.setData({
-                    released: false
+                    'data.released': false
                 })
             }
         })
     },
     // 推送客户
     pushSeeker: function(opt) {
+    },
+    // 推送其他红娘的客户给自己客户
+    go2SelectPage: function(opt) {
+        var that = this
+        var type = that.data.type
+        wx.navigateTo({
+            url: './send2Seeker?delegator_openId='+that.data[type].prePage.data.wxUserInfo.openId,
+            success: function(res) {
+            }
+        })
     }
 })

@@ -1,18 +1,18 @@
 <template name="zan-select">
-  <radio-group class="zan-select__list" bindchange="_handleZanSelectChange" data-component-id="{{ componentId }}">
+  <checkbox-group class="zan-select__list" bindchange="_handleZanSelectChange" data-component-id="{{ componentId }}">
     <label wx:for="{{ items }}" wx:key="value">
       <view class="zan-cell">
-        <radio class="zan-select__radio" value="{{ item.value }}" checked="{{ item.value === checkedValue }}"/>
+        <checkbox class="zan-select__radio" value="{{ item.value }}" checked="{{ 1 === checkedValue[item.value] }}"/>
         <view
           class="zan-cell__bd"
-          style="{{ parse.getItemStyle(item, checkedValue, activeColor) }}"
+          style="{{ parse.getItemStyle(item, checkedValue[item.value], activeColor) }}"
         >{{ item.name }}</view>
-        <view wx:if="{{ item.value === checkedValue }}" class="zan-cell__ft">
+        <view wx:if="{{ 1 === checkedValue[item.value] }}" class="zan-cell__ft">
           <icon type="success_no_circle" color="{{ parse.getColor(activeColor) }}" size="14"></icon>
         </view>
       </view>
     </label>
-  </radio-group>
+  </checkbox-group>
 </template>
 
 <wxs module="parse">
@@ -28,7 +28,8 @@ module.exports = {
     var style = 'padding-left: ' + padding + 'px;';
 
     // 如果为选中状态，则高亮
-    if (item.value === checkedValue) {
+    //if (item.value === checkedValue) {
+    if (1 === checkedValue) {
       style += 'color: ' + getColor(activeColor);
     }
 

@@ -14,14 +14,39 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
+var getMySeeker = async function(ctx) {
+    var data = await getDTaskInfo_r(ctx,connection)
+    if(data.status != 200) {
+        console.log('Get record failed!' + data.msg)
+    } else {
+        var idArry = data.data
+        var resArry = []
+        var selectStr = "name,age,education,height,requirement,wx_portraitAddr,open_id"
+        for(var i=0;i<idArry.length;i++) {
+            var queryStr = "select " + selectStr + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "'"
+            var result = await getSeekerInfo_r(queryStr,connection)
+            if(result.data) {
+                result.data[0]['is_release'] = idArry[i]['is_release']
+                resArry.push(result.data[0])
+            }
+        }
+
+        ctx.state.data = {
+            result: resArry
+        }
+    }
+}
+
 var getMessageList = async function(ctx) {
 
     var data = await getMessageList_r(connection)
     var idArry = data.data
     var resArry = []
+    var selectItems = "open_id,name,age,gender,height,weight,education,constellation,blood_type,portrait,wx_portraitAddr,requirement,self_introduction"
     for(var i=0;i<idArry.length;i++) {
-        var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
+        var queryStr = "select " + selectItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
         var result = await getSeekerInfo_r(queryStr,connection)
+        result['delegator_openId'] = idArry[i].delegator_openId // 获取对方代理人id
         if(result.data) {
             resArry.push(result.data[0])
         }
@@ -133,5 +158,6 @@ function queryFromDB(resolve, reject, queryStr, connection) {
 module.exports = {
     getUserInfo: getUserInfo,
     getDTaskInfo: getDTaskInfo,
-    getMessageList: getMessageList
+    getMessageList: getMessageList,
+    getMySeeker: getMySeeker
 }

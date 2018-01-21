@@ -1,0 +1,18 @@
+<import src="../../zanui-style/select/index.wxml" />
+
+<view class="zanui-container">
+
+    <!--view class="doc-title zan-hairline">请选择推送给的客户</view-->
+    <view class="zan-panel-title">请选择客户</view>
+    <view class="zan-panel">
+        <checkbox-group class="zan-select__list" bindchange="checkAll">
+            <label class="checkbox">
+                <checkbox value="" checked="{{checkAll}}"/>全选
+            </label>
+        </checkbox-group>
+        <template is="zan-select" data="{{ items, checkedValue: checked.color, activeColor, componentId: 'color' }}" ></template>
+    </view>
+    <view class="weui-btn-area" style="text-align:center">
+        <button class="weui-btn mini-btn" type="primary" bindtap="pushS2S" size="mini" style="margin-left:30%">推送</button>
+    </view>
+</view>

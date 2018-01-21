@@ -37,6 +37,7 @@ var config = {
 
         /*****获取红娘相关信息*****/
         getDTaskInfoUrl: `${host}/weapp/getDTaskInfo`,
+        getMySeekerUrl: `${host}/weapp/getMySeeker`,    // 获取当前红娘客户
         pushSeekerUrl: `${host}/weapp/pushSeekerInfo`,
         cancelPushSeekerUrl: `${host}/weapp/cancelPushSeekerInfo`,
         // 获取信息发布榜信息

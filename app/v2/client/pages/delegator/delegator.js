@@ -272,8 +272,8 @@ Page(extend({}, Tab, {
     goMessageDetail(opt) {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
-        data['seeker_openId'] = data['open_id']     // 发布信息的seeker id
-        data['SD_openId'] = data['delegator_openId']    // 发布信息的seeker的红娘id
+        data['MS_openId'] = data['open_id']     // 发布信息的seeker id
+        data['MD_openId'] = data['delegator_openId']    // 发布信息的seeker的红娘id
         data['delegator_openId'] =  this.data.wxUserInfo.openId     // 当前红娘id
         wx.navigateTo({
             url: './seekerDetail?type=messageList&data='+JSON.stringify(data)+'&index='+index,

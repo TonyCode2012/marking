@@ -36,6 +36,7 @@ Page({
             },
             type:'messageList',
             portrait:"",
+            pushedSeekerInfo: {},
             seekerOpenId:"",
             delegatorOpenId:"",
             prePage: {},
@@ -73,6 +74,7 @@ Page({
         var index = opt.index
         var type = opt.type
         this.setData({
+            [type+'.pushedSeekerInfo']: data,
             type: type
         })
         this.prepareTpl(type)
@@ -152,11 +154,12 @@ Page({
             success: function(res) {
                 util.showSuccess('发布成功')
                 var index = that.data.seekerInfo.prePageIndex
-                that.data.prePage.setData({
+                var type = that.data.type
+                that.data[type].prePage.setData({
                     ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 1
                 })
                 that.setData({
-                    'data.released': true
+                    [type+'.released']: true
                 })
             }
         })
@@ -171,11 +174,12 @@ Page({
             success: function(res) {
                 util.showSuccess('取消发布成功')
                 var index = that.data.seekerInfo.prePageIndex
-                that.data.prePage.setData({
+                var type = that.data.type
+                that.data[type].prePage.setData({
                     ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 0
                 })
                 that.setData({
-                    'data.released': false
+                    [type+'.released']: false
                 })
             }
         })
@@ -188,7 +192,7 @@ Page({
         var that = this
         var type = that.data.type
         wx.navigateTo({
-            url: './send2Seeker?delegator_openId='+that.data[type].prePage.data.wxUserInfo.openId,
+            url: './send2Seeker?data='+that.data[type].pushedSeekerInfo,
             success: function(res) {
             }
         })

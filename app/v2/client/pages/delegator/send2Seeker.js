@@ -26,15 +26,16 @@ Page(Object.assign({}, Zan.CheckLabel, {
         },    
         activeColor: '#4b0',
         checkAll: false,
-        delegator_openId: ''
+        messageData: {}
     },
 
     onLoad: function(opt) {
         var that = this
         // 设置当前红娘id
-        var delegator_openId = opt.delegator_openId
+        var data = opt.data
+        var delegator_openId = data.delegator_openId
         this.setData({
-            delegator_openId: delegator_openId
+            messageData: opt.data
         })
         // 获取当前红娘的客户
         wx.request({
@@ -91,6 +92,29 @@ Page(Object.assign({}, Zan.CheckLabel, {
             });
         }
     },
+    // 将信息发布榜的信息推送给自己的客户
     pushS2S: function(opt) {
+        var messageData = this.data.messageData
+        var checkedSeekerId = this.data.checked['color']
+        checkedSeekerId = Object.keys(checkedSeekerId)
+        var insertData = []
+        var items = this.data.items
+        for(var i=0;i<checkedSeekerId;i++){
+            var id = checkedSeekerId[i]
+            var seeker_openId = items[id][open_id]
+            var tmpData = {
+                pDelegator_openid: messageData.MD_openId,
+                pSeeker_openid: messageData.MS_openId,
+                tDelegator_openid: messageData.delegator_openId,
+                tSeeker_openid: seeker_openId
+            }
+            insertData.push(tmpData)
+        }
+        wx.request({
+            url: config.service.insert2DSUrl,
+            data: insertData,
+            success: function(res) {
+            }
+        })
     }
 }));

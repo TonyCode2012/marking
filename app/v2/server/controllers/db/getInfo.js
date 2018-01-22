@@ -46,7 +46,7 @@ var getMessageList = async function(ctx) {
     for(var i=0;i<idArry.length;i++) {
         var queryStr = "select " + selectItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
         var result = await getSeekerInfo_r(queryStr,connection)
-        result['delegator_openId'] = idArry[i].delegator_openId // 获取对方代理人id
+        result.data[0]['delegator_openId'] = idArry[i].delegator_openId // 获取对方代理人id
         if(result.data) {
             resArry.push(result.data[0])
         }

@@ -14,6 +14,20 @@ var getJSONKeyVal = function(data) {
     return {keyStr:data_key,valStr:data_val}
 }
 
+var getCondition = function(data,type) {
+    if(type != 'and' && type != 'or') console.log("error:Please indicate 'and' or 'or'")
+    var keyArry = Object.keys(data)
+    var cdStr = ""
+    for(var i=0;i<keyArry.length;i++) {
+        var key = keyArry[i]
+        var val = data[key]
+        cdStr = cdStr + key + "='" + val + "' and "
+    }
+    cdStr = cdStr.substring(0,cdStr.length-5)
+    return cdStr
+}
+
 module.exports = {
-    getJSONKeyVal: getJSONKeyVal
+    getJSONKeyVal: getJSONKeyVal,
+    getCondition: getCondition
 }

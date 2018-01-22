@@ -192,7 +192,7 @@ Page({
         var that = this
         var type = that.data.type
         wx.navigateTo({
-            url: './send2Seeker?data='+that.data[type].pushedSeekerInfo,
+            url: './send2Seeker?data='+JSON.stringify(that.data[type].pushedSeekerInfo),
             success: function(res) {
             }
         })

@@ -42,6 +42,8 @@ var config = {
         cancelPushSeekerUrl: `${host}/weapp/cancelPushSeekerInfo`,
         // 获取信息发布榜信息
         getMessageListUrl: `${host}/weapp/getMessageList`,
+        // 插入信息
+        insertD2SUrl: `${host}/weapp/insertD2S`,
 
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,

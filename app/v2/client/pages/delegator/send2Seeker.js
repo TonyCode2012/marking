@@ -32,10 +32,10 @@ Page(Object.assign({}, Zan.CheckLabel, {
     onLoad: function(opt) {
         var that = this
         // 设置当前红娘id
-        var data = opt.data
+        var data = JSON.parse(opt.data)
         var delegator_openId = data.delegator_openId
         this.setData({
-            messageData: opt.data
+            messageData: data
         })
         // 获取当前红娘的客户
         wx.request({
@@ -45,12 +45,14 @@ Page(Object.assign({}, Zan.CheckLabel, {
             },
             success: function(res) {
                 var data = res.data.data.result
+                var items = {}
                 for(var i=0;i<data.length;i++) {
                     data[i]['padding'] = 0
                     data[i]['value'] = i+1
+                    items[i+1] = data[i]
                 }
                 that.setData({
-                    items: data
+                    items: items
                 })
             }
         })
@@ -79,7 +81,7 @@ Page(Object.assign({}, Zan.CheckLabel, {
         if(e.detail.value.length == 1) {
             // 注：checkedValue的值对应items中的value
             var checkedValue = {}
-            var dataItem = this.data.items
+            var dataItem = Objec.keys(this.data.items)
             for(var i=0;i<dataItem.length;i++) {
                 checkedValue[i+1] = 1
             }
@@ -99,9 +101,9 @@ Page(Object.assign({}, Zan.CheckLabel, {
         checkedSeekerId = Object.keys(checkedSeekerId)
         var insertData = []
         var items = this.data.items
-        for(var i=0;i<checkedSeekerId;i++){
+        for(var i=0;i<checkedSeekerId.length;i++){
             var id = checkedSeekerId[i]
-            var seeker_openId = items[id][open_id]
+            var seeker_openId = items[id]['open_id']
             var tmpData = {
                 pDelegator_openid: messageData.MD_openId,
                 pSeeker_openid: messageData.MS_openId,
@@ -111,9 +113,12 @@ Page(Object.assign({}, Zan.CheckLabel, {
             insertData.push(tmpData)
         }
         wx.request({
-            url: config.service.insert2DSUrl,
-            data: insertData,
+            url: config.service.insertD2SUrl,
+            data: {
+                insertArry: insertData
+            },
             success: function(res) {
+                util.showSuccess(JSON.stringify(res))
             }
         })
     }

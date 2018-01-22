@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 21/01/2018 23:56:47
+ Date: 23/01/2018 00:02:24
 */
 
 SET NAMES utf8mb4;
@@ -37,15 +37,22 @@ CREATE TABLE `D2DPush`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `D2SPush`;
 CREATE TABLE `D2SPush`  (
-  `pDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `pSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `tDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `tSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `pDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `pSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `tDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `tSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `start_time` date NULL DEFAULT NULL,
   `status` int(1) NULL DEFAULT NULL,
   `d2s_push_id` int(2) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`d2s_push_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of D2SPush
+-- ----------------------------
+INSERT INTO `D2SPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', NULL, NULL, 6);
+INSERT INTO `D2SPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', NULL, NULL, 7);
+INSERT INTO `D2SPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM2', NULL, NULL, 8);
 
 -- ----------------------------
 -- Table structure for DelegationShip
@@ -210,6 +217,6 @@ CREATE TABLE `cSessionInfo`  (
 -- ----------------------------
 -- Records of cSessionInfo
 -- ----------------------------
-INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'df5cb3b6-a544-475a-b08f-fd88d245c238', 'bdd30904fa2b6fcc41b0882d906466839d8601f2', '2018-01-21 22:33:30', '2018-01-21 22:33:30', '2V/rORoAyoTrUGojnWBQMQ==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1516545210,\"appid\":\"wx8727802679966793\"}}');
+INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', '7a5fff1d-7fd6-444a-ad69-fa2e75359d24', '983e2838d4e2d6e66d5208c1cd1f4a2b1fe00c9b', '2018-01-22 22:11:24', '2018-01-22 22:11:24', 'qFcyCcsejVqsKGWHUJ0O0w==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1516630283,\"appid\":\"wx8727802679966793\"}}');
 
 SET FOREIGN_KEY_CHECKS = 1;

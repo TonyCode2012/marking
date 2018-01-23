@@ -83,6 +83,9 @@ Page({
         var prePage = pages[pages.length-2]
 
         if(type == 'seekerInfo') {
+            wx.setNavigationBarTitle({
+              title: '我的任务'
+            })
             this.setData({
                 'seekerInfo.portrait': data.wx_portraitAddr,
                 'seekerInfo.seekerOpenId': data.seeker_openId,
@@ -92,6 +95,9 @@ Page({
                 'seekerInfo.prePage': prePage
             })
         } else if(type == 'messageList') {
+            wx.setNavigationBarTitle({
+              title: '信息发布榜'
+            })
             this.setData({
                 'messageList.portrait': data.wx_portraitAddr,
                 'messageList.seekerOpenId': data.seeker_openId,

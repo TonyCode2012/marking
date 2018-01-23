@@ -67,7 +67,7 @@ Page(Object.assign({}, Zan.CheckLabel, {
         this.setData({
             [`checked.${componentId}`]: checkedValue
         });
-        if(valArry.length == this.data.items.length) {
+        if(valArry.length == (Object.keys(this.data.items)).length) {
             this.setData({
                 checkAll: true
             });
@@ -81,7 +81,7 @@ Page(Object.assign({}, Zan.CheckLabel, {
         if(e.detail.value.length == 1) {
             // 注：checkedValue的值对应items中的value
             var checkedValue = {}
-            var dataItem = Objec.keys(this.data.items)
+            var dataItem = Object.keys(this.data.items)
             for(var i=0;i<dataItem.length;i++) {
                 checkedValue[i+1] = 1
             }

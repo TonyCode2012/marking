@@ -15,7 +15,10 @@ Page(extend({}, Tab, {
                             list: {
                                 receivedPush: {
                                     id: 'receivedPush',
-                                    title: '收到的推送'
+                                    title: '收到的推送',
+                                    data: {
+                                        list: []
+                                    }
                                 },
                                 sendedPush: {
                                     id: 'sendedPush',
@@ -23,6 +26,7 @@ Page(extend({}, Tab, {
                                 }
                             },
                             activeIndex: 0,
+                            selectedId: 'receivedPush',
                             sliderOffset: 0,
                             sliderLeft: 0,
                             title: '新建发布',
@@ -152,6 +156,7 @@ Page(extend({}, Tab, {
             util.showModel('get role user info failed!',JSON.stringify(e))
         }
         // 初始化信息
+        that.getReceivedPush()  // 获取当前红娘收到的推送
         that.getSeekerInfo()    // 获取红娘任务
         that.getMessageList()   // 获取信息发布榜信息
         that.setData({
@@ -252,6 +257,21 @@ Page(extend({}, Tab, {
                 var data = res.data.data.result
                 that.setData({
                     'homePage.tabContent.list.messageList.data.list': data
+                })
+            }
+        })
+    },
+    // 获取当前代理人收到的推送
+    getReceivedPush() {
+        var that = this
+        wx.request({
+            url: config.service.getDReceivedPushUrl,
+            data: {
+                delegator_openid: that.data.wxUserInfo.openId
+            },
+            success: function(res) {
+                that.setData({
+                    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': res.data.data.result
                 })
             }
         })

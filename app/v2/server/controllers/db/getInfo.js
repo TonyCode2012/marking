@@ -4,6 +4,10 @@ var urlParser = require('url')
 var queryString  = require("querystring");
 
 
+var seekerPubInfoItems = "open_id,name,age,gender,height,weight,education,constellation,blood_type,portrait,wx_portraitAddr,requirement,self_introduction"
+
+var delegatorPubInfoItems = "open_id,name,wx_portraitAddr"
+
 var connection = mysql.createConnection({
     host     : config.host,
     port     : config.port,
@@ -13,6 +17,36 @@ var connection = mysql.createConnection({
 });
 
 connection.connect();
+
+// 获取当前红娘收到的推送
+var getDReceivedPush = async function(ctx) {
+    var data = await getD2SInfo(ctx,connection)
+    relatedList = data.data
+    var resArry = []
+    for(var i=0;i<relatedList.length;i++) {
+        var item = relatedList[i]
+        var tSeekerInfo = {}
+        var pSeekerInfo = {}
+        var pDelegatorInfo = {}
+        var r1 = await getSeekerPubInfo(item.tSeeker_openid,connection)
+        var r2 = await getSeekerPubInfo(item.pSeeker_openid,connection)
+        var r3 = await getDelegatorPubInfo(item.pDelegator_openid,connection)
+        r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
+        r2.status == 200 ? pSeekerInfo = r2.data[0] : {}
+        r3.status == 200 ? pDelegatorInfo = r3.data[0] : {}
+        var tmpPush = {
+            receivedSInfo: pSeekerInfo,
+            receivedDInfo: pDelegatorInfo,
+            toSeekerInfo: tSeekerInfo
+        }
+
+        resArry.push(tmpPush)
+    } 
+
+    ctx.state.data = {
+        result: resArry
+    }
+}
 
 var getMySeeker = async function(ctx) {
     var data = await getDTaskInfo_r(ctx,connection)
@@ -42,9 +76,8 @@ var getMessageList = async function(ctx) {
     var data = await getMessageList_r(connection)
     var idArry = data.data
     var resArry = []
-    var selectItems = "open_id,name,age,gender,height,weight,education,constellation,blood_type,portrait,wx_portraitAddr,requirement,self_introduction"
     for(var i=0;i<idArry.length;i++) {
-        var queryStr = "select " + selectItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
+        var queryStr = "select " + seekerPubInfoItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
         var result = await getSeekerInfo_r(queryStr,connection)
         result.data[0]['delegator_openId'] = idArry[i].delegator_openId // 获取对方代理人id
         if(result.data) {
@@ -83,6 +116,14 @@ var getDTaskInfo = async function(ctx) {
     ctx.state.data = {
         result: resArry
     }
+}
+
+function getD2SInfo(ctx, connection) {
+    return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var queryStr = "select * from D2SPush where tDelegator_openid='" + data.delegator_openid + "'"
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
 }
 
 function getUserInfo_r(ctx, connection) {
@@ -125,6 +166,20 @@ function getMessageList_r(connection) {
     })
 }
 
+function getSeekerPubInfo(seeker_openid,connection) {
+    return new Promise(function (resolve, reject) {
+        var queryStr = "select "+seekerPubInfoItems+" from SeekerInfo where open_id='"+seeker_openid+"'"
+        queryFromDB(resolve, reject, queryStr, connection)
+    })
+}
+
+function getDelegatorPubInfo(delegator_openid,connection) {
+    return new Promise(function (resolve, reject) {
+        var queryStr = "select "+delegatorPubInfoItems+" from DelegatorInfo where open_id='"+delegator_openid+"'"
+        queryFromDB(resolve, reject, queryStr, connection)
+    })
+}
+
 function queryFromDB(resolve, reject, queryStr, connection) {
     // get info from User by open_id
     connection.query(queryStr, function (error, results, fields) {
@@ -159,5 +214,6 @@ module.exports = {
     getUserInfo: getUserInfo,
     getDTaskInfo: getDTaskInfo,
     getMessageList: getMessageList,
-    getMySeeker: getMySeeker
+    getMySeeker: getMySeeker,
+    getDReceivedPush: getDReceivedPush
 }

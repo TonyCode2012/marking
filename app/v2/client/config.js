@@ -42,6 +42,8 @@ var config = {
         cancelPushSeekerUrl: `${host}/weapp/cancelPushSeekerInfo`,
         // 获取信息发布榜信息
         getMessageListUrl: `${host}/weapp/getMessageList`,
+        // 获取代理人收到的推送信息
+        getDReceivedPushUrl: `${host}/weapp/getDReceivedPush`,
         // 插入信息
         insertD2SUrl: `${host}/weapp/insertD2S`,
 

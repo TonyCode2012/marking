@@ -301,6 +301,16 @@ Page(extend({}, Tab, {
             }
         })
     },
+    // 跳转到当前推送匹配的具体页面
+    goRevdPushDetail(opt) {
+        var data = opt.currentTarget.dataset.item
+        var index = opt.currentTarget.dataset.index
+        wx.navigateTo({
+            url: './revdPushDetail?index='+index,
+            success: function(res) {
+            }
+        })
+    },
     /*有关页面的操作*/
     handleZanTabChange(e) {
       var componentId = e.componentId;

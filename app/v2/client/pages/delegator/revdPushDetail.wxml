@@ -7,17 +7,22 @@
     </view>
     <view class="page__bd page__bd_spacing">
         <view class="weui-flex">
-            <view class="weui-flex__item"><view class="placeholder">weui</view></view>
+            <view class="weui-flex__item">
+                <view class="placeholder">双方信息对比</view>
+            </view>
         </view>
         <view class="weui-flex">
             <view class="weui-flex__item">
                 <view class="placeholder">
-                    <template is="seekerDetailTpl" data="{{userData.receivedSInfo}}" />
+                    <template is="compareDetailTpl" data="{{...info.receivedSInfo}}" />
                 </view>
             </view>
             <view class="weui-flex__item">
                 <view class="placeholder">
-                    <template is="seekerDetailTpl" data="{{userData.toSeekerInfo}}" />
+                    <template is="compareDetailTpl" data="{{...info.toSeekerInfo}}" />
+                    <view class="weui-btn-area" style="text-align:center;display:inline">
+                        <button class="weui-btn mini-btn" type="primary" bindtap="confirmPush" size="mini" style="margin-left:30%">推送</button>
+                    </view>
                 </view>
             </view>
         </view>

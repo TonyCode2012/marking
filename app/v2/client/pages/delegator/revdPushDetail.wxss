@@ -5,5 +5,5 @@
     background-color: #EBEBEB;
     height: 2.3em;
     line-height: 2.3em;
-    color: #cfcfcf;
+   /*color: #cfcfcf;*/
 }

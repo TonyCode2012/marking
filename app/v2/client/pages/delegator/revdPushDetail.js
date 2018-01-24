@@ -48,6 +48,7 @@ Page({
                 self_introduction:{ title:"自我介绍", type:"textarea", value:"" },
             }
         },
+        userData: {}
     },
 
     onLoad: function(opt) {
@@ -59,6 +60,9 @@ Page({
         that.setData({
             userData: curData
         })
+        this.prepareTpl()
+        this.setPageData(curData)
+        util.showSuccess('成功')
     },
     prepareTpl: function() {
         var dataList = this.data.info
@@ -82,21 +86,28 @@ Page({
         var keyArry = Object.keys(dataList) // receivedSInfo或者toSeekerInfo
         for(var i=0;i<keyArry.length;i++) {
             var key = keyArry[i]
+            var curData = data[key]
             var val = dataList[key]['list']
             var title = 'info.' + key + '.list.'
+            this.setData({
+                ['info.'+key+'.portrait']: curData['wx_portraitAddr']
+            })
             var valKeyArry = Object.keys(val)
             for(var j=0;j<valKeyArry.length;j++){
-                var valKey = valKeyArry[j]['data']
+                var valKey = valKeyArry[j]
+                var valval = val[valKey]['data']
                 var valTitle = title + valKey + '.data.'
-                var valKKArry = Object.keys(valKey)
+                var valKKArry = Object.keys(valval)
                 for(var k=0;k<valKKArry.length;k++) {
                     var valKK = valKKArry[k]
                     var valKeyTitle = valTitle + valKK
                     this.setData({
-                        [valKeyTitle + '.value']: data[valKey]
+                        [valKeyTitle + '.value']: curData[valKK]
                     })
                 }
             }
         }
+    },
+    confirmPush(opt) {
     },
 })

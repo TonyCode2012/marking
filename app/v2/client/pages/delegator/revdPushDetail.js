@@ -48,7 +48,8 @@ Page({
                 self_introduction:{ title:"自我介绍", type:"textarea", value:"" },
             }
         },
-        userData: {}
+        userData: {},
+        pDelegator_openid: ''
     },
 
     onLoad: function(opt) {
@@ -58,6 +59,7 @@ Page({
         var DPage = pages[pages.length-2]
         var curData = DPage.data.homePage.tabContent.list.myPush.data.list.receivedPush.data.list[index]
         that.setData({
+            pDelegator_openid: opt.pDelegator_openid,
             userData: curData
         })
         this.prepareTpl()
@@ -109,5 +111,23 @@ Page({
         }
     },
     confirmPush(opt) {
+        var userData = this.data.userData
+        var insertData = []
+        var tmpData = {
+            pDelegator_openid: this.data.pDelegator_openid,
+            pSeeker_openid: userData.toSeekerInfo.open_id,
+            tDelegator_openid: userData.receivedDInfo.open_id,
+            tSeeker_openid: userData.receivedSInfo.open_id
+        }
+        insertData.push(tmpData)
+        wx.request({
+            url: config.service.insertD2SUrl,
+            data: {
+                insertArry: insertData
+            },
+            success: function(res) {
+                util.showSuccess('推送给客户成功')
+            }
+        })
     },
 })

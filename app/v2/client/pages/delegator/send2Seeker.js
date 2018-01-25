@@ -95,7 +95,9 @@ Page(Object.assign({}, Zan.CheckLabel, {
         }
     },
     // 将信息发布榜的信息推送给自己的客户
-    pushS2S: function(opt) {
+    //pushS2S: function(opt) {
+    // 查看信息发布榜后将自己客户的信息推介给对方红娘
+    pushS2D: function(opt) {
         var messageData = this.data.messageData
         var checkedSeekerId = this.data.checked['color']
         checkedSeekerId = Object.keys(checkedSeekerId)
@@ -113,7 +115,7 @@ Page(Object.assign({}, Zan.CheckLabel, {
             insertData.push(tmpData)
         }
         wx.request({
-            url: config.service.insertD2SUrl,
+            url: config.service.insertD2DUrl,
             data: {
                 insertArry: insertData
             },

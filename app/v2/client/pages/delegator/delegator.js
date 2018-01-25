@@ -306,7 +306,7 @@ Page(extend({}, Tab, {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
         wx.navigateTo({
-            url: './revdPushDetail?index='+index,
+            url: './revdPushDetail?index='+index+'&pDelegator_openid='+this.data.wxUserInfo.openId,
             success: function(res) {
             }
         })

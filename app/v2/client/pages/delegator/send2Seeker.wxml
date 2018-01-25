@@ -13,6 +13,6 @@
         <template is="zan-select" data="{{ items, checkedValue: checked.color, activeColor, componentId: 'color' }}" ></template>
     </view>
     <view class="weui-btn-area" style="text-align:center">
-        <button class="weui-btn mini-btn" type="primary" bindtap="pushS2S" size="mini" style="margin-left:30%">推送</button>
+        <button class="weui-btn mini-btn" type="primary" bindtap="pushS2D" size="mini" style="margin-left:30%">推送</button>
     </view>
 </view>

@@ -190,9 +190,6 @@ Page({
             }
         })
     },
-    // 推送客户
-    pushSeeker: function(opt) {
-    },
     // 推送其他红娘的客户给自己客户
     go2SelectPage: function(opt) {
         var that = this

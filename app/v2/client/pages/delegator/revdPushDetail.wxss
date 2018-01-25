@@ -1,6 +1,6 @@
 .placeholder{
     margin: 5px;
-    padding: 0 10px;
+    padding: 0 0px;
     text-align: center;
     background-color: #EBEBEB;
     height: 2.3em;

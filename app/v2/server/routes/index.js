@@ -28,6 +28,7 @@ router.get('/decrypt', controllers.decrypt)
 // --- 数据库操作 --- //
 router.get('/register', dbControllers.register)
 router.get('/insertD2S', dbControllers.insert.insertD2S)
+router.get('/insertD2D', dbControllers.insert.insertD2D)
 router.get('/getUserInfo', dbControllers.getInfo.getUserInfo)
 router.get('/getDTaskInfo', dbControllers.getInfo.getDTaskInfo)
 router.get('/getMySeeker', dbControllers.getInfo.getMySeeker)

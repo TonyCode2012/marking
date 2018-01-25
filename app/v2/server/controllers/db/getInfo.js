@@ -20,34 +20,66 @@ connection.connect();
 
 // 获取当前红娘收到的推送
 var getDReceivedPush = async function(ctx) {
-    var resArry = []
-    var data = await getD2DInfo(ctx,connection)
-    if(data.status == 200) {
-        relatedList = data.data
-        for(var i=0;i<relatedList.length;i++) {
-            var item = relatedList[i]
-            var tSeekerInfo = {}
-            var pSeekerInfo = {}
-            var pDelegatorInfo = {}
-            var r1 = await getSeekerPubInfo(item.tSeeker_openid,connection)
-            var r2 = await getSeekerPubInfo(item.pSeeker_openid,connection)
-            var r3 = await getDelegatorPubInfo(item.pDelegator_openid,connection)
-            r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
-            r2.status == 200 ? pSeekerInfo = r2.data[0] : {}
-            r3.status == 200 ? pDelegatorInfo = r3.data[0] : {}
-            var tmpPush = {
-                receivedSInfo: pSeekerInfo,
-                receivedDInfo: pDelegatorInfo,
-                toSeekerInfo: tSeekerInfo
-            }
-    
-            resArry.push(tmpPush)
-        } 
-    }
+
+    var resArry = await getReceivedPush_r(ctx,'delegator')
     
     ctx.state.data = {
         result: resArry
     }
+}
+
+// 获取当前红娘收到的推送
+var getSReceivedPush = async function(ctx) {
+
+    var resArry = await getReceivedPush_r(ctx, 'seeker')
+    
+    ctx.state.data = {
+        result: resArry
+    }
+}
+
+async function getReceivedPush_r(ctx, role) {
+    var resArry = []
+    var data = (role=='delegator'?await getD2DInfo(ctx,connection):await getD2SInfo(ctx,connection))
+    if(data.status == 200) {
+        relatedList = data.data
+        for(var i=0;i<relatedList.length;i++) {
+            var item = relatedList[i]
+            var tmpPush = {}
+            if(role == 'delegator') {
+                var tSeekerInfo = {}
+                var pSeekerInfo = {}
+                var pDelegatorInfo = {}
+                var r1 = await getSeekerPubInfo(item.tSeeker_openid,connection)
+                var r2 = await getSeekerPubInfo(item.pSeeker_openid,connection)
+                var r3 = await getDelegatorPubInfo(item.pDelegator_openid,connection)
+                r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
+                r2.status == 200 ? pSeekerInfo = r2.data[0] : {}
+                r3.status == 200 ? pDelegatorInfo = r3.data[0] : {}
+                tmpPush = {
+                    receivedSInfo: pSeekerInfo,
+                    receivedDInfo: pDelegatorInfo,
+                    toSeekerInfo: tSeekerInfo
+                }
+            } else if(role == 'seeker') {
+                var tSeekerInfo = {}
+                var tDelegatorInfo = {}
+                var r1 = await getSeekerPubInfo(item.tSeeker_openid,connection)
+                var r2 = await getDelegatorPubInfo(item.tDelegator_openid,connection)
+                r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
+                r2.status == 200 ? tDelegatorInfo = r2.data[0] : {}
+                tmpPush = {
+                    receivedSInfo: tSeekerInfo,
+                    receivedDInfo: tDelegatorInfo
+                }
+            }
+    
+            resArry.push(tmpPush)
+        } 
+    } else {
+        console.log('get data failed!' + data.msg)
+    }
+    return resArry
 }
 
 var getMySeeker = async function(ctx) {
@@ -124,6 +156,14 @@ function getD2DInfo(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
         var queryStr = "select * from D2DPush where tDelegator_openid='" + data.delegator_openid + "'"
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
+}
+
+function getD2SInfo(ctx, connection) {
+    return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var queryStr = "select * from D2SPush where pSeeker_openid='" + data.seeker_openid + "'"
         queryFromDB(resolve,reject,queryStr,connection)
     })
 }
@@ -217,5 +257,6 @@ module.exports = {
     getDTaskInfo: getDTaskInfo,
     getMessageList: getMessageList,
     getMySeeker: getMySeeker,
-    getDReceivedPush: getDReceivedPush
+    getDReceivedPush: getDReceivedPush,
+    getSReceivedPush: getSReceivedPush
 }

@@ -134,7 +134,8 @@ Page({
                     } else {
                         that.regAndGetUser(result,() => {
                             wx.switchTab({
-                                url: '../delegator/delegator'
+                                //url: '../delegator/delegator'
+                                url: '../seeker/seeker'
                             })
                         })
                     }
@@ -160,7 +161,8 @@ Page({
                             }
                             if(args.loginAppInfo == undefined) {
                                 wx.switchTab({
-                                    url: '../delegator/delegator'
+                                    //url: '../delegator/delegator'
+                                    url: '../seeker/seeker'
                                 })
                             } else if(args.loginAppInfo.scene == 1044){
                                 var role = args.loginAppInfo.query.role

@@ -23,6 +23,7 @@ Page(extend({}, Tab, {
                                 }
                             },
                             activeIndex: 0,
+                            selectedId: 'receivedPush',
                             sliderOffset: 0,
                             sliderLeft: 0,
                             title: '新建发布',
@@ -145,6 +146,7 @@ Page(extend({}, Tab, {
             that.setRegisterPage()
             util.showModel('get user info failed!',JSON.stringify(e))
         }
+        this.getReceivedPush()
         that.setData({
             title: opt.title
         })
@@ -293,6 +295,21 @@ Page(extend({}, Tab, {
 
 
     //--------------- Home Page functions -----------------//
+    // 获取当前红娘收到的推送
+    getReceivedPush() {
+        var that = this
+        wx.request({
+            url: config.service.getSReceivedPushUrl,
+            data: {
+                seeker_openid: that.data.wxUserInfo.openId
+            },
+            success: function(res) {
+                that.setData({
+                    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': res.data.data.result
+                })
+            }
+        })
+    },
     handleZanTabChange(e) {
       var componentId = e.componentId;
       var selectedId = e.selectedId;
@@ -303,12 +320,13 @@ Page(extend({}, Tab, {
     },
     // functions related about myinfo navigate page
     tabClick: function (opt) {
-        var curData = 'homePage.tabContent.list.myInfo.data'
+        var type = opt.currentTarget.dataset.type
+        var title = 'homePage.tabContent.list.'+type+'.data'
         var selectedId = opt.currentTarget.dataset.infotype
         this.setData({
-            [curData + '.sliderOffset']: opt.currentTarget.offsetLeft,
-            [curData + '.activeIndex']: opt.currentTarget.id,
-            [curData + '.selectedId']: selectedId
+            [title + '.sliderOffset']: opt.currentTarget.offsetLeft,
+            [title + '.activeIndex']: opt.currentTarget.id,
+            [title + '.selectedId']: selectedId
         });
     },
     editMyInfoBtn: function(opt) {

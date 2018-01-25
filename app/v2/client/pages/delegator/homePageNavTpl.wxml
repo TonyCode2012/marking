@@ -10,7 +10,8 @@
                         <view class="weui-navbar__title">{{item.title}}</view>
                     </view>
                 </block>
-                <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+                <view class="weui-navbar__slider" 
+                    style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
             </view>
             <view class="weui-tab__panel">
                 <view wx:for="{{list}}" wx:key="id">

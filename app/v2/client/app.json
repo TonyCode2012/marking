@@ -2,6 +2,7 @@
   "pages":[
     "pages/index/index",
     "pages/seeker/seeker",
+    "pages/seeker/seekerDetail",
     "pages/seeker/register/regPrivateInfo",
     "pages/seeker/register/regPersonalInfo",
     "pages/seeker/register/pictureUploader",

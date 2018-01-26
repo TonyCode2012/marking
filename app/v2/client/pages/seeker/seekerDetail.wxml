@@ -1,0 +1,3 @@
+<import src="./seekerTpl.wxml" />
+
+<template is="seekerDetailTpl" data="{{...type=='seekerInfo'?seekerInfo:type=='recvdPushInfo'?recvdPushInfo:messageList}}" />

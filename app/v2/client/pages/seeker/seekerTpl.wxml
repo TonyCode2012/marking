@@ -1,0 +1,70 @@
+<template name="seekerDetailTpl">
+    <view class="page">
+        <view class="weui-panel weui-panel_access">
+            <view class="weui-panel__bd">
+                <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+                    <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                        <image class="weui-media-box__thumb" src="{{portrait}}" />
+                    </view>
+                    <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                        <view class="weui-media-box__title">{{userWXInfo.nickName}}</view>
+                        <view class="weui-media-box__desc">keep fighting</view>
+                    </view>
+                </navigator>
+            </view>
+        </view>
+        <!--view hidden="{{mode!='register'}}">{{title}}</view>
+        <view class="weui-cells__title"></view-->
+        <view wx:for="{{list}}" class="weui-cells weui-cells_after-title">
+            <view class="weui-cells__title">{{item.title}}</view>
+            <view wx:for="{{item.data}}" wx:for-item="sitem" wx:key="*this" hidden="{{sitem.show==false}}" class="{{sitem.type=='textarea'?'weui-cell':'weui-cell weui-cell_input'}}">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">{{sitem.title}}</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input wx:if="{{sitem.type!='textarea'}}" class="weui-input" disabled="true" value="{{sitem.value}}"/>
+                    <textarea wx:else class="weui-textarea" bindinput="getInputVal" value="{{sitem.value}}" 
+                        placeholder="{{sitem.placeHolder}}" disabled="true" style="height: 3.3em" />
+                    <view wx:if="{{sitem.type=='textarea'}}" class="weui-textarea-counter">0/200</view>
+                </view>
+            </view>
+        </view>
+        <!--view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view-->
+        <view class="weui-btn-area" style="text-align:center">
+            <button class="weui-btn mini-btn" type="primary" bindtap="sendMatchReq" size="mini" style="margin-left:30%">发送匹配请求</button>
+        </view>
+    </view>
+</template>
+
+<template name="compareDetailTpl">
+    <view class="page">
+        <view class="weui-panel weui-panel_access">
+            <view class="weui-panel__bd">
+                <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+                    <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                        <image class="weui-media-box__thumb" src="{{portrait}}" />
+                    </view>
+                    <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                        <view class="weui-media-box__title">{{userWXInfo.nickName}}</view>
+                        <view class="weui-media-box__desc">keep fighting</view>
+                    </view>
+                </navigator>
+            </view>
+        </view>
+        <view wx:for="{{list}}" class="weui-cells weui-cells_after-title">
+            <view class="weui-cells__title" hidden="{{index=='reqInfo'}}">{{item.title}}</view>
+            <view wx:for="{{item.data}}" wx:for-index="sid" wx:for-item="sitem" wx:key="*this" hidden="{{sitem.show==false}}" class="{{sitem.type=='textarea'?'':'weui-cell weui-cell_input'}}">
+                <view class="{{(sid=='requirement'||sid=='self_introduction')?'weui-cells__title':'weui-cell__hd'}}">
+                    <!--view class="weui-label">{{sitem.title}}</view-->
+                    {{sitem.title}}
+                </view>
+                <view class="{{(sid=='requirement'||sid=='self_introduction')?'':'weui-cell__bd'}}">
+                    <input wx:if="{{sitem.type!='textarea'}}" class="weui-input" disabled="true" value="{{sitem.value}}"/>
+                    <textarea wx:else class="weui-textarea" bindinput="getInputVal" value="{{sitem.value}}" auto-height="true"
+                        placeholder="{{sitem.placeHolder}}" disabled="true" style="height: 3.3em" />
+                    <view wx:if="{{sitem.type=='textarea'}}" class="weui-textarea-counter">0/200</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>

@@ -310,6 +310,14 @@ Page(extend({}, Tab, {
             }
         })
     },
+    // 跳转到推送信息具体页面
+    goRecvdPushDetail(opt) {
+        var index = opt.currentTarget.dataset.index
+        var data = opt.currentTarget.dataset.item
+        wx.navigateTo({
+            url: './seekerDetail?type=recvdPushInfo&index='+index+'&data='+JSON.stringify(data)
+        })
+    },
     handleZanTabChange(e) {
       var componentId = e.componentId;
       var selectedId = e.selectedId;
@@ -469,9 +477,3 @@ Page(extend({}, Tab, {
         })
     }
 }));
-
-
-
-
-
-

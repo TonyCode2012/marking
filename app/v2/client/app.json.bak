@@ -24,8 +24,14 @@
    "selectedColor":"#06bd04",  
    "list": [
      {  
-       "pagePath": "pages/seeker/seeker",
+       "pagePath": "pages/seeker/register/regPrivateInfo",
        "text": "找对象",
+       "iconPath": "images/index.png",
+       "selectedIconPath": "images/indexHL.png"
+     },
+     {  
+       "pagePath": "pages/seeker/seeker",
+       "text": "找对象2",
        "iconPath": "images/index.png",
        "selectedIconPath": "images/indexHL.png"
      },

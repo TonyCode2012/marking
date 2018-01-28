@@ -89,17 +89,25 @@ Page({
     },
 
     onLoad: function(opt) {
-        var data = JSON.parse(opt.data)
-        var index = opt.index
-        var type = opt.type
-        this.setData({
-            [type+'.pushedSeekerInfo']: data,
-            type: type
-        })
-        this.prepareTpl(type)
         // 获取上一个页面的数据引用
         var pages = getCurrentPages()
         var prePage = pages[pages.length-2]
+        // 获取当前使用的数据
+        var type = opt.type
+        var index = opt.index
+        var tn = JSON.parse(opt.tArry)
+        var data = prePage.data.homePage.tabContent
+        for(var i=0;i<tn.length;i++) {
+            var ti = tn[i]
+            //i==tn.length-1?data=data.list[ti]:data=data.list[ti].data
+            data = data.list[ti].data
+        }
+        data = data.list[index]
+        this.setData({
+            type: type
+        })
+        // 设置页面模板
+        this.prepareTpl(type)
 
         if(type == 'seekerInfo') {
             wx.setNavigationBarTitle({

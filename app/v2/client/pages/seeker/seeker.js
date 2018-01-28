@@ -15,11 +15,17 @@ Page(extend({}, Tab, {
                             list: {
                                 receivedPush: {
                                     id: 'receivedPush',
-                                    title: '收到的推送'
+                                    title: '收到的推送',
+                                    data: {
+                                        list: {}
+                                    }
                                 },
                                 sendedPush: {
                                     id: 'sendedPush',
-                                    title: '发出的推送'
+                                    title: '发出的推送',
+                                    data: {
+                                        list: {}
+                                    }
                                 }
                             },
                             activeIndex: 0,
@@ -32,15 +38,24 @@ Page(extend({}, Tab, {
                     },
                     myMatch: {
                         id: 'myMatch',
-                        title: '我的匹配'
+                        title: '我的匹配',
+                        data: {
+                            list: {}
+                        }
                     },
                     messageList: {
                         id: 'messageList',
-                        title: '信息发布榜'
+                        title: '信息发布榜',
+                        data: {
+                            list: {}
+                        }
                     },
                     myDelegator:{
                         id: 'myMatchMaker',
-                        title: '我的红娘'
+                        title: '我的红娘',
+                        data: {
+                            list: {}
+                        }
                     },
                     myInfo: {
                         id: 'myInfo',
@@ -147,6 +162,7 @@ Page(extend({}, Tab, {
             util.showModel('get user info failed!',JSON.stringify(e))
         }
         this.getReceivedPush()
+        this.getMessageList()
         that.setData({
             title: opt.title
         })
@@ -295,7 +311,7 @@ Page(extend({}, Tab, {
 
 
     //--------------- Home Page functions -----------------//
-    // 获取当前红娘收到的推送
+    // 获取当前客户收到的推送
     getReceivedPush() {
         var that = this
         wx.request({
@@ -310,12 +326,35 @@ Page(extend({}, Tab, {
             }
         })
     },
+    // 获取当前客户的匹配
+    getMatchList() {
+    },
+    // 获取信息发布榜信息
+    getMessageList() {
+        var that = this
+        wx.request({
+            url: config.service.getMessageListUrl,
+            success: function(res) {
+                var data = res.data.data.result
+                that.setData({
+                    'homePage.tabContent.list.messageList.data.list': data
+                })
+            }
+        })
+    },
     // 跳转到推送信息具体页面
     goRecvdPushDetail(opt) {
         var index = opt.currentTarget.dataset.index
         var data = opt.currentTarget.dataset.item
         wx.navigateTo({
-            url: './seekerDetail?type=recvdPushInfo&index='+index+'&data='+JSON.stringify(data)
+            url: './seekerDetail?type=recvdPushInfo&tArry=["myPush","receivedPush"]&index='+index
+        })
+    },
+    // 跳转到信息发布榜具体信息页面
+    goMessageDetail(opt) {
+        var index = opt.currentTarget.dataset.index
+        wx.navigateTo({
+            url: './seekerDetail?type=messageList&tArry=["messageList"]&index='+index
         })
     },
     handleZanTabChange(e) {

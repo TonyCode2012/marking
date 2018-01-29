@@ -28,7 +28,7 @@ var getDReceivedPush = async function(ctx) {
     }
 }
 
-// 获取当前红娘收到的推送
+// 获取当前客户收到的推送
 var getSReceivedPush = async function(ctx) {
 
     var resArry = await getReceivedPush_r(ctx, 'seeker')
@@ -40,7 +40,16 @@ var getSReceivedPush = async function(ctx) {
 
 async function getReceivedPush_r(ctx, role) {
     var resArry = []
-    var data = (role=='delegator'?await getD2DInfo(ctx,connection):await getD2SInfo(ctx,connection))
+    //var data = (role=='delegator'?await getD2DInfo(ctx,connection):await getD2SInfo(ctx,connection))
+    var data = {}
+    if(role == 'delegator') {
+        data = await getD2DInfo(ctx,connection)
+    } else if(role == 'seeker') {
+        data = await getD2SInfo(ctx,connection)
+    } else {
+        console.log('please indicate role type(delegator/seeker)')
+        return resArry
+    }
     if(data.status == 200) {
         relatedList = data.data
         for(var i=0;i<relatedList.length;i++) {
@@ -62,22 +71,36 @@ async function getReceivedPush_r(ctx, role) {
                     toSeekerInfo: tSeekerInfo
                 }
             } else if(role == 'seeker') {
-                var tSeekerInfo = {}
-                var tDelegatorInfo = {}
-                var r1 = await getSeekerPubInfo(item.tSeeker_openid,connection)
-                var r2 = await getDelegatorPubInfo(item.tDelegator_openid,connection)
-                r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
-                r2.status == 200 ? tDelegatorInfo = r2.data[0] : {}
+                var seekerInfo = {}
+                var delegatorInfo = {}
+                var seeker_openid = ''
+                var delegator_openid = ''
+                if(item.role == 'pSeeker') {
+                    seeker_openid = item.tSeeker_openid
+                    delegator_openid = item.tDelegator_openid
+                } else if(item.role == 'tSeeker') {
+                    seeker_openid = item.pSeeker_openid
+                    delegator_openid = item.pDelegator_openid
+                } else {
+                    console.log('please indicate seeker role type(pSeeker/tSeeker)')
+                    continue
+                }
+                r1 = await getSeekerPubInfo(seeker_openid,connection)
+                r2 = await getDelegatorPubInfo(delegator_openid,connection)
+                seekerInfo = (r1.status == 200 ? r1.data[0] : {})
+                delegatorInfo = (r2.status == 200 ? r2.data[0] : {})
+                seekerInfo.role = (item.role == 'pSeeker' ? 'tSeeker' : 'pSeeker')
+                delegatorInfo.role = (item.role == 'pSeeker' ? 'tDelegator' : 'pDelegator')
                 tmpPush = {
-                    receivedSInfo: tSeekerInfo,
-                    receivedDInfo: tDelegatorInfo
+                    receivedSInfo: seekerInfo,
+                    receivedDInfo: delegatorInfo
                 }
             }
     
             resArry.push(tmpPush)
         } 
     } else {
-        console.log('get data failed!' + data.msg)
+        console.log('get received push data failed!' + data.msg)
     }
     return resArry
 }
@@ -160,10 +183,44 @@ function getD2DInfo(ctx, connection) {
     })
 }
 
-function getD2SInfo(ctx, connection) {
+async function getD2SInfo(ctx, connection) {
+    var res = {}
+    var r1 = await getD2SInfo_p(ctx,connection)
+    var r2 = await getD2SInfo_t(ctx,connection)
+    if(r1.status == 200) {
+        var d1 = r1.data
+        for(var i=0;i<d1.length;i++) d1[i].role = 'pSeeker'
+    }
+    if(r2.status == 200) {
+        var d2 = r2.data
+        for(var i=0;i<d2.length;i++) d2[i].role = 'tSeeker'
+    }
+    if(r1.status == 200 && r2.status == 200) {
+        r1.data = r1.data.concat(r2.data)
+        res = r1
+    } else if(r1.status == 200) {
+        res = r1
+    } else if(r2.status == 200) {
+        res = r2
+    } else {
+        // 如果两个函数都拿不到数据，则将r1的值赋给res
+        res = r1
+    }
+    return res
+}
+
+function getD2SInfo_p(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
         var queryStr = "select * from D2SPush where pSeeker_openid='" + data.seeker_openid + "'"
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
+}
+
+function getD2SInfo_t(ctx, connection) {
+    return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var queryStr = "select * from D2SPush where tSeeker_openid='" + data.seeker_openid + "'"
         queryFromDB(resolve,reject,queryStr,connection)
     })
 }

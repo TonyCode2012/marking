@@ -11,7 +11,7 @@
  Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 28/01/2018 23:49:00
+ Date: 29/01/2018 23:47:46
 */
 
 SET NAMES utf8mb4;
@@ -26,8 +26,8 @@ CREATE TABLE `D2DPush`  (
   `pSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `tDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `tSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `start_time` date NULL DEFAULT NULL,
-  `status` int(1) NULL DEFAULT NULL,
+  `start_time` date NOT NULL,
+  `status` int(1) NOT NULL,
   `d2d_push_id` int(1) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`d2d_push_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
@@ -35,9 +35,9 @@ CREATE TABLE `D2DPush`  (
 -- ----------------------------
 -- Records of D2DPush
 -- ----------------------------
-INSERT INTO `D2DPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', NULL, NULL, 6);
-INSERT INTO `D2DPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', NULL, NULL, 7);
-INSERT INTO `D2DPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM2', NULL, NULL, 8);
+INSERT INTO `D2DPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', '2018-01-02', 0, 6);
+INSERT INTO `D2DPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', '2018-01-02', 0, 7);
+INSERT INTO `D2DPush` VALUES ('12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM2', '2018-01-02', 0, 8);
 
 -- ----------------------------
 -- Table structure for D2SPush
@@ -48,7 +48,7 @@ CREATE TABLE `D2SPush`  (
   `pSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `tDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `tSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `start_time` date NULL DEFAULT NULL,
+  `start_time` date NOT NULL,
   `status` int(1) NOT NULL DEFAULT 0,
   `d2s_push_id` int(16) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`d2s_push_id`) USING BTREE
@@ -57,8 +57,8 @@ CREATE TABLE `D2SPush`  (
 -- ----------------------------
 -- Records of D2SPush
 -- ----------------------------
-INSERT INTO `D2SPush` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', NULL, 0, 9);
-INSERT INTO `D2SPush` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', NULL, 0, 10);
+INSERT INTO `D2SPush` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', '2018-01-22', 0, 9);
+INSERT INTO `D2SPush` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', '2018-01-28', 0, 10);
 
 -- ----------------------------
 -- Table structure for DelegationShip
@@ -93,11 +93,11 @@ INSERT INTO `DelegationShip` VALUES (10, '123457', 'oHEkW0dNJwwjb3ete07iObpWGFcM
 DROP TABLE IF EXISTS `DelegatorInfo`;
 CREATE TABLE `DelegatorInfo`  (
   `open_id` varchar(40) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `gender` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `identity_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `wechat` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `phone_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `gender` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `identity_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `wechat` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `phone_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `wx_portraitAddr` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   PRIMARY KEY (`open_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
@@ -113,19 +113,18 @@ INSERT INTO `DelegatorInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'yaoz', 'mal
 -- ----------------------------
 DROP TABLE IF EXISTS `MatchContract`;
 CREATE TABLE `MatchContract`  (
-  `contract_address` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `delegatemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `delegatefemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `seekermale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `seekerfemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `reward` float(10, 0) NULL DEFAULT NULL,
-  `advance` float(4, 0) NULL DEFAULT NULL,
-  `status` int(1) NULL DEFAULT NULL,
-  `signature` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `signature_date` date NULL DEFAULT NULL,
-  `contract_id` int(1) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`contract_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  `contract_address` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `delegatemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `delegatefemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `seekermale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `seekerfemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `reward` float(10, 0) NOT NULL,
+  `advance` float(4, 0) NOT NULL,
+  `status` int(1) NOT NULL,
+  `signature` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `signature_date` date NOT NULL,
+  PRIMARY KEY (`contract_address`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for S2DPush
@@ -148,9 +147,9 @@ CREATE TABLE `S2DPush`  (
 DROP TABLE IF EXISTS `SeekerInfo`;
 CREATE TABLE `SeekerInfo`  (
   `open_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `age` int(11) NULL DEFAULT NULL,
-  `gender` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `age` int(11) NOT NULL,
+  `gender` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `height` int(11) NULL DEFAULT NULL,
   `weight` int(11) NULL DEFAULT NULL,
   `education` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -158,9 +157,9 @@ CREATE TABLE `SeekerInfo`  (
   `blood_type` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `portrait` mediumblob NULL,
   `wx_portraitAddr` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `identity_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `wechat` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `phone_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `identity_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `wechat` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `phone_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `life_photo` mediumblob NULL,
   `requirement` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `self_introduction` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -225,6 +224,6 @@ CREATE TABLE `cSessionInfo`  (
 -- ----------------------------
 -- Records of cSessionInfo
 -- ----------------------------
-INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'e9caf77b-8568-446c-b30d-c8b1cf91b966', '3ecf48a9f376bd76504048a12f947f3fa36a5001', '2018-01-28 22:49:01', '2018-01-28 22:49:01', 'w4m2R+VScze/EducAVuKQg==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1517150931,\"appid\":\"wx8727802679966793\"}}');
+INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'a8515bb0-c2c7-4d32-a1e1-ed8d82327753', '5b808e35b88d16a38d4379e63cc3a71fd5b3b757', '2018-01-29 22:12:09', '2018-01-29 22:12:09', '9x/8GHFqG4xDk1A4p6GV2w==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1517235129,\"appid\":\"wx8727802679966793\"}}');
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -19,9 +19,6 @@ Page({
             portrait:"",
             seekerOpenId:"",
             delegatorOpenId:"",
-            prePage: {},
-            prePageIndex: 0,
-            released: false
         },
         seekerInfo: {
             list: {

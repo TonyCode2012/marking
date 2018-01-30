@@ -48,6 +48,10 @@ var config = {
         // 插入信息
         insertD2SUrl: `${host}/weapp/insertD2S`,
         insertD2DUrl: `${host}/weapp/insertD2D`,
+        
+        /*****客户业务流程*****/
+        // 发送匹配请求
+        sendMatchAcceptUrl: `${host}/weapp/sendMatchAccept`,
 
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,

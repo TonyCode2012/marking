@@ -39,13 +39,17 @@ var getSReceivedPush = async function(ctx) {
 }
 
 async function getReceivedPush_r(ctx, role) {
+    var ctxData = urlParser.parse(ctx.originalUrl,true).query
+    var open_id = ''
     var resArry = []
     //var data = (role=='delegator'?await getD2DInfo(ctx,connection):await getD2SInfo(ctx,connection))
     var data = {}
     if(role == 'delegator') {
         data = await getD2DInfo(ctx,connection)
+        open_id = ctxData.delegator_openid
     } else if(role == 'seeker') {
         data = await getD2SInfo(ctx,connection)
+        open_id = ctxData.seeker_openid
     } else {
         console.log('please indicate role type(delegator/seeker)')
         return resArry
@@ -75,12 +79,15 @@ async function getReceivedPush_r(ctx, role) {
                 var delegatorInfo = {}
                 var seeker_openid = ''
                 var delegator_openid = ''
+                var myDelegator_openid = ''
                 if(item.role == 'pSeeker') {
                     seeker_openid = item.tSeeker_openid
                     delegator_openid = item.tDelegator_openid
+                    myDelegator_openid = item.pDelegator_openid
                 } else if(item.role == 'tSeeker') {
                     seeker_openid = item.pSeeker_openid
                     delegator_openid = item.pDelegator_openid
+                    myDelegator_openid = item.tDelegator_openid
                 } else {
                     console.log('please indicate seeker role type(pSeeker/tSeeker)')
                     continue
@@ -89,11 +96,15 @@ async function getReceivedPush_r(ctx, role) {
                 r2 = await getDelegatorPubInfo(delegator_openid,connection)
                 seekerInfo = (r1.status == 200 ? r1.data[0] : {})
                 delegatorInfo = (r2.status == 200 ? r2.data[0] : {})
-                seekerInfo.role = (item.role == 'pSeeker' ? 'tSeeker' : 'pSeeker')
-                delegatorInfo.role = (item.role == 'pSeeker' ? 'tDelegator' : 'pDelegator')
+                //seekerInfo.role = (item.role == 'pSeeker' ? 'tSeeker' : 'pSeeker')
+                //delegatorInfo.role = (item.role == 'pSeeker' ? 'tDelegator' : 'pDelegator')
                 tmpPush = {
                     receivedSInfo: seekerInfo,
-                    receivedDInfo: delegatorInfo
+                    receivedDInfo: delegatorInfo,
+                    seeker_openid: open_id,
+                    delegator_openid: myDelegator_openid,
+                    state: item.status,
+                    role: item.role
                 }
             }
     

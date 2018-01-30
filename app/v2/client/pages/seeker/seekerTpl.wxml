@@ -31,10 +31,10 @@
         </view>
         <!--view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view-->
         <view class="weui-btn-area" style="text-align:center">
-            <button class="weui-btn mini-btn" type="primary" bindtap="refuseMatch" hidden="{{type!='recvdPushInfo'}}"
+            <button class="weui-btn mini-btn" type="primary" bindtap="refuseMatch" hidden="{{type!='recvdPushInfo' || state == 3}}"
                 size="mini">拒绝匹配</button>
             <button class="weui-btn mini-btn" type="primary" bindtap="sendMatchReq" hidden="{{type!='recvdPushInfo'}}"
-                size="mini" style="margin-left:30%">发送匹配请求</button>
+                disabled="{{state == 3}}" size="mini" style="margin-left:30%">{{stateStr}}</button>
             <button class="weui-btn mini-btn" type="primary" bindtap="sendMatchReq" hidden="{{type!='messageList'}}"
                 size="mini" style="margin-left:30%">推送给红娘</button>
         </view>

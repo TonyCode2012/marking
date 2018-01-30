@@ -16,9 +16,14 @@ Page({
                 }
             },
             type:'recvdPushInfo',
-            portrait:"",
-            seekerOpenId:"",
-            delegatorOpenId:"",
+            state: 0,
+            stateStr: "发送匹配请求",
+            portrait: "",
+            pSOID: "",
+            pDOID: "",
+            tSOID: "",
+            tDOID: "",
+            role: ""
         },
         seekerInfo: {
             list: {
@@ -36,7 +41,7 @@ Page({
             seekerOpenId:"",
             delegatorOpenId:"",
             prePage: {},
-            prePageIndex: 0,
+            dataIndex: 0,
             released: false
         },
         messageList: {
@@ -56,7 +61,7 @@ Page({
             seekerOpenId:"",
             delegatorOpenId:"",
             prePage: {},
-            prePageIndex: 0,
+            dataIndex: 0,
             released: false
         },
         dataTpl: {
@@ -95,14 +100,14 @@ Page({
         var tn = JSON.parse(opt.tArry)
         var data = prePage.data.homePage.tabContent
         for(var i=0;i<tn.length;i++) {
-            var ti = tn[i]
-            //i==tn.length-1?data=data.list[ti]:data=data.list[ti].data
-            data = data.list[ti].data
+            data = data.list[tn[i]].data
         }
         data = data.list[index]
         this.setData({
             type: type
         })
+        // 赋值当前页面数据
+        var curPageData = data
         // 设置页面模板
         this.prepareTpl(type)
 
@@ -115,8 +120,7 @@ Page({
                 'seekerInfo.seekerOpenId': data.seeker_openId,
                 'seekerInfo.delegatorOpenId': data.delegator_openId,
                 'seekerInfo.released': data.is_release==0?false:true,
-                'seekerInfo.prePageIndex': index,
-                'seekerInfo.prePage': prePage
+                'seekerInfo.dataIndex': index,
             })
         } else if(type == 'messageList') {
             wx.setNavigationBarTitle({
@@ -127,27 +131,55 @@ Page({
                 'messageList.seekerOpenId': data.seeker_openId,
                 'messageList.SDOpenId': data.SD_openId,
                 'messageList.delegatorOpenId': data.delegator_openId,
-                'messageList.prePageIndex': index,
-                'messageList.prePage': prePage
+                'messageList.dataIndex': index,
             })
         } else if(type == 'recvdPushInfo') {
             wx.setNavigationBarTitle({
               title: '收到的推送'
             })
-            data = data.receivedSInfo
+            var recvdSData = data.receivedSInfo
+            var recvdDOpenid = data.receivedDInfo.open_id
+            var myDOID = data.delegator_openid
+            var mySOID = data.seeker_openid
+            var curRole = data.role
+            var state = data.state
+
+            // 设置匹配按键状态
+            this.setMatchStatus(state,curRole)
+
+            // 设置四方id
+            var pSOID = ''
+            var pDOID = ''
+            var tSOID = ''
+            var tDOID = ''
+            if(curRole == 'pSeeker') {
+                pSOID = mySOID
+                pDOID = myDOID
+                tSOID = recvdSData.open_id
+                tDOID = recvdDOpenid
+            } else if(curRole == 'tSeeker') {
+                pSOID = recvdSData.open_id
+                pDOID = recvdDOpenid
+                tSOID = mySOID
+                tDOID = myDOID
+            }
             this.setData({
-                'recvdPushInfo.portrait': data.wx_portraitAddr,
-                'recvdPushInfo.seekerOpenId': data.seeker_openId,
-                'recvdPushInfo.SDOpenId': data.SD_openId,
-                'recvdPushInfo.delegatorOpenId': data.delegator_openId,
-                'recvdPushInfo.prePageIndex': index,
-                'recvdPushInfo.prePage': prePage
+                'recvdPushInfo.portrait': recvdSData.wx_portraitAddr,
+                'recvdPushInfo.pSOID': pSOID,
+                'recvdPushInfo.pDOID': pDOID,
+                'recvdPushInfo.tSOID': tSOID,
+                'recvdPushInfo.tDOID': tDOID,
+                'recvdPushInfo.role': curRole,
+                'recvdPushInfo.state': state,
+                'recvdPushInfo.dataIndex': index,
             })
+            // 给当前页面数据赋值
+            curPageData = recvdSData
         } else {
             util.showModel('请给出正确的跳转参数!','error')
         }
-        data['type'] = type
-        this.setPageData(data)
+        curPageData['type'] = type
+        this.setPageData(curPageData)
     },
     prepareTpl: function(type) {
         // type的值:seekerInfo或者messageList
@@ -189,58 +221,46 @@ Page({
 
 
 
+    //--------------- RecvdPushInfo Page functions -----------------//
+    // 设置匹配按键状态
+    setMatchStatus(state,role) {
+        var stateStr = ''
+        if(state == 1){
+            if(role == 'pSeeker') {
+                stateStr = '请求已发送'
+            } else {
+                stateStr = '是否同意匹配'
+            }
+        } else if(state == 2) {
+            if(role == 'pSeeker') {
+                stateStr = '是否同意匹配'
+            } else {
+                stateStr = '请求已发送'
+            }
+        } else if(state == 3) {
+            stateStr = '对方已拒绝'
+        } else return
+        this.setData({
+            'recvdPushInfo.stateStr': stateStr
+        })
+    },
     // 发送匹配请求
     sendMatchReq(opt) {
-    },
-    // 发布与取消发布
-    release: function(opt) {
-        var that = this
+        var data = this.data.recvdPushInfo
         wx.request({
-            url: config.service.pushSeekerUrl,
+            url: config.service.sendMatchAcceptUrl,
             data: {
-                id: '12345' +  that.data.seekerInfo.seekerOpenId
+                queryData: {
+                    pSeeker_openid: data.pSOID,
+                    pDelegator_openid: data.pDOID,
+                    tSeeker_openid: data.tSOID,
+                    tDelegator_openid: data.tDOID,
+                },
+                role: data.role
             },
             success: function(res) {
-                util.showSuccess('发布成功')
-                var index = that.data.seekerInfo.prePageIndex
-                var type = that.data.type
-                that.data[type].prePage.setData({
-                    ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 1
-                })
-                that.setData({
-                    [type+'.released']: true
-                })
+                util.showSuccess('成功')
             }
         })
     },
-    cancelRelease: function(opt) {
-        var that = this
-        wx.request({
-            url: config.service.cancelPushSeekerUrl,
-            data: {
-                id: '12345' +  that.data.seekerInfo.seekerOpenId
-            },
-            success: function(res) {
-                util.showSuccess('取消发布成功')
-                var index = that.data.seekerInfo.prePageIndex
-                var type = that.data.type
-                that.data[type].prePage.setData({
-                    ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 0
-                })
-                that.setData({
-                    [type+'.released']: false
-                })
-            }
-        })
-    },
-    // 推送其他红娘的客户给自己客户
-    go2SelectPage: function(opt) {
-        var that = this
-        var type = that.data.type
-        wx.navigateTo({
-            url: './send2Seeker?data='+JSON.stringify(that.data[type].pushedSeekerInfo),
-            success: function(res) {
-            }
-        })
-    }
 })

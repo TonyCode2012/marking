@@ -14,6 +14,13 @@ var connection = mysql.createConnection({
 
 connection.connect()
 
+var setMatchAccept = async function(ctx) {
+    var result = await setMatch_r(ctx,connection)
+    ctx.state.data = {
+        result: result
+    }
+}
+
 var updateInfo = async function(ctx) {
     var result = await updateInfo_r(ctx,connection)
     ctx.state.data = {
@@ -33,6 +40,30 @@ var pushSeekerInfo = async function(ctx) {
     ctx.state.data = {
         result: result
     }
+}
+
+function setMatch_r(ctx,connection) {
+    return new Promise(function (resolve, reject) {
+    
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var role = data.role
+        var queryData = data.queryData
+        var cdStr = util.getConditionAll(JSON.parse(queryData),'and')
+        var state = (role == 'pSeeker' ? 1 : 2)
+        var queryStr = "update D2SPush set status='" + state + "' where " + cdStr
+    
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
+}
+
+function updateD2SStatus(id,state,connection) {
+    return new Promise(function (resolve, reject) {
+    
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var queryStr = "update D2SPush set status='"+state+"' where delegationship_id='" + data.id + "'"
+    
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
 }
 
 function cancelPushSeekerInfo_r(ctx, connection) {
@@ -106,5 +137,6 @@ function queryFromDB(resolve, reject, queryStr, connection) {
 module.exports = {
     updateInfo: updateInfo,
     pushSeekerInfo: pushSeekerInfo,
-    cancelPushSeekerInfo: cancelPushSeekerInfo
+    cancelPushSeekerInfo: cancelPushSeekerInfo,
+    setMatchAccept: setMatchAccept
 }

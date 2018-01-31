@@ -33,8 +33,8 @@
         <view class="weui-btn-area" style="text-align:center">
             <button class="weui-btn mini-btn" type="primary" bindtap="refuseMatch" hidden="{{type!='recvdPushInfo' || state == 3}}"
                 size="mini">拒绝匹配</button>
-            <button class="weui-btn mini-btn" type="primary" bindtap="sendMatchReq" hidden="{{type!='recvdPushInfo'}}"
-                disabled="{{state == 3}}" size="mini" style="margin-left:30%">{{stateStr}}</button>
+            <button class="weui-btn mini-btn" type="{{btn.stateBtn.type}}" bindtap="sendMatchReq" hidden="{{btn.stateBtn.hidden}}"
+                disabled="{{btn.stateBtn.disable}}" size="mini" style="margin-left:30%">{{btn.stateBtn.btnStr}}</button>
             <button class="weui-btn mini-btn" type="primary" bindtap="sendMatchReq" hidden="{{type!='messageList'}}"
                 size="mini" style="margin-left:30%">推送给红娘</button>
         </view>

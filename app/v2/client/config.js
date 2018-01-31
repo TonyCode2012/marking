@@ -28,6 +28,8 @@ var config = {
 
         // 获取User信息
         getUserInfoUrl: `${host}/weapp/getUserInfo`,
+        getSeekerInfoUrl: `${host}/weapp/getSeekerInfo`,
+        getDelegatorInfoUrl: `${host}/weapp/getDelegatorInfo`,
 
         // 更新User信息
         updateUserInfoUrl: `${host}/weapp/updateUserInfo`,

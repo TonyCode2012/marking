@@ -158,10 +158,22 @@ var getMessageList = async function(ctx) {
     }
 }
 
+var getSeekerInfo = async function(ctx) {
+    var result = await getSeekerInfo_r(ctx,connection)
+    ctx.state.data = {
+        result: result
+    }
+}
+
+var getDelegatorInfo = async function(ctx) {
+    var result = await getDelegatorInfo_r(ctx,connection)
+    ctx.state.data = {
+        result: result
+    }
+}
+
 var getUserInfo = async function(ctx) {
-
     var result = await getUserInfo_r(ctx,connection)
-
     ctx.state.data = {
         result: result
     }
@@ -236,18 +248,42 @@ function getD2SInfo_t(ctx, connection) {
     })
 }
 
+// 获取角色信息 \\
+function getDelegatorInfo_r(ctx, connection) {
+    return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+
+        var openId = data.open_id
+        var queryStr = "select * from DelegatorInfo where open_id='" + openId + "'"
+
+        queryFromDB(resolve, reject, queryStr,connection)
+    })
+}
+
+function getSeekerInfo_r(ctx, connection) {
+    return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+
+        var openId = data.open_id
+        var queryStr = "select * from SeekerInfo where open_id='" + openId + "'"
+
+        queryFromDB(resolve, reject, queryStr,connection)
+    })
+}
+
 function getUserInfo_r(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
 
         var openId = data.open_id
-        var tableId = ''
-        switch(data.role) {
-            case 'user': tableId='User';break;
-            case 'seeker': tableId='SeekerInfo';break;
-            case 'delegator': tableId='DelegatorInfo';break;
-        }
-        var queryStr = "select * from " + tableId + " where open_id='" + openId + "'"
+        //var tableId = ''
+        //switch(data.role) {
+        //    case 'user': tableId='User';break;
+        //    case 'seeker': tableId='SeekerInfo';break;
+        //    case 'delegator': tableId='DelegatorInfo';break;
+        //}
+        //var queryStr = "select * from " + tableId + " where open_id='" + openId + "'"
+        var queryStr = "select * from User where open_id='" + openId + "'"
 
         queryFromDB(resolve, reject, queryStr,connection)
     })
@@ -322,6 +358,8 @@ function queryFromDB(resolve, reject, queryStr, connection) {
 
 module.exports = {
     getUserInfo: getUserInfo,
+    getSeekerInfo: getSeekerInfo,
+    getDelegatorInfo: getDelegatorInfo,
     getDTaskInfo: getDTaskInfo,
     getMessageList: getMessageList,
     getMySeeker: getMySeeker,

@@ -138,8 +138,13 @@ Page(extend({}, Tab, {
         var that = this;
         // 获取转发邀请的用户信息
         try {
-            var roleUserInfo = wx.getStorageSync('roleUserInfo')
-            var wxUserInfo = wx.getStorageSync('wxUserInfo')
+            //var roleUserInfo = wx.getStorageSync('roleUserInfo')
+            //var wxUserInfo = wx.getStorageSync('wxUserInfo')
+            
+            // 演示使用数据
+            var roleUserInfo = this.getDemoRoleInfo(opt.openId)
+            var wxUserInfo = this.getDemoWxInfo(opt.openId)
+
             var transSceneInfo = wx.getStorageSync('transSceneInfo')
             wxUserInfo = wxUserInfo.data.data
             if(roleUserInfo && roleUserInfo.registered){
@@ -215,6 +220,31 @@ Page(extend({}, Tab, {
             }
         }
     },
+
+
+
+    //--------------- for demo  -----------------//
+    getDemoRoleInfo(openId) {
+        wx.request({
+            url: config.service.getSeekerInfoUrl,
+            data: {
+                open_id: openId
+            },
+            success: function(res) {
+            }
+        })
+    },
+    getDemoWxInfo(openId) {
+        wx.request({
+            url: config.service.getUserInfoUrl,
+            data: {
+                open_id: openId
+            },
+            success: function(res) {
+            }
+        })
+    },
+
 
 
     //--------------- both Page functions -----------------//

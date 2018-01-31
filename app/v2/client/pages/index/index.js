@@ -209,7 +209,7 @@ Page({
             success: function(res) {
                 if(res.data.data.result.errno == 1062) {
                     // 如果重复注册，说明之前用户已经注册过,则尝试获取对应用户(seeker/delegator)的信息
-                    var role = (opt.role == undefined)?'seeker':opt.role    // 进行场景判断
+                    var role = (opt.role == undefined ? 'seeker' : opt.role)    // 进行场景判断
                     wx.request({
                         url: config.service.getUserInfoUrl,
                         data: {

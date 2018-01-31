@@ -16,8 +16,19 @@ Page({
                 }
             },
             type:'recvdPushInfo',
+            btn: {
+                refuseBtn: {
+                    disable: false,
+                    hidden: true
+                },
+                stateBtn: {
+                    btnStr: "发送匹配请求",
+                    type: "primary",
+                    disable: false,
+                    hidden: true
+                }
+            },
             state: 0,
-            stateStr: "发送匹配请求",
             portrait: "",
             pSOID: "",
             pDOID: "",
@@ -224,28 +235,43 @@ Page({
     //--------------- RecvdPushInfo Page functions -----------------//
     // 设置匹配按键状态
     setMatchStatus(state,role) {
-        var stateStr = ''
-        if(state == 1){
+        var stateBtnStr = '发送匹配请求'
+        var stateBtnType = 'primary'
+        var stateBtnHidden = false
+        var stateBtnDisable = false
+        if(state == 0) {
+            stateBtnStr = '发送匹配请求'
+        } else if(state == 1) {
             if(role == 'pSeeker') {
-                stateStr = '请求已发送'
+                stateBtnStr = '请求已发送'
+                stateBtnType = 'default'
+                stateBtnDisable = true
             } else {
-                stateStr = '是否同意匹配'
+                stateBtnStr = '是否同意匹配'
             }
         } else if(state == 2) {
             if(role == 'pSeeker') {
-                stateStr = '是否同意匹配'
+                stateBtnStr = '是否同意匹配'
             } else {
-                stateStr = '请求已发送'
+                stateBtnStr = '请求已发送'
+                stateBtnType = 'default'
+                stateBtnDisable = true
             }
         } else if(state == 3) {
-            stateStr = '对方已拒绝'
-        } else return
+            stateBtnStr = '对方已拒绝'
+            stateBtnType = 'default'
+            stateBtnDisable = true
+        }
         this.setData({
-            'recvdPushInfo.stateStr': stateStr
+            'recvdPushInfo.btn.stateBtn.btnStr': stateBtnStr,
+            'recvdPushInfo.btn.stateBtn.type': stateBtnType,
+            'recvdPushInfo.btn.stateBtn.hidden': stateBtnHidden,
+            'recvdPushInfo.btn.stateBtn.disable': stateBtnDisable,
         })
     },
     // 发送匹配请求
     sendMatchReq(opt) {
+        var that = this
         var data = this.data.recvdPushInfo
         wx.request({
             url: config.service.sendMatchAcceptUrl,
@@ -259,7 +285,9 @@ Page({
                 role: data.role
             },
             success: function(res) {
-                util.showSuccess('成功')
+                var role = data.role
+                var state = (role == 'pSeeker' ? 1 : 2)
+                that.setMatchStatus(state,role)
             }
         })
     },

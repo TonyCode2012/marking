@@ -80,9 +80,6 @@ Page(extend({}, Tab, {
                 identityInfo: {title:'身份识别信息', mode:'register', data:{}}
             }
         },
-        registered: false,
-        nonRegInfo: {verifyCode:'y'},
-        wxUserInfo: {},
         dataTpl: {
             identityInfo: {
                 name: {title: '姓名', placeHolder: '请输入您的姓名', value: ''},
@@ -107,7 +104,11 @@ Page(extend({}, Tab, {
                 requirement: {title:'我的要求', type:'textarea', placeHolder:'请输入您的要求', value:''},
                 reward: {title:'悬赏金额', placeHolder:'请输入您的悬赏金额', value:'', valueType:'人民币'}
             }
-        }
+        },
+        registered: false,
+        nonRegInfo: {verifyCode:'y'},
+        wxUserInfo: {},
+        roleUserInfo: {}
     },
     onShareAppMessage: function (res) {
         if (res.from === 'button') {
@@ -134,8 +135,19 @@ Page(extend({}, Tab, {
           title: '我是红娘'
         })
         var that = this;
+
+        // 演示数据 start {
+        var openId = opt.openId
+        var roleUserInfo = this.getDemoRoleInfo(openId)
+        var wxUserInfo = this.getDemoWxInfo(openId)
+        that.setData({
+            registered: true
+        })
+        // } end
+
+
         // 获取转发邀请的用户信息
-        try {
+        /*try {
             var roleUserInfo = wx.getStorageSync('roleUserInfo')
             var wxUserInfo = wx.getStorageSync('wxUserInfo')
             wxUserInfo = wxUserInfo.data.data
@@ -154,10 +166,10 @@ Page(extend({}, Tab, {
         } catch(e) {
             that.setRegisterPage()
             util.showModel('get role user info failed!',JSON.stringify(e))
-        }
+        }*/
         // 初始化信息
-        that.getReceivedPush()  // 获取当前红娘收到的推送
-        that.getSeekerInfo()    // 获取红娘任务
+        that.getReceivedPush(openId)  // 获取当前红娘收到的推送
+        that.getTask(openId)          // 获取红娘任务
         that.getMessageList()   // 获取信息发布榜信息
         that.setData({
             title: opt.title
@@ -216,6 +228,38 @@ Page(extend({}, Tab, {
     },
 
 
+
+    //--------------- for demo  -----------------//
+    getDemoRoleInfo(openId) {
+        var that = this
+        wx.request({
+            url: config.service.getSeekerInfoUrl,
+            data: {
+                open_id: openId
+            },
+            success: function(res) {
+                that.setData({
+                    'homePage.roleUserInfo': res.data.data.result
+                })
+            }
+        })
+    },
+    getDemoWxInfo(openId) {
+        var that = this
+        wx.request({
+            url: config.service.getUserInfoUrl,
+            data: {
+                open_id: openId
+            },
+            success: function(res) {
+                that.setData({
+                    'homePage.wxUserInfo': res.data.data.result
+                })
+            }
+        })
+    },
+
+
     //---------------both Page functions -----------------//
     getInputVal: function(opt) {
         var curInfoType = opt.currentTarget.dataset.infotype
@@ -233,12 +277,13 @@ Page(extend({}, Tab, {
 
     //--------------- Home Page functions -----------------//
     /*从数据库获取相关数据*/
-    getSeekerInfo() {
+    // 获取客户信息
+    getTask(openId) {
         var that = this
         wx.request({
             url: config.service.getDTaskInfoUrl,
             data: {
-                delegator_openId: '12345',
+                delegator_openId: openId,
             },
             success: function(res) {
                 var data = res.data.data.result

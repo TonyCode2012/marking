@@ -142,14 +142,20 @@ var getMySeeker = async function(ctx) {
 var getMessageList = async function(ctx) {
 
     var data = await getMessageList_r(connection)
-    var idArry = data.data
     var resArry = []
-    for(var i=0;i<idArry.length;i++) {
-        var queryStr = "select " + seekerPubInfoItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
-        var result = await getSeekerInfo_r(queryStr,connection)
-        result.data[0]['delegator_openId'] = idArry[i].delegator_openId // 获取对方代理人id
-        if(result.data) {
-            resArry.push(result.data[0])
+    if(data.status == 200) {
+        var idArry = data.data
+        for(var i=0;i<idArry.length;i++) {
+            var queryStr = "select " + seekerPubInfoItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
+            var result = await getSeekerInfo_r(queryStr,connection)
+            if(result.status == 200) {
+                result.data[0]['delegator_openId'] = idArry[i].delegator_openId // 获取对方代理人id
+                if(result.data) {
+                    resArry.push(result.data[0])
+                }
+            } else {
+                console.log("message list: get seeker info failed!")
+            }
         }
     }
 
@@ -182,14 +188,16 @@ var getUserInfo = async function(ctx) {
 var getDTaskInfo = async function(ctx) {
 
     var data = await getDTaskInfo_r(ctx,connection)
-    var idArry = data.data
     var resArry = []
-    for(var i=0;i<idArry.length;i++) {
-        var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "'"
-        var result = await getSeekerInfo_r(queryStr,connection)
-        if(result.data) {
-            result.data[0]['is_release'] = idArry[i]['is_release']
-            resArry.push(result.data[0])
+    if(data.status == 200) {
+        var idArry = data.data
+        for(var i=0;i<idArry.length;i++) {
+            var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public=1"
+            var result = await getSeekerInfo_r(queryStr,connection)
+            if(result.status == 200) {
+                result.data[0]['is_release'] = idArry[i]['is_release']
+                resArry.push(result.data[0])
+            }
         }
     }
 

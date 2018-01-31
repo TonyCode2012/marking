@@ -136,21 +136,28 @@ Page(extend({}, Tab, {
           title: '我要找对象'
         })
         var that = this;
-        // 获取转发邀请的用户信息
-        try {
-            //var roleUserInfo = wx.getStorageSync('roleUserInfo')
-            //var wxUserInfo = wx.getStorageSync('wxUserInfo')
-            
-            // 演示使用数据
-            var roleUserInfo = this.getDemoRoleInfo(opt.openId)
-            var wxUserInfo = this.getDemoWxInfo(opt.openId)
 
+        // 演示流程 start {
+        var demoOpenid = opt.openId
+        var roleUserInfo = this.getDemoRoleInfo(demoOpenid)
+        var wxUserInfo = this.getDemoWxInfo(demoOpenid)
+        that.setData({
+            registered: true
+        })
+
+        // } end
+
+
+        // 获取转发邀请的用户信息
+        /*try {
+            var roleUserInfo = wx.getStorageSync('roleUserInfo')
+            var wxUserInfo = wx.getStorageSync('wxUserInfo')
             var transSceneInfo = wx.getStorageSync('transSceneInfo')
             wxUserInfo = wxUserInfo.data.data
             if(roleUserInfo && roleUserInfo.registered){
                 that.setHomePage(roleUserInfo.data)
                 that.setData({
-                    'homePage.wxUserInfo': wxUserInfo,
+                    //'homePage.wxUserInfo': wxUserInfo,
                     'homePage.transSceneInfo': transSceneInfo,
                     'registered': true
                 })
@@ -165,7 +172,7 @@ Page(extend({}, Tab, {
         } catch(e) {
             that.setRegisterPage()
             util.showModel('get user info failed!',JSON.stringify(e))
-        }
+        }*/
         this.getReceivedPush()
         this.getMessageList()
         that.setData({
@@ -225,22 +232,30 @@ Page(extend({}, Tab, {
 
     //--------------- for demo  -----------------//
     getDemoRoleInfo(openId) {
+        var that = this
         wx.request({
             url: config.service.getSeekerInfoUrl,
             data: {
                 open_id: openId
             },
             success: function(res) {
+                that.setData({
+                    'homePage.roleUserInfo': res.data.data.result
+                })
             }
         })
     },
     getDemoWxInfo(openId) {
+        var that = this
         wx.request({
             url: config.service.getUserInfoUrl,
             data: {
                 open_id: openId
             },
             success: function(res) {
+                that.setData({
+                    'homePage.wxUserInfo': res.data.data.result
+                })
             }
         })
     },

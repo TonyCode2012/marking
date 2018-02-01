@@ -17,8 +17,8 @@ Page({
             },
             type:'seekerInfo',
             portrait:"",
-            seekerOpenId:"",
-            delegatorOpenId:"",
+            seeker_openid:"",
+            delegator_openid:"",
             prePage: {},
             prePageIndex: 0,
             released: false
@@ -37,8 +37,8 @@ Page({
             type:'messageList',
             portrait:"",
             pushedSeekerInfo: {},
-            seekerOpenId:"",
-            delegatorOpenId:"",
+            seeker_openid:"",
+            delegator_openid:"",
             prePage: {},
             prePageIndex: 0,
             released: false
@@ -88,8 +88,8 @@ Page({
             })
             this.setData({
                 'seekerInfo.portrait': data.wx_portraitAddr,
-                'seekerInfo.seekerOpenId': data.seeker_openId,
-                'seekerInfo.delegatorOpenId': data.delegator_openId,
+                'seekerInfo.seeker_openid': data.seeker_openid,
+                'seekerInfo.delegator_openid': data.delegator_openid,
                 'seekerInfo.released': data.is_release==0?false:true,
                 'seekerInfo.prePageIndex': index,
                 'seekerInfo.prePage': prePage
@@ -100,9 +100,9 @@ Page({
             })
             this.setData({
                 'messageList.portrait': data.wx_portraitAddr,
-                'messageList.seekerOpenId': data.seeker_openId,
+                'messageList.seeker_openid': data.seeker_openId,
                 'messageList.SDOpenId': data.SD_openId,
-                'messageList.delegatorOpenId': data.delegator_openId,
+                'messageList.delegator_openid': data.delegator_openId,
                 'messageList.prePageIndex': index,
                 'messageList.prePage': prePage
             })
@@ -155,7 +155,7 @@ Page({
         wx.request({
             url: config.service.pushSeekerUrl,
             data: {
-                id: '12345' +  that.data.seekerInfo.seekerOpenId
+                id: '12345' +  that.data.seekerInfo.seeker_openid
             },
             success: function(res) {
                 util.showSuccess('发布成功')
@@ -175,7 +175,7 @@ Page({
         wx.request({
             url: config.service.cancelPushSeekerUrl,
             data: {
-                id: '12345' +  that.data.seekerInfo.seekerOpenId
+                id: '12345' +  that.data.seekerInfo.seeker_openid
             },
             success: function(res) {
                 util.showSuccess('取消发布成功')
@@ -194,8 +194,9 @@ Page({
     go2SelectPage: function(opt) {
         var that = this
         var type = that.data.type
+        var open_id = that.data[type].delegator_openid
         wx.navigateTo({
-            url: './send2Seeker?data='+JSON.stringify(that.data[type].pushedSeekerInfo),
+            url: './send2Seeker?data='+JSON.stringify(that.data[type].pushedSeekerInfo)+'&delegator_openid='+open_id,
             success: function(res) {
             }
         })

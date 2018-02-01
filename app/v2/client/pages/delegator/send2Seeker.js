@@ -33,7 +33,7 @@ Page(Object.assign({}, Zan.CheckLabel, {
         var that = this
         // 设置当前红娘id
         var data = JSON.parse(opt.data)
-        var delegator_openId = data.delegator_openId
+        var delegator_openid = opt.delegator_openid
         this.setData({
             messageData: data
         })
@@ -41,7 +41,7 @@ Page(Object.assign({}, Zan.CheckLabel, {
         wx.request({
             url: config.service.getMySeekerUrl,
             data: {
-                delegator_openId: 12345
+                delegator_openid: delegator_openid
             },
             success: function(res) {
                 var data = res.data.data.result
@@ -107,9 +107,9 @@ Page(Object.assign({}, Zan.CheckLabel, {
             var id = checkedSeekerId[i]
             var seeker_openId = items[id]['open_id']
             var tmpData = {
-                pDelegator_openid: messageData.MD_openId,
+                pdelegator_openid: messageData.MD_openId,
                 pSeeker_openid: messageData.MS_openId,
-                tDelegator_openid: messageData.delegator_openId,
+                tdelegator_openid: messageData.delegator_openid,
                 tSeeker_openid: seeker_openId
             }
             insertData.push(tmpData)

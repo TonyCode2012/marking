@@ -239,7 +239,7 @@ Page(extend({}, Tab, {
             },
             success: function(res) {
                 that.setData({
-                    'homePage.roleUserInfo': res.data.data.result
+                    'homePage.roleUserInfo': res.data.data.result.data[0]
                 })
             }
         })
@@ -253,7 +253,7 @@ Page(extend({}, Tab, {
             },
             success: function(res) {
                 that.setData({
-                    'homePage.wxUserInfo': res.data.data.result
+                    'homePage.wxUserInfo': res.data.data.result.data[0]
                 })
             }
         })
@@ -283,7 +283,7 @@ Page(extend({}, Tab, {
         wx.request({
             url: config.service.getDTaskInfoUrl,
             data: {
-                delegator_openId: openId,
+                delegator_openid: openId,
             },
             success: function(res) {
                 var data = res.data.data.result
@@ -325,8 +325,8 @@ Page(extend({}, Tab, {
     goTaskDetail(opt) {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
-        data['seeker_openId'] = data['open_id']
-        data['delegator_openId'] =  this.data.wxUserInfo.openId
+        data['seeker_openid'] = data['open_id']
+        data['delegator_openid'] =  this.data.homePage.wxUserInfo.open_id
         wx.navigateTo({
             url: './seekerDetail?type=seekerInfo&data='+JSON.stringify(data)+'&index='+index,
             success: function(res) {

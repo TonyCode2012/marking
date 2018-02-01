@@ -300,7 +300,7 @@ function getUserInfo_r(ctx, connection) {
 function getDTaskInfo_r(ctx,connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
-        var queryStr = "select * from DelegationShip where delegator_openId='" + data.delegator_openId + "'"
+        var queryStr = "select * from DelegationShip where delegator_openId='" + data.delegator_openid + "'"
 
         queryFromDB(resolve, reject, queryStr,connection)
     })

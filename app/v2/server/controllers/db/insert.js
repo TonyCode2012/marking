@@ -3,6 +3,7 @@ var mysql = require('mysql')
 var urlParser = require('url')
 var queryString  = require("querystring");
 var util = require('./util')
+var sd = require('silly-datetime');
 
 
 var connection = mysql.createConnection({
@@ -55,17 +56,20 @@ var insertD2S = function(ctx) {
 
 var insertRelation = async function(ctx,tableId) {
     var dataList = urlParser.parse(ctx.originalUrl,true).query.insertArry
-    var dataList = JSON.parse(dataList)
+    dataList = JSON.parse(dataList)
     var resArry = []
     for(var i=0;i<dataList.length;i++) {
-        var kvPair = util.getJSONKeyVal(dataList[i])
         var cdStr = util.getCondition(dataList[i],allIDFields,'and')
         var data = {
             condition: cdStr,
             tableId: tableId
         }
-        var res_f = await confirmNODup(cdStr,connection)
+        var res_f = await confirmNODup(data,connection)
         if(res_f.data.length == 0) {
+            var time = sd.format(new Date(),'YYYY-MM-DD HH:mm:ss');
+            dataList[i].status = 0
+            dataList[i].start_time = time
+            var kvPair = util.getJSONKeyVal(dataList[i])
             var res = await insertRelation_r(tableId,kvPair,connection)
             resArry.push(res)
         } else {

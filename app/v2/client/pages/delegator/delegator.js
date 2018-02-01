@@ -239,7 +239,7 @@ Page(extend({}, Tab, {
             },
             success: function(res) {
                 that.setData({
-                    'homePage.roleUserInfo': res.data.data.result.data[0]
+                    'homePage.roleUserInfo': res.data.data.result
                 })
             }
         })
@@ -325,10 +325,15 @@ Page(extend({}, Tab, {
     goTaskDetail(opt) {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
-        data['seeker_openid'] = data['open_id']
-        data['delegator_openid'] =  this.data.homePage.wxUserInfo.open_id
+        var eData = {
+            seeker_openid: data['open_id'],
+            delegator_openid: this.data.homePage.wxUserInfo.open_id,
+            index: index,
+            type: 'seekerInfo',
+            tArry: ["myTask"]
+        }
         wx.navigateTo({
-            url: './seekerDetail?type=seekerInfo&data='+JSON.stringify(data)+'&index='+index,
+            url: './seekerDetail?data='+JSON.stringify(eData),
             success: function(res) {
             }
         })
@@ -337,11 +342,16 @@ Page(extend({}, Tab, {
     goMessageDetail(opt) {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
-        data['MS_openId'] = data['open_id']     // 发布信息的seeker id
-        data['MD_openId'] = data['delegator_openId']    // 发布信息的seeker的红娘id
-        data['delegator_openId'] =  this.data.wxUserInfo.openId     // 当前红娘id
+        var eData = {
+            delegator_openid: this.data.homePage.wxUserInfo.open_id,
+            MS_openid: data['open_id'],         // 发布信息的seeker id
+            MD_openid: data['delegator_openid'],// 发布信息的seeker的红娘id
+            index: index,
+            type: 'messageList',
+            tArry: ["messageList"]
+        }
         wx.navigateTo({
-            url: './seekerDetail?type=messageList&data='+JSON.stringify(data)+'&index='+index,
+            url: './seekerDetail?data='+JSON.stringify(eData),
             success: function(res) {
             }
         })

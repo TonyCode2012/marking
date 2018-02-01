@@ -34,7 +34,7 @@ var getCondition = function(data,fields,type) {
     for(var i=0;i<fields.length;i++) {
         var field = fields[i]
         var val = data[field] 
-        cdStr = cdStr + key + "='" + val + "' and "
+        cdStr = cdStr + field + "='" + val + "' and "
     }
     //for(var i=0;i<keyArry.length;i++) {
     //    var key = keyArry[i]

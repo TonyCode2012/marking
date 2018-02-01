@@ -26,16 +26,20 @@ Page(Object.assign({}, Zan.CheckLabel, {
         },    
         activeColor: '#4b0',
         checkAll: false,
-        messageData: {}
+        delegator_openid: "",
+        MS_openid: "",
+        MD_openid: ""
     },
 
     onLoad: function(opt) {
         var that = this
         // 设置当前红娘id
         var data = JSON.parse(opt.data)
-        var delegator_openid = opt.delegator_openid
+        var delegator_openid = data.delegator_openid
         this.setData({
-            messageData: data
+            delegator_openid: data.delegator_openid,
+            MS_openid: data.MS_openid,
+            MD_openid: data.MD_openid
         })
         // 获取当前红娘的客户
         wx.request({
@@ -98,7 +102,6 @@ Page(Object.assign({}, Zan.CheckLabel, {
     //pushS2S: function(opt) {
     // 查看信息发布榜后将自己客户的信息推介给对方红娘
     pushS2D: function(opt) {
-        var messageData = this.data.messageData
         var checkedSeekerId = this.data.checked['color']
         checkedSeekerId = Object.keys(checkedSeekerId)
         var insertData = []
@@ -107,10 +110,10 @@ Page(Object.assign({}, Zan.CheckLabel, {
             var id = checkedSeekerId[i]
             var seeker_openId = items[id]['open_id']
             var tmpData = {
-                pdelegator_openid: messageData.MD_openId,
-                pSeeker_openid: messageData.MS_openId,
-                tdelegator_openid: messageData.delegator_openid,
-                tSeeker_openid: seeker_openId
+                pDelegator_openid: this.data.delegator_openid,
+                pSeeker_openid: seeker_openId,
+                tDelegator_openid: this.data.MD_openid,
+                tSeeker_openid: this.data.MS_openid
             }
             insertData.push(tmpData)
         }

@@ -19,7 +19,6 @@ Page({
             portrait:"",
             seeker_openid:"",
             delegator_openid:"",
-            prePage: {},
             prePageIndex: 0,
             released: false
         },
@@ -39,7 +38,8 @@ Page({
             pushedSeekerInfo: {},
             seeker_openid:"",
             delegator_openid:"",
-            prePage: {},
+            MS_openid:"",           // 发布信息的seeker openid
+            MD_openid:"",           // 发布信息的delegator openid
             prePageIndex: 0,
             released: false
         },
@@ -70,17 +70,24 @@ Page({
     },
 
     onLoad: function(opt) {
-        var data = JSON.parse(opt.data)
+        opt = JSON.parse(opt.data)
         var index = opt.index
         var type = opt.type
         this.setData({
-            [type+'.pushedSeekerInfo']: data,
             type: type
         })
-        this.prepareTpl(type)
-        // 获取上一个页面的数据引用
-        var pages = getCurrentPages()
+        this.prepareTpl(type)   // 设置页面模板
+        // 获取当前使用的数据
+        var pages = getCurrentPages()       // 获取上一个页面的数据引用
         var prePage = pages[pages.length-2]
+        var tn = opt.tArry
+        var data = prePage.data.homePage.tabContent
+        for(var i=0;i<tn.length;i++) {
+            data = data.list[tn[i]].data
+        }
+        data = data.list[index]
+        // 赋值当前页面数据
+        var curPageData = data
 
         if(type == 'seekerInfo') {
             wx.setNavigationBarTitle({
@@ -88,11 +95,10 @@ Page({
             })
             this.setData({
                 'seekerInfo.portrait': data.wx_portraitAddr,
-                'seekerInfo.seeker_openid': data.seeker_openid,
-                'seekerInfo.delegator_openid': data.delegator_openid,
+                'seekerInfo.seeker_openid': opt.seeker_openid,
+                'seekerInfo.delegator_openid': opt.delegator_openid,
                 'seekerInfo.released': data.is_release==0?false:true,
                 'seekerInfo.prePageIndex': index,
-                'seekerInfo.prePage': prePage
             })
         } else if(type == 'messageList') {
             wx.setNavigationBarTitle({
@@ -100,11 +106,11 @@ Page({
             })
             this.setData({
                 'messageList.portrait': data.wx_portraitAddr,
-                'messageList.seeker_openid': data.seeker_openId,
-                'messageList.SDOpenId': data.SD_openId,
-                'messageList.delegator_openid': data.delegator_openId,
+                'messageList.seeker_openid': opt.seeker_openid,
+                'messageList.delegator_openid': opt.delegator_openid,
+                'messageList.MS_openid': opt.MS_openid,
+                'messageList.MD_openid': opt.MD_openid,
                 'messageList.prePageIndex': index,
-                'messageList.prePage': prePage
             })
         } else {
             util.showModel('请给出正确的跳转参数!','error')
@@ -194,9 +200,13 @@ Page({
     go2SelectPage: function(opt) {
         var that = this
         var type = that.data.type
-        var open_id = that.data[type].delegator_openid
+        var eData = {
+            delegator_openid: that.data[type].delegator_openid,
+            MS_openid: that.data[type].MS_openid,
+            MD_openid: that.data[type].MD_openid,
+        }
         wx.navigateTo({
-            url: './send2Seeker?data='+JSON.stringify(that.data[type].pushedSeekerInfo)+'&delegator_openid='+open_id,
+            url: './send2Seeker?data='+JSON.stringify(eData),
             success: function(res) {
             }
         })

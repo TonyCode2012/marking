@@ -102,25 +102,24 @@ Page({
     },
 
     onLoad: function(opt) {
+        var index = opt.index
+        var type = opt.type
+        this.setData({
+            type: type
+        })
+        this.prepareTpl(type)   // 设置页面模板
         // 获取上一个页面的数据引用
         var pages = getCurrentPages()
         var prePage = pages[pages.length-2]
         // 获取当前使用的数据
-        var type = opt.type
-        var index = opt.index
         var tn = JSON.parse(opt.tArry)
         var data = prePage.data.homePage.tabContent
         for(var i=0;i<tn.length;i++) {
             data = data.list[tn[i]].data
         }
         data = data.list[index]
-        this.setData({
-            type: type
-        })
         // 赋值当前页面数据
         var curPageData = data
-        // 设置页面模板
-        this.prepareTpl(type)
 
         if(type == 'seekerInfo') {
             wx.setNavigationBarTitle({

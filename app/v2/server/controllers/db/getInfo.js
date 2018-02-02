@@ -209,6 +209,7 @@ var getDTaskInfo = async function(ctx) {
 function getD2DInfo(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
+        console.log("=========data:"+JSON.stringify(data))
         var queryStr = "select * from D2DPush where tDelegator_openid='" + data.delegator_openid + "'"
         queryFromDB(resolve,reject,queryStr,connection)
     })

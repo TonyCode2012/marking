@@ -19,7 +19,7 @@
                         <view class="weui-media-box weui-media-box_small-appmsg">
                             <view class="weui-cells weui-cells_in-small-appmsg">
                                 <navigator wx:for="{{item.data.list}}" wx:key="*this" url="" data-index="{{index}}" data-item="{{item}}" 
-                                    bindtap="goRevdPushDetail" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+                                    bindtap="goRecvdPushDetail" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
                                     <view class="weui-cell__hd" style="height:40px;width:40px">
                                         <image src="{{item.receivedSInfo.wx_portraitAddr}}" style="width: 100%;height: 100%;margin-right: 5px" />
                                     </view>

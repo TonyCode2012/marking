@@ -67,6 +67,7 @@ Page(extend({}, Tab, {
             },
             loginInfo: {},
             delegatorInfo: {},
+            open_id: "",
             wxUserInfo: {},
             userInfo: {},
             title: '',
@@ -115,7 +116,7 @@ Page(extend({}, Tab, {
           // 来自页面内转发按钮
           console.log(res.target)
         }
-        var openId = this.data.wxUserInfo.openId
+        var openId = this.data.wxUserInfo.open_id
         return {
           title: '转发给',
           path: '/pages/delegator/delegator?openId='+openId+'&role=seeker',
@@ -141,6 +142,7 @@ Page(extend({}, Tab, {
         var roleUserInfo = this.getDemoRoleInfo(openId)
         var wxUserInfo = this.getDemoWxInfo(openId)
         that.setData({
+            open_id: openId,
             registered: true
         })
         // } end
@@ -307,12 +309,12 @@ Page(extend({}, Tab, {
         })
     },
     // 获取当前代理人收到的推送
-    getReceivedPush() {
+    getReceivedPush(open_id) {
         var that = this
         wx.request({
             url: config.service.getDReceivedPushUrl,
             data: {
-                delegator_openid: that.data.wxUserInfo.openId
+                delegator_openid: open_id
             },
             success: function(res) {
                 that.setData({
@@ -357,11 +359,15 @@ Page(extend({}, Tab, {
         })
     },
     // 跳转到当前推送匹配的具体页面
-    goRevdPushDetail(opt) {
+    goRecvdPushDetail(opt) {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
+        var eData = {
+            index: index,
+            pDelegator_openid: this.data.homePage.wxUserInfo.open_id
+        }
         wx.navigateTo({
-            url: './revdPushDetail?index='+index+'&pDelegator_openid='+this.data.wxUserInfo.openId,
+            url: './recvdPushDetail?data='+JSON.stringify(eData),
             success: function(res) {
             }
         })
@@ -407,7 +413,7 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        updateData['open_id'] = this.data.wxUserInfo.openId
+        updateData['open_id'] = this.data.wxUserInfo.open_id
         updateData['role'] = 'delegator'
         wx.request({
             url: config.service.updateUserInfoUrl,
@@ -482,7 +488,7 @@ Page(extend({}, Tab, {
                     delegatorInfo[fieldKey] = fieldObj.value
             }
         }
-        delegatorInfo['open_id'] = curUserInfo.openId
+        delegatorInfo['open_id'] = curUserInfo.open_id
         return {
             data: delegatorInfo,
             role: 'delegator'

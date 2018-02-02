@@ -102,6 +102,7 @@ Page({
     },
 
     onLoad: function(opt) {
+        opt = JSON.parse(opt.data)
         var index = opt.index
         var type = opt.type
         this.setData({
@@ -112,7 +113,7 @@ Page({
         var pages = getCurrentPages()
         var prePage = pages[pages.length-2]
         // 获取当前使用的数据
-        var tn = JSON.parse(opt.tArry)
+        var tn = opt.tArry
         var data = prePage.data.homePage.tabContent
         for(var i=0;i<tn.length;i++) {
             data = data.list[tn[i]].data

@@ -54,6 +54,7 @@ Page({
 
     onLoad: function(opt) {
         var that = this
+        opt = JSON.parse(opt.data)
         var index = opt.index
         var pages = getCurrentPages()
         var DPage = pages[pages.length-2]

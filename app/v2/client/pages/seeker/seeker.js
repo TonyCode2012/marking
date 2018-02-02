@@ -173,7 +173,7 @@ Page(extend({}, Tab, {
             that.setRegisterPage()
             util.showModel('get user info failed!',JSON.stringify(e))
         }*/
-        this.getReceivedPush()
+        this.getReceivedPush(demoOpenid)
         this.getMessageList()
         that.setData({
             title: opt.title
@@ -357,12 +357,12 @@ Page(extend({}, Tab, {
 
     //--------------- Home Page functions -----------------//
     // 获取当前客户收到的推送
-    getReceivedPush() {
+    getReceivedPush(openId) {
         var that = this
         wx.request({
             url: config.service.getSReceivedPushUrl,
             data: {
-                seeker_openid: that.data.wxUserInfo.openId
+                seeker_openid: openId
             },
             success: function(res) {
                 that.setData({
@@ -391,15 +391,25 @@ Page(extend({}, Tab, {
     goRecvdPushDetail(opt) {
         var index = opt.currentTarget.dataset.index
         var data = opt.currentTarget.dataset.item
+        var eData = {
+            index: index,
+            type: "recvdPushInfo",
+            tArry: ["myPush","receivedPush"]
+        }
         wx.navigateTo({
-            url: './seekerDetail?type=recvdPushInfo&tArry=["myPush","receivedPush"]&index='+index
+            url: './seekerDetail?data='+JSON.stringify(eData)
         })
     },
     // 跳转到信息发布榜具体信息页面
     goMessageDetail(opt) {
         var index = opt.currentTarget.dataset.index
+        var eData = {
+            index: index,
+            type: "messageList",
+            tArry: ["messageList"]
+        }
         wx.navigateTo({
-            url: './seekerDetail?type=messageList&tArry=["messageList"]&index='+index
+            url: './seekerDetail?data='+JSON.stringify(eData)
         })
     },
     handleZanTabChange(e) {
@@ -442,7 +452,7 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        updateData['open_id'] = this.data.wxUserInfo.openId
+        updateData['open_id'] = this.data.wxUserInfo.open_id
         updateData['role'] = 'seeker'
         wx.request({
             url: config.service.updateUserInfoUrl,
@@ -454,7 +464,7 @@ Page(extend({}, Tab, {
         })
     },
     releaseInfoBtn: function(opt) {
-        var openId = this.data.wxUserInfo.openId
+        var openId = this.data.wxUserInfo.open_id
         wx.request({
             url: config.service.updateUserInfoUrl,
             data: {
@@ -478,7 +488,7 @@ Page(extend({}, Tab, {
             success: function (res) {
                 console.log(res);
                 if (res.confirm) {
-                    var seekerId= that.data.homePage.wxUserInfo.openId
+                    var seekerId= that.data.homePage.wxUserInfo.open_id
                     var delegatorId = that.data.homePage.transSceneInfo.query.openId
                     // 将转发者作为当前seeker的delegator在关系表中进行注册
                     var relationData = {
@@ -540,7 +550,7 @@ Page(extend({}, Tab, {
                     seekerInfo[fieldKey] = fieldObj.value
             }
         }
-        seekerInfo['open_id'] = curUserInfo.openId
+        seekerInfo['open_id'] = curUserInfo.open_id
         return { data: seekerInfo,role: 'seeker' }
     },
     submitRegister: function(opt) {

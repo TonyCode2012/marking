@@ -115,7 +115,7 @@ async function getReceivedPush_r(ctx, role) {
                     receivedDInfo: delegatorInfo,
                     seeker_openid: open_id,
                     delegator_openid: myDelegator_openid,
-                    state: item.status,
+                    status: item.status,
                     role: item.role
                 }
             }

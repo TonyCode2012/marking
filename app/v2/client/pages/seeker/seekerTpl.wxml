@@ -31,12 +31,14 @@
         </view>
         <!--view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view-->
         <view class="weui-btn-area" style="text-align:center">
-            <button class="weui-btn mini-btn" type="primary" bindtap="sendRefuseReq" hidden="{{btn.refuseBtn.hidden || type == 'messageList'}}"
+            <button class="weui-btn mini-btn" type="primary" bindtap="sendRefuseReq" hidden="{{btn.refuseBtn.hidden || type == 'messageList' || type == 'matchList'}}"
                 disabled="{{btn.refuseBtn.disable}}" size="mini">拒绝匹配</button>
-            <button class="weui-btn mini-btn" type="{{btn.stateBtn.type}}" bindtap="sendMatchReq" hidden="{{btn.stateBtn.hidden || type == 'messageList'}}"
+            <button class="weui-btn mini-btn" type="{{btn.stateBtn.type}}" bindtap="sendMatchReq" hidden="{{btn.stateBtn.hidden || type == 'messageList' || type == 'matchList'}}"
                 disabled="{{btn.stateBtn.disable}}" size="mini" style="margin-left:30%">{{btn.stateBtn.btnStr}}</button>
-            <button class="weui-btn mini-btn" type="primary" bindtap="sendMatchReq" hidden="{{type!='messageList'}}"
+            <button class="weui-btn mini-btn" type="primary" bindtap="" hidden="{{type!='messageList'}}"
                 size="mini" style="margin-left:30%">推送给红娘</button>
+            <button class="weui-btn mini-btn" type="primary" bindtap="sendMarryReq" hidden="{{type!='matchList'}}"
+                size="mini" style="margin-left:30%">确认交往成功</button>
         </view>
     </view>
 </template>

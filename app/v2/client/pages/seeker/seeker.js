@@ -414,11 +414,23 @@ Page(extend({}, Tab, {
             url: './seekerDetail?data='+JSON.stringify(eData)
         })
     },
+    // 跳转到信息发布榜具体信息页面
+    goMatchDetail(opt) {
+        var index = opt.currentTarget.dataset.index
+        var eData = {
+            index: index,
+            type: "matchList",
+            tArry: ["myMatch"]
+        }
+        wx.navigateTo({
+            url: './seekerDetail?data='+JSON.stringify(eData)
+        })
+    },
     setRecvdPushType(data) {
         var recvdPush = []
         var recvdMatch = []
         for(var i=0;i<data.length;i++) {
-            if(data[i].status == 4) recvdMatch.push(data[i])
+            if(data[i].status == 5) recvdMatch.push(data[i])
             else recvdPush.push(data[i])
         }
         this.setData({

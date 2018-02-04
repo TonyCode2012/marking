@@ -84,6 +84,28 @@ Page({
             prePageIndex: 0,
             released: false
         },
+        matchList: {
+            list: {
+                basicInfo: {
+                    title: "基本信息",
+                    data: {}
+                },
+                reqInfo:{
+                    title: "征婚信息",
+                    data: {}
+                }
+            },
+            type:'matchList',
+            state: 5,
+            portrait: "",
+            pSOID: "",
+            pDOID: "",
+            tSOID: "",
+            tDOID: "",
+            role: "",
+            prePageTitle: "",
+            prePageIndex: "",
+        },
         dataTpl: {
             basicInfo: {
                 name:{ title:"姓名", value:"" },
@@ -103,7 +125,8 @@ Page({
             }
         },
         type: '',
-        prePage: {}
+        prePage: {},
+        open_id: ''
     },
     handleZanSelectChange({ componentId, value }) {
         this.setData({
@@ -123,12 +146,14 @@ Page({
         // 获取上一个页面的数据引用
         var pages = getCurrentPages()
         var prePage = pages[pages.length-2]
+        var dataList = []
         // 获取当前使用的数据
         var tn = opt.tArry
         var data = prePage.data.homePage.tabContent
         for(var i=0;i<tn.length;i++) {
             data = data.list[tn[i]].data
         }
+        dataList = data.list
         data = data.list[index]
         // 赋值当前页面数据
         var curPageData = data
@@ -155,46 +180,78 @@ Page({
                 'messageList.delegatorOpenId': data.delegator_openId,
                 'messageList.prePageIndex': index,
             })
+        } else if(type == 'matchList') {
+            wx.setNavigationBarTitle({
+              title: '匹配项目'
+            })
+            var recvdSData = data.receivedSInfo
+            var curRole = data.role
+            var state = data.status
+            var ids = this.setFourIDs(data)
+            this.setData({
+                'matchList.portrait': recvdSData.wx_portraitAddr,
+                'matchList.pSOID': ids.pSOID,
+                'matchList.pDOID': ids.pDOID,
+                'matchList.tSOID': ids.tSOID,
+                'matchList.tDOID': ids.tDOID,
+                'matchList.role': curRole,
+                'matchList.state': state,
+                'matchList.prePageIndex': index,
+                'matchList.prePageTitle': title,
+                'matchList.prePageDataList': dataList,
+                prePage: prePage
+            })
+            // 给当前页面数据赋值
+            curPageData = recvdSData
         } else if(type == 'recvdPushInfo') {
             wx.setNavigationBarTitle({
               title: '收到的推送'
             })
             var recvdSData = data.receivedSInfo
-            var recvdDOpenid = data.receivedDInfo.open_id
-            var myDOID = data.delegator_openid
-            var mySOID = data.seeker_openid
             var curRole = data.role
-            var state = data.state
-
+            var state = data.status
             // 设置匹配按键状态
             this.setMatchStatus(state,curRole)
-
-            // 设置四方id
-            var pSOID = ''
-            var pDOID = ''
-            var tSOID = ''
-            var tDOID = ''
-            if(curRole == 'pSeeker') {
-                pSOID = mySOID
-                pDOID = myDOID
-                tSOID = recvdSData.open_id
-                tDOID = recvdDOpenid
-            } else if(curRole == 'tSeeker') {
-                pSOID = recvdSData.open_id
-                pDOID = recvdDOpenid
-                tSOID = mySOID
-                tDOID = myDOID
-            }
+            var ids = this.setFourIDs(data)
+            //var recvdSData = data.receivedSInfo
+            //var recvdDOpenid = data.receivedDInfo.open_id
+            //var myDOID = data.delegator_openid
+            //var mySOID = data.seeker_openid
+            //var curRole = data.role
+            //var state = data.state
+//
+            //// 设置匹配按键状态
+            //this.setMatchStatus(state,curRole)
+//
+            //// 设置四方id
+            //var pSOID = ''
+            //var pDOID = ''
+            //var tSOID = ''
+            //var tDOID = ''
+            //if(curRole == 'pSeeker') {
+            //    pSOID = mySOID
+            //    pDOID = myDOID
+            //    tSOID = recvdSData.open_id
+            //    tDOID = recvdDOpenid
+            //} else if(curRole == 'tSeeker') {
+            //    pSOID = recvdSData.open_id
+            //    pDOID = recvdDOpenid
+            //    tSOID = mySOID
+            //    tDOID = myDOID
+            //}
             this.setData({
                 'recvdPushInfo.portrait': recvdSData.wx_portraitAddr,
-                'recvdPushInfo.pSOID': pSOID,
-                'recvdPushInfo.pDOID': pDOID,
-                'recvdPushInfo.tSOID': tSOID,
-                'recvdPushInfo.tDOID': tDOID,
+                'recvdPushInfo.pSOID': ids.pSOID,
+                'recvdPushInfo.pDOID': ids.pDOID,
+                'recvdPushInfo.tSOID': ids.tSOID,
+                'recvdPushInfo.tDOID': ids.tDOID,
                 'recvdPushInfo.role': curRole,
                 'recvdPushInfo.state': state,
                 'recvdPushInfo.prePageIndex': index,
                 'recvdPushInfo.prePageTitle': title,
+                'recvdPushInfo.prePageDataList': dataList,
+                prePage: prePage,
+                open_id: data.seeker_openid
             })
             // 给当前页面数据赋值
             curPageData = recvdSData
@@ -205,7 +262,7 @@ Page({
         this.setPageData(curPageData)
     },
     prepareTpl: function(type) {
-        // type的值:seekerInfo或者messageList
+        // type的值:seekerInfo,messageList,matchList或者recvdPushInfo
         var dataList = this.data[type].list
         var keyArry = Object.keys(dataList)
         for(var i=0;i<keyArry.length;i++) {
@@ -234,11 +291,42 @@ Page({
             }
         }
         // 如果是信息榜信息则将“报酬”和“预付”隐藏掉
-        if(type=='messageList' || type == 'recvdPushInfo') {
+        if(type=='messageList' || type == 'recvdPushInfo' || type == 'matchList') {
             this.setData({
                 [type + '.list.reqInfo.data.reward.show']: false,
                 [type + '.list.reqInfo.data.advance.show']: false
             })
+        }
+    },
+    // 设置四方id
+    setFourIDs(data) {
+        var recvdSData = data.receivedSInfo
+        var recvdDOpenid = data.receivedDInfo.open_id
+        var myDOID = data.delegator_openid
+        var mySOID = data.seeker_openid
+        var curRole = data.role
+        var state = data.status
+        // 设置四方id
+        var pSOID = ''
+        var pDOID = ''
+        var tSOID = ''
+        var tDOID = ''
+        if(curRole == 'pSeeker') {
+            pSOID = mySOID
+            pDOID = myDOID
+            tSOID = recvdSData.open_id
+            tDOID = recvdDOpenid
+        } else if(curRole == 'tSeeker') {
+            pSOID = recvdSData.open_id
+            pDOID = recvdDOpenid
+            tSOID = mySOID
+            tDOID = myDOID
+        }
+        return {
+            pSOID: pSOID,
+            pDOID: pDOID,
+            tSOID: tSOID,
+            tDOID: tDOID
         }
     },
 
@@ -303,8 +391,19 @@ Page({
             }
         } else if(state == 5) {
             // 双方都接受，则匹配成功，删除相关推送条目，增加匹配条目
-            var title = this.data.recvdPushInfo.prePageTitle
-            var index = this.data.recvdPushInfo.prePageIndex
+            //var title = this.data.recvdPushInfo.prePageTitle
+            //var index = this.data.recvdPushInfo.prePageIndex
+            //var dataList = this.data.recvdPushInfo.prePageDataList
+            //var prePage = this.data.prePage
+            //dataList[index] = {}
+            ////dataList.splice(index,1)
+            //prePage.setData({
+            //    title: dataList
+            //})
+            //wx.navigateBack({})
+            wx.reLaunch({
+                url: './seeker?openId='+this.data.open_id
+            })
         }
         this.setData({
             'recvdPushInfo.btn.stateBtn.btnStr': stateBtnStr,
@@ -365,5 +464,8 @@ Page({
                 }
             }
         })
+    },
+    //--------------- matchList Page functions -----------------//
+    sendMarryReq(opt) {
     },
 })

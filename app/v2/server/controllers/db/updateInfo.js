@@ -15,7 +15,37 @@ var connection = mysql.createConnection({
 connection.connect()
 
 var setMatchAccept = async function(ctx) {
-    var result = await setMatch_r(ctx,connection)
+    var data = urlParser.parse(ctx.originalUrl,true).query
+    var queryData = data.queryData
+    var cdStr = util.getConditionAll(JSON.parse(queryData),'and')
+    var orgState = data.state
+    var role = data.role
+    var state = 0
+    if (orgState == 1 || orgState == 3) state = 5
+    else state = (role == 'pSeeker' ? 1 : 3)
+    var para = {
+        state: state,
+        cdStr: cdStr
+    }
+    var result = await setMatch_r(para,connection)
+    
+    finalState = (result.status == 200 ? state : -1)
+
+    ctx.state.data = {
+        result: result,
+        state: finalState
+    }
+}
+
+var setMatchRefuse = async function(ctx) {
+    var data = urlParser.parse(ctx.originalUrl,true).query
+    var cdStr = util.getConditionAll(JSON.parse(data.queryData),'and')
+    var state = (data.role == 'pSeeker' ? 2 : 4)
+    var para = {
+        state: state,
+        cdStr: cdStr
+    }
+    var result = await setMatch_r(para,connection)
     ctx.state.data = {
         result: result
     }
@@ -42,15 +72,10 @@ var pushSeekerInfo = async function(ctx) {
     }
 }
 
-function setMatch_r(ctx,connection) {
+function setMatch_r(data,connection) {
     return new Promise(function (resolve, reject) {
     
-        var data = urlParser.parse(ctx.originalUrl,true).query
-        var role = data.role
-        var queryData = data.queryData
-        var cdStr = util.getConditionAll(JSON.parse(queryData),'and')
-        var state = (role == 'pSeeker' ? 1 : 2)
-        var queryStr = "update D2SPush set status='" + state + "' where " + cdStr
+        var queryStr = "update D2SPush set status='" + data.state + "' where " + data.cdStr
     
         queryFromDB(resolve,reject,queryStr,connection)
     })
@@ -138,5 +163,6 @@ module.exports = {
     updateInfo: updateInfo,
     pushSeekerInfo: pushSeekerInfo,
     cancelPushSeekerInfo: cancelPushSeekerInfo,
-    setMatchAccept: setMatchAccept
+    setMatchAccept: setMatchAccept,
+    setMatchRefuse: setMatchRefuse
 }

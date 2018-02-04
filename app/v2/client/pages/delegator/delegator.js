@@ -142,7 +142,6 @@ Page(extend({}, Tab, {
         var roleUserInfo = this.getDemoRoleInfo(openId)
         var wxUserInfo = this.getDemoWxInfo(openId)
         that.setData({
-            open_id: openId,
             registered: true
         })
         // } end
@@ -235,13 +234,15 @@ Page(extend({}, Tab, {
     getDemoRoleInfo(openId) {
         var that = this
         wx.request({
-            url: config.service.getSeekerInfoUrl,
+            url: config.service.getDelegatorInfoUrl,
             data: {
                 open_id: openId
             },
             success: function(res) {
+                var data = res.data.data.result.data[0]
+                that.setHomePage(data)
                 that.setData({
-                    'homePage.roleUserInfo': res.data.data.result
+                    'homePage.roleUserInfo': data
                 })
             }
         })
@@ -302,6 +303,7 @@ Page(extend({}, Tab, {
             url: config.service.getMessageListUrl,
             success: function(res) {
                 var data = res.data.data.result
+                that.setDataType(data)
                 that.setData({
                     'homePage.tabContent.list.messageList.data.list': data
                 })
@@ -371,6 +373,12 @@ Page(extend({}, Tab, {
             success: function(res) {
             }
         })
+    },
+    setDataType(data) {
+        var curOpenId = this.data.homePage.wxUserInfo.open_id
+        for(var i=0;i<data.length;i++) {
+            if(data[i].delegator_openid != curOpenId) data[i]['bgc'] = '#96CE54'
+        }
     },
     /*有关页面的操作*/
     handleZanTabChange(e) {

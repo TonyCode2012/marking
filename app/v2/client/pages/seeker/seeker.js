@@ -173,6 +173,7 @@ Page(extend({}, Tab, {
             that.setRegisterPage()
             util.showModel('get user info failed!',JSON.stringify(e))
         }*/
+        // 获取当前客户收到的推送
         this.getReceivedPush(demoOpenid)
         this.getMessageList()
         that.setData({
@@ -239,8 +240,10 @@ Page(extend({}, Tab, {
                 open_id: openId
             },
             success: function(res) {
+                var data = res.data.data.result.data[0]
+                that.setHomePage(data)
                 that.setData({
-                    'homePage.roleUserInfo': res.data.data.result
+                    'homePage.roleUserInfo': data
                 })
             }
         })
@@ -365,14 +368,12 @@ Page(extend({}, Tab, {
                 seeker_openid: openId
             },
             success: function(res) {
-                that.setData({
-                    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': res.data.data.result
-                })
+                that.setRecvdPushType(res.data.data.result)
+                //that.setData({
+                //    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': res.data.data.result
+                //})
             }
         })
-    },
-    // 获取当前客户的匹配
-    getMatchList() {
     },
     // 获取信息发布榜信息
     getMessageList() {
@@ -394,7 +395,8 @@ Page(extend({}, Tab, {
         var eData = {
             index: index,
             type: "recvdPushInfo",
-            tArry: ["myPush","receivedPush"]
+            tArry: ["myPush","receivedPush"],
+            title: "homePage.tabContent.list.myPush.data.list.receivedPush.data.list"
         }
         wx.navigateTo({
             url: './seekerDetail?data='+JSON.stringify(eData)
@@ -412,6 +414,19 @@ Page(extend({}, Tab, {
             url: './seekerDetail?data='+JSON.stringify(eData)
         })
     },
+    setRecvdPushType(data) {
+        var recvdPush = []
+        var recvdMatch = []
+        for(var i=0;i<data.length;i++) {
+            if(data[i].status == 4) recvdMatch.push(data[i])
+            else recvdPush.push(data[i])
+        }
+        this.setData({
+            'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
+            'homePage.tabContent.list.myMatch.data.list': recvdMatch
+        })
+    },
+    //---------- 界面控制函数 ----------//
     handleZanTabChange(e) {
       var componentId = e.componentId;
       var selectedId = e.selectedId;

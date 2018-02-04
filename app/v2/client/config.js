@@ -54,6 +54,11 @@ var config = {
         /*****客户业务流程*****/
         // 发送匹配请求
         sendMatchAcceptUrl: `${host}/weapp/sendMatchAccept`,
+        // 发送拒绝请求
+        sendMatchRefuseUrl: `${host}/weapp/sendMatchRefuse`,
+        // 获取匹配状态
+        getDPushStatusUrl: `${host}/weapp/getDPushStatus`,
+        
 
         // 测试的信道服务地址
         tunnelUrl: `${host}/weapp/tunnel`,

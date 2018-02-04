@@ -15,7 +15,6 @@ Page({
                     data: {}
                 }
             },
-            type:'recvdPushInfo',
             btn: {
                 refuseBtn: {
                     disable: false,
@@ -28,13 +27,23 @@ Page({
                     hidden: true
                 }
             },
+            btnStateStr: {
+                request: "发送匹配请求",
+                sended: "请求已发送",
+                agree: "是否同意匹配",
+                irefuse: "已拒绝",
+                orefuse: "对方已拒绝",
+            },
+            type:'recvdPushInfo',
             state: 0,
             portrait: "",
             pSOID: "",
             pDOID: "",
             tSOID: "",
             tDOID: "",
-            role: ""
+            role: "",
+            prePageTitle: "",
+            prePageIndex: "",
         },
         seekerInfo: {
             list: {
@@ -52,7 +61,7 @@ Page({
             seekerOpenId:"",
             delegatorOpenId:"",
             prePage: {},
-            dataIndex: 0,
+            prePageIndex: 0,
             released: false
         },
         messageList: {
@@ -72,7 +81,7 @@ Page({
             seekerOpenId:"",
             delegatorOpenId:"",
             prePage: {},
-            dataIndex: 0,
+            prePageIndex: 0,
             released: false
         },
         dataTpl: {
@@ -93,7 +102,8 @@ Page({
                 advance:{ title:"预付", show:true, value:"" }
             }
         },
-        type: ''
+        type: '',
+        prePage: {}
     },
     handleZanSelectChange({ componentId, value }) {
         this.setData({
@@ -105,6 +115,7 @@ Page({
         opt = JSON.parse(opt.data)
         var index = opt.index
         var type = opt.type
+        var title = opt.title
         this.setData({
             type: type
         })
@@ -131,7 +142,7 @@ Page({
                 'seekerInfo.seekerOpenId': data.seeker_openId,
                 'seekerInfo.delegatorOpenId': data.delegator_openId,
                 'seekerInfo.released': data.is_release==0?false:true,
-                'seekerInfo.dataIndex': index,
+                'seekerInfo.prePageIndex': index,
             })
         } else if(type == 'messageList') {
             wx.setNavigationBarTitle({
@@ -142,7 +153,7 @@ Page({
                 'messageList.seekerOpenId': data.seeker_openId,
                 'messageList.SDOpenId': data.SD_openId,
                 'messageList.delegatorOpenId': data.delegator_openId,
-                'messageList.dataIndex': index,
+                'messageList.prePageIndex': index,
             })
         } else if(type == 'recvdPushInfo') {
             wx.setNavigationBarTitle({
@@ -182,7 +193,8 @@ Page({
                 'recvdPushInfo.tDOID': tDOID,
                 'recvdPushInfo.role': curRole,
                 'recvdPushInfo.state': state,
-                'recvdPushInfo.dataIndex': index,
+                'recvdPushInfo.prePageIndex': index,
+                'recvdPushInfo.prePageTitle': title,
             })
             // 给当前页面数据赋值
             curPageData = recvdSData
@@ -233,40 +245,74 @@ Page({
 
 
     //--------------- RecvdPushInfo Page functions -----------------//
+    /*
+     * 匹配状态说明：
+     * “0”: 双方未发送请求
+     * “1”: “推送给我”方申请匹配
+     * “2”: “推送给我”方拒绝匹配
+     * “3”: “我被推送”方申请匹配
+     * “4”: “我被推送”方拒绝匹配
+     * “5”: 双方均接受
+     * */
     // 设置匹配按键状态
     setMatchStatus(state,role) {
-        var stateBtnStr = '发送匹配请求'
+        var btnStr = this.data.recvdPushInfo.btnStateStr
+        var stateBtnStr = btnStr.request
         var stateBtnType = 'primary'
         var stateBtnHidden = false
         var stateBtnDisable = false
+        var refuseBtnHidden = false
+        var refuseBtnDisable = false
         if(state == 0) {
-            stateBtnStr = '发送匹配请求'
+            stateBtnStr = btnStr.request
         } else if(state == 1) {
             if(role == 'pSeeker') {
-                stateBtnStr = '请求已发送'
-                stateBtnType = 'default'
+                stateBtnStr = btnStr.sended
                 stateBtnDisable = true
+                refuseBtnHidden = true
             } else {
-                stateBtnStr = '是否同意匹配'
+                stateBtnStr = btnStr.agree
             }
         } else if(state == 2) {
             if(role == 'pSeeker') {
-                stateBtnStr = '是否同意匹配'
-            } else {
-                stateBtnStr = '请求已发送'
-                stateBtnType = 'default'
+                stateBtnStr = btnStr.irefuse
                 stateBtnDisable = true
+                refuseBtnHidden = true
+            } else {
+                stateBtnStr = btnStr.orefuse
+                stateBtnDisable = true
+                refuseBtnHidden = true
             }
         } else if(state == 3) {
-            stateBtnStr = '对方已拒绝'
-            stateBtnType = 'default'
-            stateBtnDisable = true
+            if(role == 'pSeeker') {
+                stateBtnStr = btnStr.agree
+            } else {
+                stateBtnStr = btnStr.sended
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            }
+        } else if(state == 4) {
+            if(role == 'pSeeker') {
+                stateBtnStr = btnStr.orefuse
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            } else {
+                stateBtnStr = btnStr.irefuse
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            }
+        } else if(state == 5) {
+            // 双方都接受，则匹配成功，删除相关推送条目，增加匹配条目
+            var title = this.data.recvdPushInfo.prePageTitle
+            var index = this.data.recvdPushInfo.prePageIndex
         }
         this.setData({
             'recvdPushInfo.btn.stateBtn.btnStr': stateBtnStr,
             'recvdPushInfo.btn.stateBtn.type': stateBtnType,
             'recvdPushInfo.btn.stateBtn.hidden': stateBtnHidden,
             'recvdPushInfo.btn.stateBtn.disable': stateBtnDisable,
+            'recvdPushInfo.btn.refuseBtn.hidden': refuseBtnHidden,
+            'recvdPushInfo.btn.refuseBtn.disable': refuseBtnDisable,
         })
     },
     // 发送匹配请求
@@ -282,12 +328,41 @@ Page({
                     tSeeker_openid: data.tSOID,
                     tDelegator_openid: data.tDOID,
                 },
+                role: data.role,
+                state: data.state
+            },
+            success: function(res) {
+                var state = res.data.data.state
+                var role = data.role
+                if(state == -1) util.showModel('后台错误，请求失败！',res.data.data.result)
+                else that.setMatchStatus(state,role)
+            }
+        })
+    },
+    // 拒绝匹配
+    sendRefuseReq(opt) {
+        var that = this
+        var data = this.data.recvdPushInfo
+        wx.request({
+            url: config.service.sendMatchRefuseUrl,
+            data: {
+                queryData: {
+                    pSeeker_openid: data.pSOID,
+                    pDelegator_openid: data.pDOID,
+                    tSeeker_openid: data.tSOID,
+                    tDelegator_openid: data.tDOID,
+                },
                 role: data.role
             },
             success: function(res) {
+                var result = res.data.data.result
                 var role = data.role
-                var state = (role == 'pSeeker' ? 1 : 2)
-                that.setMatchStatus(state,role)
+                if(result.status == 200) {
+                    var state = (role == 'pSeeker' ? 2 : 4)
+                    that.setMatchStatus(state,role)
+                } else {
+                    util.showModel('后台错误，请求失败！',result)
+                }
             }
         })
     },

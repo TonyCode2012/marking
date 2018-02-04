@@ -2,6 +2,7 @@ const { mysql: config } = require('../../config')
 var mysql = require('mysql')
 var urlParser = require('url')
 var queryString  = require("querystring");
+var util = require('./util')
 
 
 var seekerPubInfoItems = "open_id,name,age,gender,height,weight,education,constellation,blood_type,portrait,wx_portraitAddr,requirement,self_introduction"
@@ -18,11 +19,24 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
+// 获取当前红娘发出推送的状态
+var getDPushStatus = async function(ctx) {
+    var result = await getD2SPushInfo(ctx)
+    var state = 0
+    var rStatus = result.status
+    if(rStatus == 200) {
+        state = result.data[0].status
+    } else {
+        state = (rStatus == 201 ? -1 : -2)
+    }
+    ctx.state.data = {
+        state: state
+    }
+}
+
 // 获取当前红娘收到的推送
 var getDReceivedPush = async function(ctx) {
-
     var resArry = await getReceivedPush_r(ctx,'delegator')
-    
     ctx.state.data = {
         result: resArry
     }
@@ -42,7 +56,6 @@ async function getReceivedPush_r(ctx, role) {
     var ctxData = urlParser.parse(ctx.originalUrl,true).query
     var open_id = ''
     var resArry = []
-    //var data = (role=='delegator'?await getD2DInfo(ctx,connection):await getD2SInfo(ctx,connection))
     var data = {}
     if(role == 'delegator') {
         data = await getD2DInfo(ctx,connection)
@@ -59,6 +72,7 @@ async function getReceivedPush_r(ctx, role) {
         for(var i=0;i<relatedList.length;i++) {
             var item = relatedList[i]
             var tmpPush = {}
+            console.log("========item:"+JSON.stringify(item))
             if(role == 'delegator') {
                 var tSeekerInfo = {}
                 var pSeekerInfo = {}
@@ -96,8 +110,6 @@ async function getReceivedPush_r(ctx, role) {
                 r2 = await getDelegatorPubInfo(delegator_openid,connection)
                 seekerInfo = (r1.status == 200 ? r1.data[0] : {})
                 delegatorInfo = (r2.status == 200 ? r2.data[0] : {})
-                //seekerInfo.role = (item.role == 'pSeeker' ? 'tSeeker' : 'pSeeker')
-                //delegatorInfo.role = (item.role == 'pSeeker' ? 'tDelegator' : 'pDelegator')
                 tmpPush = {
                     receivedSInfo: seekerInfo,
                     receivedDInfo: delegatorInfo,
@@ -126,7 +138,7 @@ var getMySeeker = async function(ctx) {
         var selectStr = "name,age,education,height,requirement,wx_portraitAddr,open_id"
         for(var i=0;i<idArry.length;i++) {
             var queryStr = "select " + selectStr + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "'"
-            var result = await getSeekerInfo_r(queryStr,connection)
+            var result = await getSeekerInfoByQuery(queryStr,connection)
             if(result.data) {
                 result.data[0]['is_release'] = idArry[i]['is_release']
                 resArry.push(result.data[0])
@@ -147,7 +159,7 @@ var getMessageList = async function(ctx) {
         var idArry = data.data
         for(var i=0;i<idArry.length;i++) {
             var queryStr = "select " + seekerPubInfoItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
-            var result = await getSeekerInfo_r(queryStr,connection)
+            var result = await getSeekerInfoByQuery(queryStr,connection)
             if(result.status == 200) {
                 result.data[0]['delegator_openid'] = idArry[i].delegator_openId // 获取对方代理人id
                 if(result.data) {
@@ -193,7 +205,7 @@ var getDTaskInfo = async function(ctx) {
         var idArry = data.data
         for(var i=0;i<idArry.length;i++) {
             var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public=1"
-            var result = await getSeekerInfo_r(queryStr,connection)
+            var result = await getSeekerInfoByQuery(queryStr,connection)
             if(result.status == 200) {
                 result.data[0]['is_release'] = idArry[i]['is_release']
                 resArry.push(result.data[0])
@@ -204,6 +216,15 @@ var getDTaskInfo = async function(ctx) {
     ctx.state.data = {
         result: resArry
     }
+}
+
+function getD2SPushInfo(ctx) {
+    return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var cdStr = util.getConditionAll(data,'and')
+        var queryStr = "select * from D2SPush where " + cdStr
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
 }
 
 function getD2DInfo(ctx, connection) {
@@ -269,6 +290,12 @@ function getDelegatorInfo_r(ctx, connection) {
     })
 }
 
+function getSeekerInfoByQuery(queryStr, connection) {
+    return new Promise(function (resolve, reject) {
+        queryFromDB(resolve, reject, queryStr,connection)
+    })
+}
+
 function getSeekerInfo_r(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
@@ -307,12 +334,11 @@ function getDTaskInfo_r(ctx,connection) {
     })
 }
 
-function getSeekerInfo_r(queryStr, connection) {
-    return new Promise(function (resolve, reject) {
-
-        queryFromDB(resolve, reject, queryStr, connection)
-    })
-}
+//function getSeekerInfo_r(queryStr, connection) {
+//    return new Promise(function (resolve, reject) {
+//        queryFromDB(resolve, reject, queryStr, connection)
+//    })
+//}
 
 function getMessageList_r(connection) {
     return new Promise(function (resolve, reject) {
@@ -373,5 +399,6 @@ module.exports = {
     getMessageList: getMessageList,
     getMySeeker: getMySeeker,
     getDReceivedPush: getDReceivedPush,
-    getSReceivedPush: getSReceivedPush
+    getSReceivedPush: getSReceivedPush,
+    getDPushStatus: getDPushStatus,
 }

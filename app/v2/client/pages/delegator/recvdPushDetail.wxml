@@ -21,7 +21,8 @@
                 <view class="placeholder">
                     <template is="compareDetailTpl" data="{{...info.toSeekerInfo}}" />
                     <view class="weui-btn-area" style="text-align:center;display:inline">
-                        <button class="weui-btn mini-btn" type="primary" bindtap="confirmPush" size="mini" style="margin-left:30%">推送</button>
+                        <button class="weui-btn mini-btn" type="primary" bindtap="push2Seeker" disabled="{{btn.disable}}"
+                            size="mini" style="margin-left:30%">{{btn.str}}</button>
                     </view>
                 </view>
             </view>

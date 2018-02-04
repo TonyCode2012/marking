@@ -49,13 +49,17 @@ Page({
             }
         },
         userData: {},
-        pDelegator_openid: ''
+        pDelegator_openid: '',
+        btn: {
+            str: '推送',
+            disable: false
+        }
     },
 
     onLoad: function(opt) {
         var that = this
         opt = JSON.parse(opt.data)
-        var index = opt.index
+        var index = opt.index 
         var pages = getCurrentPages()
         var DPage = pages[pages.length-2]
         var curData = DPage.data.homePage.tabContent.list.myPush.data.list.receivedPush.data.list[index]
@@ -65,7 +69,21 @@ Page({
         })
         this.prepareTpl()
         this.setPageData(curData)
-        util.showSuccess('成功')
+        // 设置按键状态
+        wx.request({
+            url: config.service.getDPushStatusUrl,
+            data: {
+                pDelegator_openid: opt.pDelegator_openid,
+                pSeeker_openid: curData.toSeekerInfo.open_id,
+                tDelegator_openid: curData.receivedDInfo.open_id,
+                tSeeker_openid: curData.receivedSInfo.open_id
+            },
+            success: function(res) {
+                var state = res.data.data.state
+                if(state == -2) util.showModel('后台错误，请求失败！','')
+                else that.setBtnState(state)
+            }
+        })
     },
     prepareTpl: function() {
         var dataList = this.data.info
@@ -84,7 +102,21 @@ Page({
             }
         }
     },
-    setPageData: function(data) {
+    setBtnState(state) {
+        var btnStr = '推送'
+        var btnDisable = false
+        if(state == -1) {
+            // do nothing
+        } else {
+            btnStr = '已推送，匹配中...'
+            btnDisable = true
+        }
+        this.setData({
+            'btn.str': btnStr,
+            'btn.disable': btnDisable
+        })
+    },
+    setPageData(data) {
         var dataList = this.data.info
         var keyArry = Object.keys(dataList) // receivedSInfo或者toSeekerInfo
         for(var i=0;i<keyArry.length;i++) {
@@ -111,7 +143,8 @@ Page({
             }
         }
     },
-    confirmPush(opt) {
+    push2Seeker(opt) {
+        var that = this
         var userData = this.data.userData
         var insertData = []
         var tmpData = {
@@ -128,6 +161,7 @@ Page({
             },
             success: function(res) {
                 util.showSuccess('推送给客户成功')
+                that.setBtnState(0)
             }
         })
     },

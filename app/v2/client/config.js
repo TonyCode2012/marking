@@ -45,8 +45,10 @@ var config = {
         // 获取信息发布榜信息
         getMessageListUrl: `${host}/weapp/getMessageList`,
         // 获取代理人收到的推送信息
-        getDReceivedPushUrl: `${host}/weapp/getDReceivedPush`,
-        getSReceivedPushUrl: `${host}/weapp/getSReceivedPush`,
+        getDPushUrl: `${host}/weapp/getDPush`,
+        getSPushUrl: `${host}/weapp/getSPush`,
+        //getDReceivedPushUrl: `${host}/weapp/getDReceivedPush`,
+        //getSReceivedPushUrl: `${host}/weapp/getSReceivedPush`,
         // 插入信息
         insertD2SUrl: `${host}/weapp/insertD2S`,
         insertD2DUrl: `${host}/weapp/insertD2D`,

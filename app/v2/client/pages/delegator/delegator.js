@@ -174,7 +174,8 @@ Page(extend({}, Tab, {
             util.showModel('get role user info failed!',JSON.stringify(e))
         }*/
         // 初始化信息
-        that.getReceivedPush(openId)  // 获取当前红娘收到的推送
+        //that.getReceivedPush(openId)  // 获取当前红娘收到的推送
+        that.getPush(openId)  // 获取当前红娘收到的推送
         that.getTask(openId)          // 获取红娘任务
         that.getMessageList()   // 获取信息发布榜信息
         that.setData({
@@ -316,16 +317,21 @@ Page(extend({}, Tab, {
         })
     },
     // 获取当前代理人收到的推送
-    getReceivedPush(open_id) {
+    //getReceivedPush(open_id) {
+    getPush(open_id) {
         var that = this
         wx.request({
-            url: config.service.getDReceivedPushUrl,
+            url: config.service.getDPushUrl,
             data: {
                 delegator_openid: open_id
             },
             success: function(res) {
+                var result = res.data.data.result
+                var recvdPush = result.recvdPush
+                var sendedPush = result.sendedPush
                 that.setData({
-                    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': res.data.data.result
+                    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
+                    'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush
                 })
             }
         })
@@ -381,6 +387,17 @@ Page(extend({}, Tab, {
     },
     // 跳转到发出推送匹配的具体页面
     goSendedPushDetail(opt) {
+        var data = opt.currentTarget.dataset.item
+        var index = opt.currentTarget.dataset.index
+        var eData = {
+            index: index,
+            pDelegator_openid: this.data.homePage.wxUserInfo.open_id
+        }
+        wx.navigateTo({
+            url: './recvdPushDetail?data='+JSON.stringify(eData),
+            success: function(res) {
+            }
+        })
     },
     setDataType(data) {
         var curOpenId = this.data.homePage.wxUserInfo.open_id

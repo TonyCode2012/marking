@@ -35,27 +35,31 @@ var getDPushStatus = async function(ctx) {
 }
 
 // 获取当前红娘收到的推送
-var getDReceivedPush = async function(ctx) {
-    var resArry = await getReceivedPush_r(ctx,'delegator')
+//var getDReceivedPush = async function(ctx) {
+var getDPush = async function(ctx) {
+    //var resArry = await getReceivedPush_r(ctx,'delegator')
+    var resArry = await getPush(ctx,'delegator')
     ctx.state.data = {
         result: resArry
     }
 }
 
 // 获取当前客户收到的推送
-var getSReceivedPush = async function(ctx) {
-
-    var resArry = await getReceivedPush_r(ctx, 'seeker')
-    
+//var getSReceivedPush = async function(ctx) {
+var getSPush = async function(ctx) {
+    //var resArry = await getReceivedPush_r(ctx, 'seeker')
+    var resArry = await getPush(ctx, 'seeker')
     ctx.state.data = {
         result: resArry
     }
 }
 
-async function getReceivedPush_r(ctx, role) {
+//async function getReceivedPush_r(ctx, role) {
+async function getPush(ctx, role) {
     var ctxData = urlParser.parse(ctx.originalUrl,true).query
     var open_id = ''
-    var resArry = []
+    var recvdArry = []
+    var sendedArry = []
     var data = {}
     if(role == 'delegator') {
         data = await getD2DInfo(ctx,connection)
@@ -74,58 +78,27 @@ async function getReceivedPush_r(ctx, role) {
             var tmpPush = {}
             console.log("========item:"+JSON.stringify(item))
             if(role == 'delegator') {
-                var tSeekerInfo = {}
-                var pSeekerInfo = {}
-                var pDelegatorInfo = {}
-                var r1 = await getSeekerPubInfo(item.tSeeker_openid,connection)
-                var r2 = await getSeekerPubInfo(item.pSeeker_openid,connection)
-                var r3 = await getDelegatorPubInfo(item.pDelegator_openid,connection)
-                r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
-                r2.status == 200 ? pSeekerInfo = r2.data[0] : {}
-                r3.status == 200 ? pDelegatorInfo = r3.data[0] : {}
-                tmpPush = {
-                    receivedSInfo: pSeekerInfo,
-                    receivedDInfo: pDelegatorInfo,
-                    toSeekerInfo: tSeekerInfo
+                if(open_id == item.pDelegator_openid) {
+                    sendedArry.push(await getDSendedPush(item))
+                } else {
+                    recvdArry.push(await getDRecvdPush(item))
                 }
             } else if(role == 'seeker') {
-                var seekerInfo = {}
-                var delegatorInfo = {}
-                var seeker_openid = ''
-                var delegator_openid = ''
-                var myDelegator_openid = ''
-                if(item.role == 'pSeeker') {
-                    seeker_openid = item.tSeeker_openid
-                    delegator_openid = item.tDelegator_openid
-                    myDelegator_openid = item.pDelegator_openid
-                } else if(item.role == 'tSeeker') {
-                    seeker_openid = item.pSeeker_openid
-                    delegator_openid = item.pDelegator_openid
-                    myDelegator_openid = item.tDelegator_openid
+                if(open_id == item.pSeeker_openid) {
+                    sendedArry.push(getSSendedPush(item))
                 } else {
-                    console.log('please indicate seeker role type(pSeeker/tSeeker)')
-                    continue
-                }
-                r1 = await getSeekerPubInfo(seeker_openid,connection)
-                r2 = await getDelegatorPubInfo(delegator_openid,connection)
-                seekerInfo = (r1.status == 200 ? r1.data[0] : {})
-                delegatorInfo = (r2.status == 200 ? r2.data[0] : {})
-                tmpPush = {
-                    receivedSInfo: seekerInfo,
-                    receivedDInfo: delegatorInfo,
-                    seeker_openid: open_id,
-                    delegator_openid: myDelegator_openid,
-                    status: item.status,
-                    role: item.role
+                    recvdArry.push(getSRecvdPush(item))
                 }
             }
-    
-            resArry.push(tmpPush)
         } 
     } else {
         console.log('get received push data failed!' + data.msg)
     }
-    return resArry
+
+    return {
+        recvdPush: recvdArry,
+        sendedPush: sendedArry
+    }
 }
 
 var getMySeeker = async function(ctx) {
@@ -218,6 +191,77 @@ var getDTaskInfo = async function(ctx) {
     }
 }
 
+async function getDSendedPush(data) {
+    console.log("============sended:"+JSON.stringify(data))
+    var pSeekerInfo = {}
+    var tSeekerInfo = {}
+    var tDelegatorInfo = {}
+    var r1 = await getSeekerPubInfo(data.pSeeker_openid,connection)
+    var r2 = await getSeekerPubInfo(data.tSeeker_openid,connection)
+    var r3 = await getDelegatorPubInfo(data.tDelegator_openid,connection)
+    r1.status == 200 ? pSeekerInfo = r1.data[0] : {}
+    r2.status == 200 ? tSeekerInfo = r2.data[0] : {}
+    r3.status == 200 ? tDelegatorInfo = r3.data[0] : {}
+    console.log("=========r1:"+JSON.stringify(r1))
+    return {
+        sendedSInfo: tSeekerInfo,
+        sendedDInfo: tDelegatorInfo,
+        fromSeekerInfo: pSeekerInfo
+    }
+}
+
+async function getDRecvdPush(data) {
+    var tSeekerInfo = {}
+    var pSeekerInfo = {}
+    var pDelegatorInfo = {}
+    var r1 = await getSeekerPubInfo(data.tSeeker_openid,connection)
+    var r2 = await getSeekerPubInfo(data.pSeeker_openid,connection)
+    var r3 = await getDelegatorPubInfo(data.pDelegator_openid,connection)
+    r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
+    r2.status == 200 ? pSeekerInfo = r2.data[0] : {}
+    r3.status == 200 ? pDelegatorInfo = r3.data[0] : {}
+    return {
+        receivedSInfo: pSeekerInfo,
+        receivedDInfo: pDelegatorInfo,
+        toSeekerInfo: tSeekerInfo
+    }
+}
+
+function getSSendedPush(data) {
+}
+
+async function getSRecvdPush(data) {
+    var seekerInfo = {}
+    var delegatorInfo = {}
+    var seeker_openid = ''
+    var delegator_openid = ''
+    var myDelegator_openid = ''
+    if(data.role == 'pSeeker') {
+        seeker_openid = data.tSeeker_openid
+        delegator_openid = data.tDelegator_openid
+        myDelegator_openid = data.pDelegator_openid
+    } else if(data.role == 'tSeeker') {
+        seeker_openid = data.pSeeker_openid
+        delegator_openid = data.pDelegator_openid
+        myDelegator_openid = data.tDelegator_openid
+    } else {
+        console.log('please indicate seeker role type(pSeeker/tSeeker)')
+        continue
+    }
+    r1 = await getSeekerPubInfo(seeker_openid,connection)
+    r2 = await getDelegatorPubInfo(delegator_openid,connection)
+    seekerInfo = (r1.status == 200 ? r1.data[0] : {})
+    delegatorInfo = (r2.status == 200 ? r2.data[0] : {})
+    return {
+        receivedSInfo: seekerInfo,
+        receivedDInfo: delegatorInfo,
+        seeker_openid: open_id,
+        delegator_openid: myDelegator_openid,
+        status: data.status,
+        role: data.role
+    }
+}
+
 function getD2SPushInfo(ctx) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
@@ -231,7 +275,7 @@ function getD2DInfo(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
         console.log("=========data:"+JSON.stringify(data))
-        var queryStr = "select * from D2DPush where tDelegator_openid='" + data.delegator_openid + "'"
+        var queryStr = "select * from D2DPush where tDelegator_openid='" + data.delegator_openid + "' or pDelegator_openid='" + data.delegator_openid + "'"
         queryFromDB(resolve,reject,queryStr,connection)
     })
 }
@@ -398,7 +442,9 @@ module.exports = {
     getDTaskInfo: getDTaskInfo,
     getMessageList: getMessageList,
     getMySeeker: getMySeeker,
-    getDReceivedPush: getDReceivedPush,
-    getSReceivedPush: getSReceivedPush,
+    getDPush: getDPush,
+    getSPush: getSPush,
+    //getDReceivedPush: getDReceivedPush,
+    //getSReceivedPush: getSReceivedPush,
     getDPushStatus: getDPushStatus,
 }

@@ -130,6 +130,11 @@ Page(extend({}, Tab, {
           }
         }
     },
+
+    onShow: function(opt) {
+        //var that = this
+        this.getMessageList()   // 获取信息发布榜信息
+    },
     onLoad: function (opt) {
         // set page info
         wx.setNavigationBarTitle({
@@ -373,6 +378,9 @@ Page(extend({}, Tab, {
             success: function(res) {
             }
         })
+    },
+    // 跳转到发出推送匹配的具体页面
+    goSendedPushDetail(opt) {
     },
     setDataType(data) {
         var curOpenId = this.data.homePage.wxUserInfo.open_id

@@ -61,7 +61,9 @@ Page({
                 advance:{ title:"预付", show:true, value:"" }
             }
         },
-        type: ''
+        type: '',
+        prePage: {},
+        prePageIndex: 0
     },
     handleZanSelectChange({ componentId, value }) {
         this.setData({
@@ -88,6 +90,11 @@ Page({
         data = data.list[index]
         // 赋值当前页面数据
         var curPageData = data
+        // 设置公用全局变量
+        this.setData({
+            prePage: prePage,
+            prePageIndex: index
+        })
 
         if(type == 'seekerInfo') {
             wx.setNavigationBarTitle({
@@ -155,19 +162,21 @@ Page({
             })
         }
     },
+    //--------------- seekerInfo Page functions -----------------//
     // 发布与取消发布
     release: function(opt) {
         var that = this
         wx.request({
             url: config.service.pushSeekerUrl,
             data: {
-                id: '12345' +  that.data.seekerInfo.seeker_openid
+                delegator_openid: that.data.seekerInfo.delegator_openid,
+                seeker_openid: that.data.seekerInfo.seeker_openid
             },
             success: function(res) {
                 util.showSuccess('发布成功')
-                var index = that.data.seekerInfo.prePageIndex
+                var index = that.data.prePageIndex
                 var type = that.data.type
-                that.data[type].prePage.setData({
+                that.data.prePage.setData({
                     ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 1
                 })
                 that.setData({
@@ -181,13 +190,14 @@ Page({
         wx.request({
             url: config.service.cancelPushSeekerUrl,
             data: {
-                id: '12345' +  that.data.seekerInfo.seeker_openid
+                delegator_openid: that.data.seekerInfo.delegator_openid,
+                seeker_openid: that.data.seekerInfo.seeker_openid
             },
             success: function(res) {
                 util.showSuccess('取消发布成功')
-                var index = that.data.seekerInfo.prePageIndex
+                var index = that.data.prePageIndex
                 var type = that.data.type
-                that.data[type].prePage.setData({
+                that.data.prePage.setData({
                     ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 0
                 })
                 that.setData({

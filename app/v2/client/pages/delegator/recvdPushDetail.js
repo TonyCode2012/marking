@@ -107,8 +107,14 @@ Page({
         var btnDisable = false
         if(state == -1) {
             // do nothing
-        } else {
+        } else if(state == 0 || state == 1 || state == 3){
             btnStr = '已推送，匹配中...'
+            btnDisable = true
+        } else if(state == 2 || state == 4){
+            btnStr = '匹配失败'
+            btnDisable = true
+        } else if(state == 5) {
+            btnStr = '匹配成功，恋爱中...'
             btnDisable = true
         }
         this.setData({

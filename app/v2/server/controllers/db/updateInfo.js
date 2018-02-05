@@ -59,14 +59,14 @@ var updateInfo = async function(ctx) {
 }
 
 var cancelPushSeekerInfo = async function(ctx) {
-    var result = await cancelPushSeekerInfo_r(ctx,connection)
+    var result = await chgSRelease(ctx,0,connection)
     ctx.state.data = {
         result: result
     }
 }
 
 var pushSeekerInfo = async function(ctx) {
-    var result = await pushSeekerInfo_r(ctx,connection)
+    var result = await chgSRelease(ctx,1,connection)
     ctx.state.data = {
         result: result
     }
@@ -91,21 +91,12 @@ function updateD2SStatus(id,state,connection) {
     })
 }
 
-function cancelPushSeekerInfo_r(ctx, connection) {
+function chgSRelease(ctx, state, connection) {
     return new Promise(function (resolve, reject) {
     
         var data = urlParser.parse(ctx.originalUrl,true).query
-        var queryStr = "update DelegationShip set is_release='0' where delegationship_id='" + data.id + "'"
-    
-        queryFromDB(resolve,reject,queryStr,connection)
-    })
-}
-
-function pushSeekerInfo_r(ctx, connection) {
-    return new Promise(function (resolve, reject) {
-    
-        var data = urlParser.parse(ctx.originalUrl,true).query
-        var queryStr = "update DelegationShip set is_release='1' where delegationship_id='" + data.id + "'"
+        var cdStr = util.getConditionAll(data,'and')
+        var queryStr = "update DelegationShip set is_release='" + state + "' where " + cdStr
     
         queryFromDB(resolve,reject,queryStr,connection)
     })

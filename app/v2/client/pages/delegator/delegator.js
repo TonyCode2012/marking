@@ -377,7 +377,8 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             index: index,
-            pDelegator_openid: this.data.homePage.wxUserInfo.open_id
+            pDelegator_openid: this.data.homePage.wxUserInfo.open_id,
+            type: 'receivedPush'
         }
         wx.navigateTo({
             url: './recvdPushDetail?data='+JSON.stringify(eData),
@@ -391,7 +392,8 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             index: index,
-            pDelegator_openid: this.data.homePage.wxUserInfo.open_id
+            pDelegator_openid: this.data.homePage.wxUserInfo.open_id,
+            type: 'sendedPush',
         }
         wx.navigateTo({
             url: './recvdPushDetail?data='+JSON.stringify(eData),

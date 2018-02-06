@@ -85,9 +85,12 @@ async function getPush(ctx, role) {
                 }
             } else if(role == 'seeker') {
                 if(open_id == item.pSeeker_openid) {
-                    sendedArry.push(getSSendedPush(item))
-                } else {
-                    recvdArry.push(getSRecvdPush(item))
+                    //tmpPush = await getSRecvdPush(item)
+                    recvdArry.push(await getSRecvdPush(item,open_id))
+                } 
+                else {
+                    recvdArry.push(await getSRecvdPush(item,open_id))
+                    //sendedArry.push(await getSSendedPush(item))
                 }
             }
         } 
@@ -192,7 +195,6 @@ var getDTaskInfo = async function(ctx) {
 }
 
 async function getDSendedPush(data) {
-    console.log("============sended:"+JSON.stringify(data))
     var pSeekerInfo = {}
     var tSeekerInfo = {}
     var tDelegatorInfo = {}
@@ -202,7 +204,6 @@ async function getDSendedPush(data) {
     r1.status == 200 ? pSeekerInfo = r1.data[0] : {}
     r2.status == 200 ? tSeekerInfo = r2.data[0] : {}
     r3.status == 200 ? tDelegatorInfo = r3.data[0] : {}
-    console.log("=========r1:"+JSON.stringify(r1))
     return {
         sendedSInfo: tSeekerInfo,
         sendedDInfo: tDelegatorInfo,
@@ -227,10 +228,7 @@ async function getDRecvdPush(data) {
     }
 }
 
-function getSSendedPush(data) {
-}
-
-async function getSRecvdPush(data) {
+async function getSSendedPush(data) {
     var seekerInfo = {}
     var delegatorInfo = {}
     var seeker_openid = ''
@@ -247,6 +245,37 @@ async function getSRecvdPush(data) {
     } else {
         console.log('please indicate seeker role type(pSeeker/tSeeker)')
         continue
+    }
+    r1 = await getSeekerPubInfo(seeker_openid,connection)
+    r2 = await getDelegatorPubInfo(delegator_openid,connection)
+    seekerInfo = (r1.status == 200 ? r1.data[0] : {})
+    delegatorInfo = (r2.status == 200 ? r2.data[0] : {})
+    return {
+        receivedSInfo: seekerInfo,
+        receivedDInfo: delegatorInfo,
+        seeker_openid: open_id,
+        delegator_openid: myDelegator_openid,
+        status: data.status,
+        role: data.role
+    }
+}
+
+async function getSRecvdPush(data,open_id) {
+    var seekerInfo = {}
+    var delegatorInfo = {}
+    var seeker_openid = ''
+    var delegator_openid = ''
+    var myDelegator_openid = ''
+    if(data.role == 'pSeeker') {
+        seeker_openid = data.tSeeker_openid
+        delegator_openid = data.tDelegator_openid
+        myDelegator_openid = data.pDelegator_openid
+    } else if(data.role == 'tSeeker') {
+        seeker_openid = data.pSeeker_openid
+        delegator_openid = data.pDelegator_openid
+        myDelegator_openid = data.tDelegator_openid
+    } else {
+        console.log('please indicate seeker role type(pSeeker/tSeeker)')
     }
     r1 = await getSeekerPubInfo(seeker_openid,connection)
     r2 = await getDelegatorPubInfo(delegator_openid,connection)

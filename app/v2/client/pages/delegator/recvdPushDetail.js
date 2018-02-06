@@ -5,7 +5,7 @@ const { Tab, extend } = require('../../zanui-style/index');
 Page({
     data: {
         info: {
-            receivedSInfo: {
+            fromSeekerInfo: {
                 list: {
                     basicInfo: {
                         title: "基本信息",
@@ -60,24 +60,32 @@ Page({
         var that = this
         opt = JSON.parse(opt.data)
         var index = opt.index 
+        var type = opt.type     // type的值receviedPush或者sendedPush 
         var pages = getCurrentPages()
         var DPage = pages[pages.length-2]
-        var curData = DPage.data.homePage.tabContent.list.myPush.data.list.receivedPush.data.list[index]
+        var curData = DPage.data.homePage.tabContent.list.myPush.data.list[type].data.list[index]
         that.setData({
             pDelegator_openid: opt.pDelegator_openid,
             userData: curData
         })
         this.prepareTpl()
-        this.setPageData(curData)
+        this.setPageData(curData,type)
         // 设置按键状态
+        var ids = {}
+        if(type == 'receivedPush') {
+            ids['pDelegator_openid'] = opt.pDelegator_openid
+            ids['pSeeker_openid'] = curData.toSeekerInfo.open_id
+            ids['tDelegator_openid'] = curData.receivedDInfo.open_id
+            ids['tSeeker_openid'] = curData.receivedSInfo.open_id
+        } else {
+            ids['pDelegator_openid'] = curData.sendedDInfo.open_id
+            ids['pSeeker_openid'] = curData.sendedSInfo.open_id
+            ids['tDelegator_openid'] = opt.pDelegator_openid
+            ids['tSeeker_openid'] = curData.fromSeekerInfo.open_id
+        }
         wx.request({
             url: config.service.getDPushStatusUrl,
-            data: {
-                pDelegator_openid: opt.pDelegator_openid,
-                pSeeker_openid: curData.toSeekerInfo.open_id,
-                tDelegator_openid: curData.receivedDInfo.open_id,
-                tSeeker_openid: curData.receivedSInfo.open_id
-            },
+            data: ids,
             success: function(res) {
                 var state = res.data.data.state
                 if(state == -2) util.showModel('后台错误，请求失败！','')
@@ -122,12 +130,25 @@ Page({
             'btn.disable': btnDisable
         })
     },
-    setPageData(data) {
+    setPageData(data,type) {
         var dataList = this.data.info
-        var keyArry = Object.keys(dataList) // receivedSInfo或者toSeekerInfo
+        var keyArry = Object.keys(dataList)
         for(var i=0;i<keyArry.length;i++) {
             var key = keyArry[i]
-            var curData = data[key]
+            var curData = {}
+            if(type == 'receivedPush') {
+                if(key == 'fromSeekerInfo') {
+                    curData = data['receivedSInfo']
+                } else {
+                    curData = data['toSeekerInfo']
+                }
+            } else {
+                if(key == 'fromSeekerInfo') {
+                    curData = data['fromSeekerInfo']
+                } else {
+                    curData = data['sendedSInfo']
+                }
+            }
             var val = dataList[key]['list']
             var title = 'info.' + key + '.list.'
             this.setData({

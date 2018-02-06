@@ -14,7 +14,7 @@
         <view class="weui-flex">
             <view class="weui-flex__item">
                 <view class="placeholder">
-                    <template is="compareDetailTpl" data="{{...info.receivedSInfo}}" />
+                    <template is="compareDetailTpl" data="{{...info.fromSeekerInfo}}" />
                 </view>
             </view>
             <view class="weui-flex__item">

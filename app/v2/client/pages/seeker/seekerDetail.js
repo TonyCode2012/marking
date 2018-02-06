@@ -434,7 +434,10 @@ Page({
                 var state = res.data.data.state
                 var role = data.role
                 if(state == -1) util.showModel('后台错误，请求失败！',res.data.data.result)
-                else that.setMatchStatus(state,role)
+                else {
+                    that.setMatchStatus(state,role)
+                    that.genMatchContract()
+                }
             }
         })
     },
@@ -466,6 +469,8 @@ Page({
         })
     },
     //--------------- matchList Page functions -----------------//
+    genMatchContract(data) {
+    },
     sendMarryReq(opt) {
     },
 })

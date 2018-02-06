@@ -174,7 +174,8 @@ Page(extend({}, Tab, {
             util.showModel('get user info failed!',JSON.stringify(e))
         }*/
         // 获取当前客户收到的推送
-        this.getReceivedPush(demoOpenid)
+        //this.getReceivedPush(demoOpenid)
+        this.getPush(demoOpenid)
         this.getMessageList()
         that.setData({
             title: opt.title
@@ -360,15 +361,24 @@ Page(extend({}, Tab, {
 
     //--------------- Home Page functions -----------------//
     // 获取当前客户收到的推送
-    getReceivedPush(openId) {
+    //getReceivedPush(openId) {
+    getPush(openId) {
         var that = this
         wx.request({
-            url: config.service.getSReceivedPushUrl,
+            url: config.service.getSPushUrl,
             data: {
                 seeker_openid: openId
             },
             success: function(res) {
-                that.setRecvdPushType(res.data.data.result)
+                var result = res.data.data.result
+                var recvdPush = result.recvdPush
+                that.setRecvdPushType(recvdPush)
+                var sendedPush = result.sendedPush
+                that.setData({
+                    //'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
+                    'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush
+                })
+                //that.setRecvdPushType(res.data.data.result)
                 //that.setData({
                 //    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': res.data.data.result
                 //})

@@ -159,6 +159,10 @@ var getSeekerInfo = async function(ctx) {
     }
 }
 
+var getSeekerInfoByField = async function(data) {
+    return await getSeekerInfoByField_r(data,connection)
+}
+
 var getDelegatorInfo = async function(ctx) {
     var result = await getDelegatorInfo_r(ctx,connection)
     ctx.state.data = {
@@ -380,6 +384,16 @@ function getSeekerInfo_r(ctx, connection) {
     })
 }
 
+function getSeekerInfoByField_r(data, connection) {
+    return new Promise(function (resolve, reject) {
+        var openId = data.open_id
+        var fields = data.fields
+        var queryStr = "select "+fields+" from SeekerInfo where open_id='" + openId + "'"
+
+        queryFromDB(resolve, reject, queryStr,connection)
+    })
+}
+
 function getUserInfo_r(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
@@ -467,6 +481,7 @@ function queryFromDB(resolve, reject, queryStr, connection) {
 module.exports = {
     getUserInfo: getUserInfo,
     getSeekerInfo: getSeekerInfo,
+    getSeekerInfoByField: getSeekerInfoByField,
     getDelegatorInfo: getDelegatorInfo,
     getDTaskInfo: getDTaskInfo,
     getMessageList: getMessageList,

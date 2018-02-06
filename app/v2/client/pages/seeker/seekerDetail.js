@@ -470,7 +470,22 @@ Page({
     },
     //--------------- matchList Page functions -----------------//
     genMatchContract(data) {
+        var data = this.data.recvdPushInfo
+        wx.request({
+            url: config.service.insertMatchContractUrl,
+            data: {
+                pDelegator_openid: data.pDOID,
+                pSeeker_openid: data.pSOID,
+                tDelegator_openid: data.tDOID,
+                tSeeker_openid: data.tSOID
+            },
+            success: function(res) {
+                util.showSuccess('成功')
+            }
+        })
     },
-    sendMarryReq(opt) {
+    sendMarryFReq(opt) {
+    },
+    sendMarrySReq(opt) {
     },
 })

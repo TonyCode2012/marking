@@ -4,6 +4,7 @@ var urlParser = require('url')
 var queryString  = require("querystring");
 var util = require('./util')
 var sd = require('silly-datetime');
+var getQ = require('./getInfo')
 
 
 var connection = mysql.createConnection({
@@ -18,6 +19,48 @@ connection.connect();
 
 var allIDFields = ['pDelegator_openid','pSeeker_openid','tDelegator_openid','tSeeker_openid']
 var twoIDFields = ['delegator_openid','seeker_openid']
+
+var insertMatchContract = async function(ctx) {
+    var data = urlParser.parse(ctx.originalUrl,true).query
+    var result = {}
+    var pSQuery = {
+        open_id: data.pSeeker_openid,
+        fields: "reward,advance"
+    }
+    var tSQuery = {
+        open_id: data.tSeeker_openid,
+        fields: "reward,advance"
+    }
+    var pSInfo = await getQ.getSeekerInfoByField(pSQuery)
+    var tSInfo = await getQ.getSeekerInfoByField(tSQuery)
+    if(pSInfo.status == 200 && tSInfo.status == 200) {
+        pSInfo = pSInfo.data[0]
+        tSInfo = tSInfo.data[0]
+        var time = sd.format(new Date(),'YYYY-MM-DD HH:mm:ss');
+        var qData = {
+            contract_address: 'xxx',
+            pDelegator_openid: data.pDelegator_openid,
+            pSeeker_openid: data.pSeeker_openid,
+            tDelegator_openid: data.tDelegator_openid,
+            tSeeker_openid: data.tSeeker_openid,
+            pReward: pSInfo.reward,
+            tReward: tSInfo.reward,
+            pAdvance: pSInfo.advance,
+            tAdvance: tSInfo.advance,
+            status: 0,
+            signature: 'xxxx',
+            signature_date: time
+        }
+        var kvPair = util.getJSONKeyVal(qData)
+        result = await insertMatchContract_r(kvPair,connection)
+    } else {
+        result['status'] = 400
+        result['msg'] = 'Get seeker reward or advance failed!'
+    }
+    ctx.state.data = {
+        result: result
+    }
+}
 
 var insertDelegationShip = async function(ctx) {
     var idata = urlParser.parse(ctx.originalUrl,true).query.data
@@ -80,6 +123,13 @@ var insertRelation = async function(ctx,tableId) {
     return resArry
 }
 
+function insertMatchContract_r(data,connection) {
+    return new Promise(function (resolve, reject) {
+        var queryStr = "insert into MatchContract "+data.keyStr+" values "+data.valStr
+        queryFromDB(resolve, reject, queryStr,connection)
+    })
+}
+
 function insertDelegationShip_r(ctx,connection) {
     return new Promise(function (resolve, reject) {
         var queryStr = "insert into DelegationShip " + 
@@ -129,5 +179,6 @@ function queryFromDB(resolve, reject, queryStr, connection) {
 module.exports = {
     insertD2S: insertD2S,
     insertDelegationShip: insertDelegationShip,
-    insertD2D: insertD2D
+    insertD2D: insertD2D,
+    insertMatchContract: insertMatchContract
 }

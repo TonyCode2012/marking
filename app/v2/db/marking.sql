@@ -11,7 +11,7 @@
  Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 05/02/2018 23:53:01
+ Date: 06/02/2018 23:59:29
 */
 
 SET NAMES utf8mb4;
@@ -60,7 +60,7 @@ CREATE TABLE `D2SPush`  (
 -- ----------------------------
 INSERT INTO `D2SPush` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', '2018-01-22', 1, 9);
 INSERT INTO `D2SPush` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'oHEkW0dNJwwjb3ete07iObpWGFcM1', '12345', 'oHEkW0dNJwwjb3ete07iObpWGFcM', '2018-01-28', 0, 10);
-INSERT INTO `D2SPush` VALUES ('delegatorBID', 'seekerBID', 'DelegatorAID', 'seekerAID', '2018-02-02', 4, 11);
+INSERT INTO `D2SPush` VALUES ('delegatorBID', 'seekerBID', 'DelegatorAID', 'seekerAID', '2018-02-02', 5, 11);
 
 -- ----------------------------
 -- Table structure for DelegationShip
@@ -108,17 +108,24 @@ INSERT INTO `DelegatorInfo` VALUES ('delegatorBID', 'delegatorB', 'male', '52263
 DROP TABLE IF EXISTS `MatchContract`;
 CREATE TABLE `MatchContract`  (
   `contract_address` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `delegatemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `delegatefemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `seekermale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `seekerfemale_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `reward` float(10, 0) NOT NULL,
-  `advance` float(4, 0) NOT NULL,
+  `pDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `pSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `tDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `tSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `pReward` float(10, 0) NOT NULL,
+  `tReward` float(10, 0) NOT NULL,
+  `pAdvance` float(10, 0) NOT NULL,
+  `tAdvance` float(10, 0) NOT NULL,
   `status` int(1) NOT NULL,
   `signature` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `signature_date` date NOT NULL,
+  `signature_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
   PRIMARY KEY (`contract_address`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of MatchContract
+-- ----------------------------
+INSERT INTO `MatchContract` VALUES ('xxx', 'delegatorBID', 'seekerBID', 'delegatorAID', 'seekerAID', 400, 400, 200, 200, 0, 'xxxx', '2018-02-06 23:51:05');
 
 -- ----------------------------
 -- Table structure for S2DPush
@@ -158,7 +165,7 @@ CREATE TABLE `SeekerInfo`  (
   `requirement` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `self_introduction` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `reward` float(10, 0) NULL DEFAULT NULL,
-  `advance` float(2, 0) NULL DEFAULT NULL,
+  `advance` float(10, 0) NULL DEFAULT NULL,
   `is_public` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`open_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
@@ -166,8 +173,8 @@ CREATE TABLE `SeekerInfo`  (
 -- ----------------------------
 -- Records of SeekerInfo
 -- ----------------------------
-INSERT INTO `SeekerInfo` VALUES ('seekerAID', 'xiaomei', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volubility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
-INSERT INTO `SeekerInfo` VALUES ('seekerBID', 'xiaoming', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, NULL, 1);
+INSERT INTO `SeekerInfo` VALUES ('seekerAID', 'xiaomei', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volubility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, 200, 1);
+INSERT INTO `SeekerInfo` VALUES ('seekerBID', 'xiaoming', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, 200, 1);
 
 -- ----------------------------
 -- Table structure for User

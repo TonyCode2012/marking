@@ -37,7 +37,7 @@
                 disabled="{{btn.stateBtn.disable}}" size="mini" style="margin-left:30%">{{btn.stateBtn.btnStr}}</button>
             <button class="weui-btn mini-btn" type="primary" bindtap="" hidden="{{type!='messageList'}}"
                 size="mini" style="margin-left:30%">推送给红娘</button>
-            <button class="weui-btn mini-btn" type="primary" bindtap="sendMarryFReq" hidden="{{type!='matchList'}}"
+            <button class="weui-btn mini-btn" type="primary" bindtap="sendMarryFReq" hidden="{{btn.refuseBtn.hidden || type!='matchList'}}"
                 size="mini">拒绝恋爱</button>
             <button class="weui-btn mini-btn" type="primary" bindtap="sendMarrySReq" hidden="{{btn.stateBtn.hidden || type!='matchList'}}"
                 disabled="{{btn.stateBtn.disable}}" size="mini" style="margin-left:30%">{{btn.stateBtn.str}}</button>

@@ -65,6 +65,8 @@ var config = {
         insertMatchContractUrl: `${host}/weapp/insertMatchContract`,
         getContractBySeekerIdUrl: `${host}/weapp/getContractBySeekerId`,
         getContractByIdsListUrl: `${host}/weapp/getContractByIdsList`,
+        sendMarryAcceptUrl: `${host}/weapp/sendMarryAccept`,
+        sendMarryRefuseUrl: `${host}/weapp/sendMarryRefuse`,
         
 
         // 测试的信道服务地址

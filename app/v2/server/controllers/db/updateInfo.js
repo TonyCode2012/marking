@@ -14,6 +14,43 @@ var connection = mysql.createConnection({
 
 connection.connect()
 
+var setMarryAccept = async function(ctx) {
+    var data = urlParser.parse(ctx.originalUrl,true).query
+    var queryData = data.queryData
+    var cdStr = util.getConditionAll(JSON.parse(queryData),'and')
+    var orgState = data.state
+    var role = data.role
+    var state = 0
+    if (orgState == 1 || orgState == 3) state = 5
+    else state = (role == 'pSeeker' ? 1 : 3)
+    var para = {
+        state: state,
+        cdStr: cdStr
+    }
+    var result = await setMarry_r(para,connection)
+    
+    finalState = (result.status == 200 ? state : -1)
+
+    ctx.state.data = {
+        result: result,
+        state: finalState
+    }
+}
+
+var setMarryRefuse = async function(ctx) {
+    var data = urlParser.parse(ctx.originalUrl,true).query
+    var cdStr = util.getConditionAll(JSON.parse(data.queryData),'and')
+    var state = (data.role == 'pSeeker' ? 2 : 4)
+    var para = {
+        state: state,
+        cdStr: cdStr
+    }
+    var result = await setMarry_r(para,connection)
+    ctx.state.data = {
+        result: result
+    }
+}
+
 var setMatchAccept = async function(ctx) {
     var data = urlParser.parse(ctx.originalUrl,true).query
     var queryData = data.queryData
@@ -70,6 +107,15 @@ var pushSeekerInfo = async function(ctx) {
     ctx.state.data = {
         result: result
     }
+}
+
+function setMarry_r(data,connection) {
+    return new Promise(function (resolve, reject) {
+    
+        var queryStr = "update MatchContract set status='" + data.state + "' where " + data.cdStr
+    
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
 }
 
 function setMatch_r(data,connection) {
@@ -155,5 +201,7 @@ module.exports = {
     pushSeekerInfo: pushSeekerInfo,
     cancelPushSeekerInfo: cancelPushSeekerInfo,
     setMatchAccept: setMatchAccept,
-    setMatchRefuse: setMatchRefuse
+    setMatchRefuse: setMatchRefuse,
+    setMarryAccept: setMarryAccept,
+    setMarryRefuse: setMarryRefuse
 }

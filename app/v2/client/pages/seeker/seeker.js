@@ -466,15 +466,31 @@ Page(extend({}, Tab, {
                 recvdMatch.push({
                     matchInfo: matchInfo
                 })
+                var pDOID,pSOID,tDOID,tSOID
+                if(matchInfo.role == 'pSeeker') {
+                    pDOID = matchInfo.delegator_openid
+                    pSOID = matchInfo.seeker_openid
+                    tDOID = matchInfo.receivedDInfo.open_id
+                    tSOID = matchInfo.receivedSInfo.open_id
+                } else {
+                    pDOID = matchInfo.receivedDInfo.open_id
+                    pSOID = matchInfo.receivedSInfo.open_id
+                    tDOID = matchInfo.delegator_openid
+                    tSOID = matchInfo.seeker_openid
+                }
                 idsList.push({
-                    pDelegator_openid: matchInfo.delegator_openid,
-                    pSeeker_openid: matchInfo.seeker_openid,
-                    tDelegator_openid: matchInfo.receivedDInfo.open_id,
-                    tSeeker_openid: matchInfo.receivedSInfo.open_id,
+                    ids: {
+                        pDelegator_openid: pDOID,
+                        pSeeker_openid: pSOID,
+                        tDelegator_openid: tDOID,
+                        tSeeker_openid: tSOID,
+                    },
                     index: i
                 })
             }
-            else recvdPush.push(recvdAllPush[i])
+            else {
+                recvdPush.push(recvdAllPush[i])
+            }
         }
         this.setData({
             'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush,

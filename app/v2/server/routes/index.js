@@ -49,6 +49,8 @@ router.get('/pushSeekerInfo', dbControllers.updateInfo.pushSeekerInfo)
 router.get('/cancelPushSeekerInfo', dbControllers.updateInfo.cancelPushSeekerInfo)
 router.get('/sendMatchAccept', dbControllers.updateInfo.setMatchAccept)
 router.get('/sendMatchRefuse', dbControllers.updateInfo.setMatchRefuse)
+router.get('/sendMarryAccept', dbControllers.updateInfo.setMarryAccept)
+router.get('/sendMarryRefuse', dbControllers.updateInfo.setMarryRefuse)
 
 // --- 获取区块链钱包地址 Demo --- //
 // 图片上传接口，小程序端可以直接将 url 填入 wx.uploadFile 中

@@ -336,6 +336,19 @@ Page(extend({}, Tab, {
             }
         })
     },
+    // 获取合同信息
+    getContractByIdsList(idsList,callback) {
+        wx.request({
+            url: config.service.getContractByIdsListUrl,
+            data: {
+                idsList: idsList
+            },
+            success: function(res) {
+                var contracts = res.data.data.result
+                callback(contracts)
+            }
+        })
+    },
     // 跳转到当前代理人代理的seeker页面
     goTaskDetail(opt) {
         var data = opt.currentTarget.dataset.item
@@ -401,6 +414,62 @@ Page(extend({}, Tab, {
             success: function(res) {
             }
         })
+    },
+    setRecvdPushType(data) {
+        var that = this
+        var recvdAllPush = data.recvdPush
+        var sendedPush = data.sendedPush
+        var recvdPush = []
+        var recvdMatch = []
+        var idsList = []
+        for(var i=0;i<recvdAllPush.length;i++) {
+            if(recvdAllPush[i].status == 5) {
+                var matchInfo = recvdAllPush[i]
+                recvdMatch.push({
+                    matchInfo: matchInfo
+                })
+                var pDOID,pSOID,tDOID,tSOID
+                if(matchInfo.role == 'pSeeker') {
+                    pDOID = matchInfo.delegator_openid
+                    pSOID = matchInfo.seeker_openid
+                    tDOID = matchInfo.receivedDInfo.open_id
+                    tSOID = matchInfo.receivedSInfo.open_id
+                } else {
+                    pDOID = matchInfo.receivedDInfo.open_id
+                    pSOID = matchInfo.receivedSInfo.open_id
+                    tDOID = matchInfo.delegator_openid
+                    tSOID = matchInfo.seeker_openid
+                }
+                idsList.push({
+                    ids: {
+                        pDelegator_openid: pDOID,
+                        pSeeker_openid: pSOID,
+                        tDelegator_openid: tDOID,
+                        tSeeker_openid: tSOID,
+                    },
+                    index: i
+                })
+            }
+            else {
+                recvdPush.push(recvdAllPush[i])
+            }
+        }
+        this.setData({
+            'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush,
+            'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
+        })
+        if(idsList.length != 0) {
+            this.getContractByIdsList(idsList,(result) => {
+                for(var i=0;i<result.length;i++) {
+                    var item = result[i]
+                    var index = item.index
+                    recvdMatch[index]['contractInfo'] = item
+                }
+                that.setData({
+                    'homePage.tabContent.list.myMatch.data.list': recvdMatch
+                })
+            })
+        }
     },
     setMsgDataType(data) {
         var curOpenId = this.data.homePage.wxUserInfo.open_id

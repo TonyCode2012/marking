@@ -27,15 +27,10 @@ var getContractByIdsList = async function(ctx) {
     console.log("=======contract:"+JSON.stringify(dataList))
     var resArry = []
     for(var i=0;i<dataList.length;i++) {
-        var ids = dataList[i]
-        var index = ids.index
-        var rids = {
-            pDelegator_openid: ids.pDelegator_openid,
-            pSeeker_openid: ids.pSeeker_openid,
-            tDelegator_openid: ids.tDelegator_openid,
-            tSeeker_openid: ids.tSeeker_openid
-        }
-        var res = await getContractByIds_r(rids,seekerContractPubInfo)
+        var item = dataList[i]
+        var ids = item.ids
+        var index = item.index
+        var res = await getContractByIds_r(ids,seekerContractPubInfo)
         if(res.status == 200) {
             var tmp = res.data[0] 
             tmp['index'] = index
@@ -119,14 +114,8 @@ async function getPush(ctx, role) {
                     recvdArry.push(await getDRecvdPush(item))
                 }
             } else if(role == 'seeker') {
-                if(open_id == item.pSeeker_openid) {
-                    //tmpPush = await getSRecvdPush(item)
-                    recvdArry.push(await getSRecvdPush(item,open_id))
-                } 
-                else {
-                    recvdArry.push(await getSRecvdPush(item,open_id))
-                    //sendedArry.push(await getSSendedPush(item))
-                }
+                recvdArry.push(await getSRecvdPush(item,open_id))
+                // 暂时缺少客户发出的推送的获取
             }
         } 
     } else {

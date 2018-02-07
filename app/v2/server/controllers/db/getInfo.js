@@ -9,6 +9,8 @@ var seekerPubInfoItems = "open_id,name,age,gender,height,weight,education,conste
 
 var delegatorPubInfoItems = "open_id,name,wx_portraitAddr"
 
+var seekerContractPubInfo = "contract_addr,pDelegator_openid,pSeeker_openid,tDelegator_openid,tSeeker_openid,status,signature_date"
+
 var connection = mysql.createConnection({
     host     : config.host,
     port     : config.port,
@@ -18,6 +20,39 @@ var connection = mysql.createConnection({
 });
 
 connection.connect();
+
+var getContractByIdsList = async function(ctx) {
+    var dataList = urlParser.parse(ctx.originalUrl,true).query.idsList
+    dataList = JSON.parse(dataList)
+    console.log("=======contract:"+JSON.stringify(dataList))
+    var resArry = []
+    for(var i=0;i<dataList.length;i++) {
+        var ids = dataList[i]
+        var index = ids.index
+        var rids = {
+            pDelegator_openid: ids.pDelegator_openid,
+            pSeeker_openid: ids.pSeeker_openid,
+            tDelegator_openid: ids.tDelegator_openid,
+            tSeeker_openid: ids.tSeeker_openid
+        }
+        var res = await getContractByIds_r(rids,seekerContractPubInfo)
+        if(res.status == 200) {
+            var tmp = res.data[0] 
+            tmp['index'] = index
+            resArry.push(tmp)
+        }
+    }
+    ctx.state.data = {
+        result: resArry
+    }
+}
+
+var getContractBySeekerId = async function(ctx) {
+    var result = await getContractBySeekerId_r(ctx,'*')
+    ctx.state.data = {
+        result: result
+    }
+}
 
 // 获取当前红娘发出推送的状态
 var getDPushStatus = async function(ctx) {
@@ -295,6 +330,26 @@ async function getSRecvdPush(data,open_id) {
     }
 }
 
+function getContractByIds_r(ids,fields) {
+    return new Promise(function (resolve, reject) {
+        var cdStr = util.getConditionAll(ids,'and')
+        var queryStr = "select " + fields + " from MatchContract where " + cdStr
+        console.log("========query:"+queryStr)
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
+}
+
+function getContractBySeekerId_r(ctx,fields) {
+    return new Promise(function (resolve, reject) {
+        var data = urlParser.parse(ctx.originalUrl,true).query
+        var seeker_openid = data.seeker_openid
+        var queryStr = "select " + fields + ",if(pSeeker_openid='" + seeker_openid 
+            + "','pSeeker','tSeeker') as role from MatchContract where pSeeker_openid='" + seeker_openid 
+            + "' or tSeeker_openid='" + seeker_openid + "'"
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
+}
+
 function getD2SPushInfo(ctx) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
@@ -488,6 +543,8 @@ module.exports = {
     getMySeeker: getMySeeker,
     getDPush: getDPush,
     getSPush: getSPush,
+    getContractBySeekerId: getContractBySeekerId,
+    getContractByIdsList: getContractByIdsList,
     //getDReceivedPush: getDReceivedPush,
     //getSReceivedPush: getSReceivedPush,
     getDPushStatus: getDPushStatus,

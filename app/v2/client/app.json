@@ -9,7 +9,7 @@
     "pages/delegator/delegator",
     "pages/delegator/seekerDetail",
     "pages/delegator/send2Seeker",
-    "pages/delegator/recvdPushDetail",
+    "pages/delegator/pushDetail",
     "pages/addCgi/addCgi"
   ],
   "window":{

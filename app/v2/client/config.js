@@ -63,6 +63,8 @@ var config = {
         
         /*****合同流程*****/
         insertMatchContractUrl: `${host}/weapp/insertMatchContract`,
+        getContractBySeekerIdUrl: `${host}/weapp/getContractBySeekerId`,
+        getContractByIdsListUrl: `${host}/weapp/getContractByIdsList`,
         
 
         // 测试的信道服务地址

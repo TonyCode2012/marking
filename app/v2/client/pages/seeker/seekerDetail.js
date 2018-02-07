@@ -95,6 +95,18 @@ Page({
                     data: {}
                 }
             },
+            btn: {
+                refuseBtn: {
+                    disable: false,
+                    hidden: true
+                },
+                stateBtn: {
+                    str: "接受恋爱",
+                    type: "primary",
+                    disable: false,
+                    hidden: false
+                }
+            },
             type:'matchList',
             state: 5,
             portrait: "",
@@ -146,14 +158,13 @@ Page({
         // 获取上一个页面的数据引用
         var pages = getCurrentPages()
         var prePage = pages[pages.length-2]
-        var dataList = []
         // 获取当前使用的数据
         var tn = opt.tArry
         var data = prePage.data.homePage.tabContent
         for(var i=0;i<tn.length;i++) {
             data = data.list[tn[i]].data
         }
-        dataList = data.list
+        var dataList = data.list
         data = data.list[index]
         // 赋值当前页面数据
         var curPageData = data
@@ -184,10 +195,13 @@ Page({
             wx.setNavigationBarTitle({
               title: '匹配项目'
             })
-            var recvdSData = data.receivedSInfo
-            var curRole = data.role
-            var state = data.status
-            var ids = this.setFourIDs(data)
+            var matchData = data.matchInfo
+            var recvdSData = matchData.receivedSInfo
+            var curRole = matchData.role
+            var state = matchData.status
+            var ids = this.setFourIDs(matchData)
+            // 设置恋爱按钮状态
+            this.setMarryBtnStatus()
             this.setData({
                 'matchList.portrait': recvdSData.wx_portraitAddr,
                 'matchList.pSOID': ids.pSOID,
@@ -213,32 +227,6 @@ Page({
             // 设置匹配按键状态
             this.setMatchStatus(state,curRole)
             var ids = this.setFourIDs(data)
-            //var recvdSData = data.receivedSInfo
-            //var recvdDOpenid = data.receivedDInfo.open_id
-            //var myDOID = data.delegator_openid
-            //var mySOID = data.seeker_openid
-            //var curRole = data.role
-            //var state = data.state
-//
-            //// 设置匹配按键状态
-            //this.setMatchStatus(state,curRole)
-//
-            //// 设置四方id
-            //var pSOID = ''
-            //var pDOID = ''
-            //var tSOID = ''
-            //var tDOID = ''
-            //if(curRole == 'pSeeker') {
-            //    pSOID = mySOID
-            //    pDOID = myDOID
-            //    tSOID = recvdSData.open_id
-            //    tDOID = recvdDOpenid
-            //} else if(curRole == 'tSeeker') {
-            //    pSOID = recvdSData.open_id
-            //    pDOID = recvdDOpenid
-            //    tSOID = mySOID
-            //    tDOID = myDOID
-            //}
             this.setData({
                 'recvdPushInfo.portrait': recvdSData.wx_portraitAddr,
                 'recvdPushInfo.pSOID': ids.pSOID,
@@ -484,8 +472,104 @@ Page({
             }
         })
     },
-    sendMarryFReq(opt) {
+    // 获取合同信息
+    getContract(openId) {
+        var that = this
+        wx.request({
+            url: config.service.getContractBySeekerIdUrl,
+            data: {
+                seeker_openid: openId
+            },
+            success: function(res) {
+                util.showSuccess('成功')
+                //this.setData({
+                //    'homePage.tabContent.list.myMatch.data.list': recvdMatch
+                //})
+            }
+        })
     },
+    // 设置恋爱按钮状态
+    /*
+     * 匹配状态说明：
+     * “0”: 双方未发送请求
+     * “1”: “推送给我”方申请匹配
+     * “2”: “推送给我”方拒绝匹配
+     * “3”: “我被推送”方申请匹配
+     * “4”: “我被推送”方拒绝匹配
+     * “5”: 双方均接受
+     * */
+    // 设置匹配按键状态
+    setMarryBtnStatus(state,role) {
+        var btnStr = this.data.recvdPushInfo.btnStateStr
+        var stateBtnStr = btnStr.request
+        var stateBtnType = 'primary'
+        var stateBtnHidden = false
+        var stateBtnDisable = false
+        var refuseBtnHidden = false
+        var refuseBtnDisable = false
+        if(state == 0) {
+            stateBtnStr = btnStr.request
+        } else if(state == 1) {
+            if(role == 'pSeeker') {
+                stateBtnStr = btnStr.sended
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            } else {
+                stateBtnStr = btnStr.agree
+            }
+        } else if(state == 2) {
+            if(role == 'pSeeker') {
+                stateBtnStr = btnStr.irefuse
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            } else {
+                stateBtnStr = btnStr.orefuse
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            }
+        } else if(state == 3) {
+            if(role == 'pSeeker') {
+                stateBtnStr = btnStr.agree
+            } else {
+                stateBtnStr = btnStr.sended
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            }
+        } else if(state == 4) {
+            if(role == 'pSeeker') {
+                stateBtnStr = btnStr.orefuse
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            } else {
+                stateBtnStr = btnStr.irefuse
+                stateBtnDisable = true
+                refuseBtnHidden = true
+            }
+        } else if(state == 5) {
+            wx.reLaunch({
+                url: './seeker?openId='+this.data.open_id
+            })
+        }
+        this.setData({
+            'matchList.btn.stateBtn.btnStr': stateBtnStr,
+            'matchList.btn.stateBtn.type': stateBtnType,
+            'matchList.btn.stateBtn.hidden': stateBtnHidden,
+            'matchList.btn.stateBtn.disable': stateBtnDisable,
+            'matchList.btn.refuseBtn.hidden': refuseBtnHidden,
+            'matchList.btn.refuseBtn.disable': refuseBtnDisable,
+        })
+    },
+    // 拒绝恋爱
+    sendMarryFReq(opt) {
+        wx.request({
+            url: config.service.sendMarryRefuseUrl,
+            data: {
+            },
+            success: function(res) {
+            }
+        })
+    },
+    // 接受恋爱
     sendMarrySReq(opt) {
     },
 })

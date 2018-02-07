@@ -16,6 +16,11 @@ Page({
                 }
             },
             type:'seekerInfo',
+            pushBtn: {
+                str: '推送',
+                hidden: false,
+                disable: false
+            },
             portrait:"",
             seeker_openid:"",
             delegator_openid:"",
@@ -34,6 +39,11 @@ Page({
                 }
             },
             type:'messageList',
+            pushBtn: {
+                str: '推送',
+                hidden: false,
+                disable: false
+            },
             portrait:"",
             pushedSeekerInfo: {},
             seeker_openid:"",
@@ -75,10 +85,14 @@ Page({
         opt = JSON.parse(opt.data)
         var index = opt.index
         var type = opt.type
+        var isOwn = opt.isOwn
         this.setData({
             type: type
         })
-        this.prepareTpl(type)   // 设置页面模板
+        // 设置页面模板
+        this.prepareTpl(type) 
+        // 设置按键状态
+        this.setBtnStatus(type,isOwn)
         // 获取当前使用的数据
         var pages = getCurrentPages()       // 获取上一个页面的数据引用
         var prePage = pages[pages.length-2]
@@ -159,6 +173,13 @@ Page({
             this.setData({
                 'messageList.list.reqInfo.data.reward.show': false,
                 'messageList.list.reqInfo.data.advance.show': false
+            })
+        }
+    },
+    setBtnStatus(type,isOwn) {
+        if(type == 'messageList') {
+            this.setData({
+                'messageList.pushBtn.hidden': isOwn
             })
         }
     },

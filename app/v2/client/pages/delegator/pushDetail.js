@@ -50,6 +50,7 @@ Page({
         },
         userData: {},
         pDelegator_openid: '',
+        type: '',
         btn: {
             str: '推送',
             disable: false
@@ -66,7 +67,8 @@ Page({
         var curData = DPage.data.homePage.tabContent.list.myPush.data.list[type].data.list[index]
         that.setData({
             pDelegator_openid: opt.pDelegator_openid,
-            userData: curData
+            userData: curData,
+            type: type
         })
         this.prepareTpl()
         this.setPageData(curData,type)
@@ -111,10 +113,14 @@ Page({
         }
     },
     setBtnState(state) {
+        var type = this.data.type
         var btnStr = '推送'
         var btnDisable = false
         if(state == -1) {
-            // do nothing
+            if(type == 'sendedPush') {
+                btnStr = '等待对方推送'
+                btnDisable = true
+            }
         } else if(state == 0 || state == 1 || state == 3){
             btnStr = '已推送，匹配中...'
             btnDisable = true
@@ -122,7 +128,7 @@ Page({
             btnStr = '匹配失败'
             btnDisable = true
         } else if(state == 5) {
-            btnStr = '匹配成功，恋爱中...'
+            btnStr = '匹配成功,恋爱中...'
             btnDisable = true
         }
         this.setData({

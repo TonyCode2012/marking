@@ -15,7 +15,7 @@
         </view>
         <!--view hidden="{{mode!='register'}}">{{title}}</view>
         <view class="weui-cells__title"></view-->
-        <view wx:for="{{list}}" class="weui-cells weui-cells_after-title">
+        <view wx:for="{{list}}" wx:key="*this" class="weui-cells weui-cells_after-title">
             <view class="weui-cells__title">{{item.title}}</view>
             <view wx:for="{{item.data}}" wx:for-item="sitem" wx:key="*this" hidden="{{sitem.show==false}}" class="{{sitem.type=='textarea'?'weui-cell':'weui-cell weui-cell_input'}}">
                 <view class="weui-cell__hd">
@@ -32,7 +32,8 @@
         <!--view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view-->
         <view class="weui-btn-area" style="text-align:center">
             <button class="weui-btn mini-btn" type="primary" hidden="{{type=='messageList'}}" bindtap="{{released?'cancelRelease':'release'}}" size="mini">{{released?'取消发布':'发布'}}</button>
-            <button class="weui-btn mini-btn" type="primary" bindtap="go2SelectPage" size="mini" style="margin-left:30%">推送</button>
+            <button class="weui-btn mini-btn" type="primary" hidden="{{pushBtn.hidden}}" disabled="{{pushBtn.disable}}"
+                bindtap="go2SelectPage" size="mini" style="margin-left:30%">{{pushBtn.str}}</button>
         </view>
     </view>
 </template>
@@ -52,7 +53,7 @@
                 </navigator>
             </view>
         </view>
-        <view wx:for="{{list}}" class="weui-cells weui-cells_after-title">
+        <view wx:for="{{list}}" wx:key="*this" class="weui-cells weui-cells_after-title">
             <view class="weui-cells__title" hidden="{{index=='reqInfo'}}">{{item.title}}</view>
             <view wx:for="{{item.data}}" wx:for-index="sid" wx:for-item="sitem" wx:key="*this" hidden="{{sitem.show==false}}" class="{{sitem.type=='textarea'?'':'weui-cell weui-cell_input'}}">
                 <view class="{{(sid=='requirement'||sid=='self_introduction')?'weui-cells__title':'weui-cell__hd'}}">

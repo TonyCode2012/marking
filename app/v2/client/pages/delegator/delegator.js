@@ -309,7 +309,7 @@ Page(extend({}, Tab, {
             url: config.service.getMessageListUrl,
             success: function(res) {
                 var data = res.data.data.result
-                that.setDataType(data)
+                that.setMsgDataType(data)
                 that.setData({
                     'homePage.tabContent.list.messageList.data.list': data
                 })
@@ -361,6 +361,7 @@ Page(extend({}, Tab, {
             delegator_openid: this.data.homePage.wxUserInfo.open_id,
             MS_openid: data['open_id'],         // 发布信息的seeker id
             MD_openid: data['delegator_openid'],// 发布信息的seeker的红娘id
+            isOwn: data['isOwn'],
             index: index,
             type: 'messageList',
             tArry: ["messageList"]
@@ -381,7 +382,7 @@ Page(extend({}, Tab, {
             type: 'receivedPush'
         }
         wx.navigateTo({
-            url: './recvdPushDetail?data='+JSON.stringify(eData),
+            url: './pushDetail?data='+JSON.stringify(eData),
             success: function(res) {
             }
         })
@@ -396,15 +397,20 @@ Page(extend({}, Tab, {
             type: 'sendedPush',
         }
         wx.navigateTo({
-            url: './recvdPushDetail?data='+JSON.stringify(eData),
+            url: './pushDetail?data='+JSON.stringify(eData),
             success: function(res) {
             }
         })
     },
-    setDataType(data) {
+    setMsgDataType(data) {
         var curOpenId = this.data.homePage.wxUserInfo.open_id
         for(var i=0;i<data.length;i++) {
-            if(data[i].delegator_openid != curOpenId) data[i]['bgc'] = '#96CE54'
+            if(data[i].delegator_openid != curOpenId) {
+                data[i]['bgc'] = '#96CE54'
+                data[i]['isOwn'] = false
+            } else {
+                data[i]['isOwn'] = true
+            }
         }
     },
     /*有关页面的操作*/

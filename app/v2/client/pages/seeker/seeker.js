@@ -176,6 +176,7 @@ Page(extend({}, Tab, {
         // 获取当前客户收到的推送
         //this.getReceivedPush(demoOpenid)
         this.getPush(demoOpenid)
+        //this.getContract(demoOpenid)
         this.getMessageList()
         that.setData({
             title: opt.title
@@ -361,7 +362,6 @@ Page(extend({}, Tab, {
 
     //--------------- Home Page functions -----------------//
     // 获取当前客户收到的推送
-    //getReceivedPush(openId) {
     getPush(openId) {
         var that = this
         wx.request({
@@ -371,17 +371,34 @@ Page(extend({}, Tab, {
             },
             success: function(res) {
                 var result = res.data.data.result
-                var recvdPush = result.recvdPush
-                that.setRecvdPushType(recvdPush)
-                var sendedPush = result.sendedPush
-                that.setData({
-                    //'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
-                    'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush
-                })
-                //that.setRecvdPushType(res.data.data.result)
-                //that.setData({
-                //    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': res.data.data.result
-                //})
+                // 设置推送类型：接收到的推送/匹配和发出的推送
+                that.setRecvdPushType(result)
+            }
+        })
+    },
+    // 获取合同信息
+    getContract(openId,callback) {
+        var that = this
+        wx.request({
+            url: config.service.getContractBySeekerIdUrl,
+            data: {
+                seeker_openid: openId
+            },
+            success: function(res) {
+                var contracts = res.data.data.result.data
+            }
+        })
+    },
+    // 获取合同信息
+    getContractByIdsList(idsList,callback) {
+        wx.request({
+            url: config.service.getContractByIdsListUrl,
+            data: {
+                idsList: idsList
+            },
+            success: function(res) {
+                var contracts = res.data.data.result
+                callback(contracts)
             }
         })
     },
@@ -424,7 +441,7 @@ Page(extend({}, Tab, {
             url: './seekerDetail?data='+JSON.stringify(eData)
         })
     },
-    // 跳转到信息发布榜具体信息页面
+    // 跳转到匹配具体信息页面
     goMatchDetail(opt) {
         var index = opt.currentTarget.dataset.index
         var eData = {
@@ -437,16 +454,44 @@ Page(extend({}, Tab, {
         })
     },
     setRecvdPushType(data) {
+        var that = this
+        var recvdAllPush = data.recvdPush
+        var sendedPush = data.sendedPush
         var recvdPush = []
         var recvdMatch = []
-        for(var i=0;i<data.length;i++) {
-            if(data[i].status == 5) recvdMatch.push(data[i])
-            else recvdPush.push(data[i])
+        var idsList = []
+        for(var i=0;i<recvdAllPush.length;i++) {
+            if(recvdAllPush[i].status == 5) {
+                var matchInfo = recvdAllPush[i]
+                recvdMatch.push({
+                    matchInfo: matchInfo
+                })
+                idsList.push({
+                    pDelegator_openid: matchInfo.delegator_openid,
+                    pSeeker_openid: matchInfo.seeker_openid,
+                    tDelegator_openid: matchInfo.receivedDInfo.open_id,
+                    tSeeker_openid: matchInfo.receivedSInfo.open_id,
+                    index: i
+                })
+            }
+            else recvdPush.push(recvdAllPush[i])
         }
         this.setData({
+            'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush,
             'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
-            'homePage.tabContent.list.myMatch.data.list': recvdMatch
         })
+        if(idsList.length != 0) {
+            this.getContractByIdsList(idsList,(result) => {
+                for(var i=0;i<result.length;i++) {
+                    var item = result[i]
+                    var index = item.index
+                    recvdMatch[index]['contractInfo'] = item
+                }
+                that.setData({
+                    'homePage.tabContent.list.myMatch.data.list': recvdMatch
+                })
+            })
+        }
     },
     //---------- 界面控制函数 ----------//
     handleZanTabChange(e) {

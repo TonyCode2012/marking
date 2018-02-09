@@ -327,12 +327,13 @@ Page(extend({}, Tab, {
             },
             success: function(res) {
                 var result = res.data.data.result
-                var recvdPush = result.recvdPush
-                var sendedPush = result.sendedPush
-                that.setData({
-                    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
-                    'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush
-                })
+                that.setRecvdPushType(result)
+                //var recvdPush = result.recvdPush
+                //var sendedPush = result.sendedPush
+                //that.setData({
+                //    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
+                //    'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush
+                //})
             }
         })
     },
@@ -417,57 +418,77 @@ Page(extend({}, Tab, {
     },
     setRecvdPushType(data) {
         var that = this
-        var recvdAllPush = data.recvdPush
+        var cur_openId = that.data.homePage.wxUserInfo.open_id
+        var recvdPush = data.recvdPush
         var sendedPush = data.sendedPush
-        var recvdPush = []
-        var recvdMatch = []
-        var idsList = []
-        for(var i=0;i<recvdAllPush.length;i++) {
-            if(recvdAllPush[i].status == 5) {
-                var matchInfo = recvdAllPush[i]
-                recvdMatch.push({
-                    matchInfo: matchInfo
-                })
-                var pDOID,pSOID,tDOID,tSOID
-                if(matchInfo.role == 'pSeeker') {
-                    pDOID = matchInfo.delegator_openid
-                    pSOID = matchInfo.seeker_openid
-                    tDOID = matchInfo.receivedDInfo.open_id
-                    tSOID = matchInfo.receivedSInfo.open_id
-                } else {
-                    pDOID = matchInfo.receivedDInfo.open_id
-                    pSOID = matchInfo.receivedSInfo.open_id
-                    tDOID = matchInfo.delegator_openid
-                    tSOID = matchInfo.seeker_openid
-                }
-                idsList.push({
+        var rRecvdPush= []
+        var rSendedPush = []
+        var recvdIdsList = []
+        var sendedIdsList = []
+        for(var i=0;i<recvdPush.length;i++) {
+            var matchInfo = recvdPush[i]
+            if(recvdPush[i].status == 5) {
+                recvdIdsList.push({
                     ids: {
-                        pDelegator_openid: pDOID,
-                        pSeeker_openid: pSOID,
-                        tDelegator_openid: tDOID,
-                        tSeeker_openid: tSOID,
+                        pDelegator_openid: cur_openId,
+                        pSeeker_openid: matchInfo.toSeekerInfo.open_id,
+                        tDelegator_openid: matchInfo.receivedDInfo.open_id,
+                        tSeeker_openid: matchInfo.receivedSInfo.open_id,
                     },
                     index: i
                 })
             }
-            else {
-                recvdPush.push(recvdAllPush[i])
-            }
+            rRecvdPush.push({
+                matchInfo: matchInfo
+            })
         }
-        this.setData({
-            'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': sendedPush,
-            'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': recvdPush,
-        })
-        if(idsList.length != 0) {
-            this.getContractByIdsList(idsList,(result) => {
+        for(var i=0;i<sendedPush.length;i++) {
+            var matchInfo = sendedPush[i]
+            if(sendedPush[i].status == 5) {
+                sendedIdsList.push({
+                    ids: {
+                        pDelegator_openid: matchInfo.sendedDInfo.open_id,
+                        pSeeker_openid: matchInfo.sendedSInfo.open_id,
+                        tDelegator_openid: cur_openId,
+                        tSeeker_openid: matchInfo.fromSeekerInfo.open_id,
+                    },
+                    index: i
+                })
+            }
+            rSendedPush.push({
+                matchInfo: matchInfo
+            })
+        }
+        if(recvdIdsList.length != 0) {
+            this.getContractByIdsList(recvdIdsList,(result) => {
                 for(var i=0;i<result.length;i++) {
                     var item = result[i]
                     var index = item.index
-                    recvdMatch[index]['contractInfo'] = item
+                    rRecvdPush[index]['contractInfo'] = item
                 }
-                that.setData({
-                    'homePage.tabContent.list.myMatch.data.list': recvdMatch
+                this.setData({
+                    'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': rRecvdPush
                 })
+            })
+        } else {
+            this.setData({
+                'homePage.tabContent.list.myPush.data.list.receivedPush.data.list': rRecvdPush
+            })
+        }
+        if(sendedIdsList.length != 0) {
+            this.getContractByIdsList(sendedIdsList,(result) => {
+                for(var i=0;i<result.length;i++) {
+                    var item = result[i]
+                    var index = item.index
+                    rSendedPush[index]['contractInfo'] = item
+                }
+                this.setData({
+                    'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': rSendedPush
+                })
+            })
+        } else {
+            this.setData({
+                'homePage.tabContent.list.myPush.data.list.sendedPush.data.list': rSendedPush
             })
         }
     },

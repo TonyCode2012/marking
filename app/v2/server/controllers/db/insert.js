@@ -38,7 +38,7 @@ var insertMatchContract = async function(ctx) {
         tSInfo = tSInfo.data[0]
         var time = sd.format(new Date(),'YYYY-MM-DD HH:mm:ss');
         var qData = {
-            contract_address: 'xxx',
+            contract_addr: 'xxx',
             pDelegator_openid: data.pDelegator_openid,
             pSeeker_openid: data.pSeeker_openid,
             tDelegator_openid: data.tDelegator_openid,

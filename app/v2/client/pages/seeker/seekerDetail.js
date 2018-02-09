@@ -434,8 +434,11 @@ Page({
                 var role = data.role
                 if(state == -1) util.showModel('后台错误，请求失败！',res.data.data.result)
                 else {
-                    that.setMatchStatus(state,role)
-                    that.genMatchContract()
+                    if(state == 5) {
+                        that.genMatchContract(state,role)
+                    } else {
+                        that.setMatchStatus(state,role)
+                    }
                 }
             }
         })
@@ -469,7 +472,8 @@ Page({
     },
 
     //--------------- matchList Page functions -----------------//
-    genMatchContract(data) {
+    genMatchContract(state,role) {
+        var that = this
         var data = this.data.recvdPushInfo
         wx.request({
             url: config.service.insertMatchContractUrl,
@@ -481,6 +485,7 @@ Page({
             },
             success: function(res) {
                 util.showSuccess('成功')
+                that.setMatchStatus(state,role)
             }
         })
     },

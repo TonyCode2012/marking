@@ -65,25 +65,26 @@ Page({
         var pages = getCurrentPages()
         var DPage = pages[pages.length-2]
         var curData = DPage.data.homePage.tabContent.list.myPush.data.list[type].data.list[index]
+        var matchInfo = curData.matchInfo
         that.setData({
             pDelegator_openid: opt.pDelegator_openid,
             userData: curData,
             type: type
         })
         this.prepareTpl()
-        this.setPageData(curData,type)
+        this.setPageData(matchInfo,type)
         // 设置按键状态
         var ids = {}
         if(type == 'receivedPush') {
             ids['pDelegator_openid'] = opt.pDelegator_openid
-            ids['pSeeker_openid'] = curData.toSeekerInfo.open_id
-            ids['tDelegator_openid'] = curData.receivedDInfo.open_id
-            ids['tSeeker_openid'] = curData.receivedSInfo.open_id
+            ids['pSeeker_openid'] = matchInfo.toSeekerInfo.open_id
+            ids['tDelegator_openid'] = matchInfo.receivedDInfo.open_id
+            ids['tSeeker_openid'] = matchInfo.receivedSInfo.open_id
         } else {
-            ids['pDelegator_openid'] = curData.sendedDInfo.open_id
-            ids['pSeeker_openid'] = curData.sendedSInfo.open_id
+            ids['pDelegator_openid'] = matchInfo.sendedDInfo.open_id
+            ids['pSeeker_openid'] = matchInfo.sendedSInfo.open_id
             ids['tDelegator_openid'] = opt.pDelegator_openid
-            ids['tSeeker_openid'] = curData.fromSeekerInfo.open_id
+            ids['tSeeker_openid'] = matchInfo.fromSeekerInfo.open_id
         }
         wx.request({
             url: config.service.getDPushStatusUrl,
@@ -128,8 +129,17 @@ Page({
             btnStr = '匹配失败'
             btnDisable = true
         } else if(state == 5) {
-            btnStr = '匹配成功,恋爱中...'
+            // 匹配成功设置恋爱按钮状态
+            var contractInfo = this.data.userData.contractInfo
             btnDisable = true
+            var mStatus = contractInfo.status
+            if(mStatus == 0 || mStatus == 1 || mStatus == 3) {
+                btnStr = '匹配成功,恋爱中...'
+            } else if(mStatus == 2 || mStatus == 4) {
+                btnStr = '恋爱失败'
+            } else if(mStatus == 5) {
+                btnStr = '恋爱成功'
+            }
         }
         this.setData({
             'btn.str': btnStr,
@@ -178,7 +188,7 @@ Page({
     },
     push2Seeker(opt) {
         var that = this
-        var userData = this.data.userData
+        var userData = this.data.userData.matchInfo
         var insertData = []
         var tmpData = {
             pDelegator_openid: this.data.pDelegator_openid,

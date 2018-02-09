@@ -232,10 +232,22 @@ async function getDSendedPush(data) {
     r1.status == 200 ? pSeekerInfo = r1.data[0] : {}
     r2.status == 200 ? tSeekerInfo = r2.data[0] : {}
     r3.status == 200 ? tDelegatorInfo = r3.data[0] : {}
+    var ids = {
+        pDelegator_openid: data.tDelegator_openid,
+        pSeeker_openid: data.tSeeker_openid,
+        tDelegator_openid: data.pDelegator_openid,
+        tSeeker_openid: data.pSeeker_openid
+    }
+    var d2sRes = await getD2SPushStatus(ids)
+    var state = -1
+    if(d2sRes.status == 200) {
+        state = d2sRes.data[0].status
+    }
     return {
         sendedSInfo: tSeekerInfo,
         sendedDInfo: tDelegatorInfo,
-        fromSeekerInfo: pSeekerInfo
+        fromSeekerInfo: pSeekerInfo,
+        status: state
     }
 }
 
@@ -249,10 +261,22 @@ async function getDRecvdPush(data) {
     r1.status == 200 ? tSeekerInfo = r1.data[0] : {}
     r2.status == 200 ? pSeekerInfo = r2.data[0] : {}
     r3.status == 200 ? pDelegatorInfo = r3.data[0] : {}
+    var ids = {
+        pDelegator_openid: data.tDelegator_openid,
+        pSeeker_openid: data.tSeeker_openid,
+        tDelegator_openid: data.pDelegator_openid,
+        tSeeker_openid: data.pSeeker_openid
+    }
+    var d2sRes = await getD2SPushStatus(ids)
+    var state = -1
+    if(d2sRes.status == 200) {
+        state = d2sRes.data[0].status
+    }
     return {
         receivedSInfo: pSeekerInfo,
         receivedDInfo: pDelegatorInfo,
-        toSeekerInfo: tSeekerInfo
+        toSeekerInfo: tSeekerInfo,
+        status: state
     }
 }
 
@@ -317,6 +341,14 @@ async function getSRecvdPush(data,open_id) {
         status: data.status,
         role: data.role
     }
+}
+
+function getD2SPushStatus(ids) {
+    return new Promise(function (resolve, reject) {
+        var cdStr = util.getConditionAll(ids,'and')
+        var queryStr = "select status from D2SPush where " + cdStr
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
 }
 
 function getContractByIds_r(ids,fields) {
@@ -537,4 +569,5 @@ module.exports = {
     //getDReceivedPush: getDReceivedPush,
     //getSReceivedPush: getSReceivedPush,
     getDPushStatus: getDPushStatus,
+    getD2SPushStatus: getD2SPushStatus,
 }

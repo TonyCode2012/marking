@@ -461,8 +461,8 @@ Page(extend({}, Tab, {
         var recvdMatch = []
         var idsList = []
         for(var i=0;i<recvdAllPush.length;i++) {
+            var matchInfo = recvdAllPush[i]
             if(recvdAllPush[i].status == 5) {
-                var matchInfo = recvdAllPush[i]
                 recvdMatch.push({
                     matchInfo: matchInfo
                 })
@@ -489,7 +489,7 @@ Page(extend({}, Tab, {
                 })
             }
             else {
-                recvdPush.push(recvdAllPush[i])
+                recvdPush.push(matchInfo)
             }
         }
         this.setData({

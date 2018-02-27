@@ -332,7 +332,7 @@ Page({
 
 
 
-    //--------------- recvdPushInfo Page functions -----------------//
+    //--------------- pushInfo Page functions -----------------//
     /*
      * 匹配状态说明：
      * “0”: 双方未发送请求
@@ -440,10 +440,10 @@ Page({
                 if(state == -1) util.showModel('后台错误，请求失败！',res.data.data.result)
                 else {
                     if(state == 5) {
+                        // 匹配成功生成链上信息
                         that.genMatchContract(state,role)
-                    } else {
-                        that.setMatchStatus(state,role)
                     }
+                    that.setMatchStatus(state,role)
                 }
             }
         })

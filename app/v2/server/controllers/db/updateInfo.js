@@ -14,6 +14,10 @@ var connection = mysql.createConnection({
 
 connection.connect()
 
+var updateSeekerInfo = async function(opt) {
+    var result = await updateSInfo(opt)
+}
+
 var setMarryAccept = async function(ctx) {
     var data = urlParser.parse(ctx.originalUrl,true).query
     var queryData = data.queryData
@@ -65,8 +69,9 @@ var setMatchAccept = async function(ctx) {
         cdStr: cdStr
     }
     var result = await setMatch_r(para,connection)
+    var res_freezeSeeker = await 
     
-    finalState = (result.status == 200 ? state : -1)
+    var finalState = (result.status == 200 ? state : -1)
 
     ctx.state.data = {
         result: result,
@@ -107,6 +112,15 @@ var pushSeekerInfo = async function(ctx) {
     ctx.state.data = {
         result: result
     }
+}
+
+function updateSInfo(opt) {
+    return new Promise(function (resolve, reject) {
+    
+        var queryStr = "update SeekerInfo set " + opt.val + "' where " + opt.cdStr
+    
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
 }
 
 function setMarry_r(data,connection) {
@@ -198,6 +212,7 @@ function queryFromDB(resolve, reject, queryStr, connection) {
 
 module.exports = {
     updateInfo: updateInfo,
+    updateSeekerInfo: updateSeekerInfo,
     pushSeekerInfo: pushSeekerInfo,
     cancelPushSeekerInfo: cancelPushSeekerInfo,
     setMatchAccept: setMatchAccept,

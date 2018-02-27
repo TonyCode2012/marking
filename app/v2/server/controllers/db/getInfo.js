@@ -158,7 +158,7 @@ var getMessageList = async function(ctx) {
     if(data.status == 200) {
         var idArry = data.data
         for(var i=0;i<idArry.length;i++) {
-            var queryStr = "select " + seekerPubInfoItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public='1'"
+            var queryStr = "select " + seekerPubInfoItems + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public=1 and status=0"
             var result = await getSeekerInfoByQuery(queryStr,connection)
             if(result.status == 200) {
                 result.data[0]['delegator_openid'] = idArry[i].delegator_openId // 获取对方代理人id
@@ -208,7 +208,7 @@ var getDTaskInfo = async function(ctx) {
     if(data.status == 200) {
         var idArry = data.data
         for(var i=0;i<idArry.length;i++) {
-            var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public=1"
+            var queryStr = "select * from SeekerInfo where open_id='" + idArry[i].seeker_openId + "' and is_public=1 and status=0"
             var result = await getSeekerInfoByQuery(queryStr,connection)
             if(result.status == 200) {
                 result.data[0]['is_release'] = idArry[i]['is_release']

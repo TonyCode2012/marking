@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
 connection.connect()
 
 var updateSeekerInfo = async function(opt) {
-    var result = await updateSInfo(opt)
+    var result = await updateInfoByCd(opt,'SeekerInfo')
 }
 
 var setMarryAccept = async function(ctx) {
@@ -57,8 +57,8 @@ var setMarryRefuse = async function(ctx) {
 
 var setMatchAccept = async function(ctx) {
     var data = urlParser.parse(ctx.originalUrl,true).query
-    var queryData = data.queryData
-    var cdStr = util.getConditionAll(JSON.parse(queryData),'and')
+    var queryData = JSON.parse(data.queryData)
+    var cdStr = util.getConditionAll(queryData,'and')
     var orgState = data.state
     var role = data.role
     var state = 0
@@ -69,7 +69,17 @@ var setMatchAccept = async function(ctx) {
         cdStr: cdStr
     }
     var result = await setMatch_r(para,connection)
-    var res_freezeSeeker = await 
+    if ( state == 5 ) {
+        // 恋爱成功，更改SeekerInfo表中的status状态为’冻结‘
+        console.log("queryData is:" + JSON.stringify(queryData))
+        var sVal = "status='1'"
+        var sPcd = "open_id='" + queryData.pSeeker_openid + "'"
+        var sTcd = "open_id='" + queryData.tSeeker_openid + "'"
+        var opt1 = { val: sVal, cdStr: sPcd }
+        var opt2 = { val: sVal, cdStr: sTcd }
+        var pSeeker_res = await updateSeekerInfo(opt1)
+        var tSeeker_res = await updateSeekerInfo(opt2)
+    }
     
     var finalState = (result.status == 200 ? state : -1)
 
@@ -114,11 +124,9 @@ var pushSeekerInfo = async function(ctx) {
     }
 }
 
-function updateSInfo(opt) {
+function updateInfoByCd(opt,tableId) {
     return new Promise(function (resolve, reject) {
-    
-        var queryStr = "update SeekerInfo set " + opt.val + "' where " + opt.cdStr
-    
+        var queryStr = "update " + tableId + " set " + opt.val + " where " + opt.cdStr
         queryFromDB(resolve,reject,queryStr,connection)
     })
 }

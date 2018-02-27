@@ -30,18 +30,19 @@ Page({
             btnStateStr: {
                 request: "发送匹配请求",
                 sended: "请求已发送",
-                agree: "是否同意匹配",
+                agree: "同意匹配",
                 irefuse: "已拒绝",
                 orefuse: "对方已拒绝",
             },
             type:'recvdPushInfo',
             state: 0,
+            tState: 0,      // 对方同意(1)
+            role: "",
             portrait: "",
             pSOID: "",
             pDOID: "",
             tSOID: "",
             tDOID: "",
-            role: "",
             prePageTitle: "",
             prePageIndex: "",
         },
@@ -117,12 +118,12 @@ Page({
             },
             type:'matchList',
             state: 5,
+            role: "",
             portrait: "",
             pSOID: "",
             pDOID: "",
             tSOID: "",
             tDOID: "",
-            role: "",
             prePageTitle: "",
             prePageIndex: "",
         },
@@ -331,7 +332,7 @@ Page({
 
 
 
-    //--------------- RecvdPushInfo Page functions -----------------//
+    //--------------- recvdPushInfo Page functions -----------------//
     /*
      * 匹配状态说明：
      * “0”: 双方未发送请求
@@ -350,6 +351,7 @@ Page({
         var stateBtnDisable = false
         var refuseBtnHidden = false
         var refuseBtnDisable = false
+        var tState = 0
         if(state == 0) {
             stateBtnStr = btnStr.request
         } else if(state == 1) {
@@ -359,6 +361,7 @@ Page({
                 refuseBtnHidden = true
             } else {
                 stateBtnStr = btnStr.agree
+                tState = 1
             }
         } else if(state == 2) {
             if(role == 'pSeeker') {
@@ -373,6 +376,7 @@ Page({
         } else if(state == 3) {
             if(role == 'pSeeker') {
                 stateBtnStr = btnStr.agree
+                tState = 1
             } else {
                 stateBtnStr = btnStr.sended
                 stateBtnDisable = true
@@ -405,6 +409,7 @@ Page({
             })
         }
         this.setData({
+            'recvdPushInfo.tState': tState,
             'recvdPushInfo.btn.stateBtn.btnStr': stateBtnStr,
             'recvdPushInfo.btn.stateBtn.type': stateBtnType,
             'recvdPushInfo.btn.stateBtn.hidden': stateBtnHidden,

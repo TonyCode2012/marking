@@ -173,13 +173,13 @@ function updateInfo_r(ctx, connection) {
 }
 
 function queryFromDB(resolve, reject, queryStr, connection) {
-        // update SeekerInfo by open_id
+    // update SeekerInfo by open_id
     connection.query(queryStr, function (error, results, fields) {
         var retInfo = {}
         if (error) {
             console.log(error);
             retInfo = {
-                msg: 'get seeker info SeekerInfo failed!',
+                msg: 'update info failed!',
                 code: error.code,
                 errno: error.errno,
                 sqlMessage: error.sqlMessage,
@@ -187,8 +187,8 @@ function queryFromDB(resolve, reject, queryStr, connection) {
             }
         } else {
             retInfo = {
-                msg: 'get seeker info from SeekerInfo successfully!',
-                seekerInfo: results,
+                msg: 'update info successfully!',
+                result: results,
                 status: 200
             }
         }

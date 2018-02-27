@@ -113,7 +113,9 @@ Page(extend({}, Tab, {
                 height: {title: '身高', placeHolder: '请输入您的身高', value: ''},
                 education: {title: '学历', placeHolder: '请输入您的学历', value: ''},
                 constellation: {title: '星座', placeHolder: '请输入您的星座', value: ''},
-                blood_type: {title: '血型', placeHolder: '请输入您的血型', value: ''}
+                blood_type: {title: '血型', placeHolder: '请输入您的血型', value: ''},
+                locality: {title: '所在地', placeHolder: '请输入您的所在地', value: ''},
+                hometown: {title: '家乡', placeHolder: '请输入您的家乡', value: ''}
             },
             privateInfo: {
                 life_photo: {title:'生活照', placeHolder:'请上传您的生活照', value:[]}
@@ -259,7 +261,7 @@ Page(extend({}, Tab, {
             },
             success: function(res) {
                 that.setData({
-                    'homePage.wxUserInfo': res.data.data.result
+                    'homePage.wxUserInfo': res.data.data.result.data[0]
                 })
             }
         })
@@ -550,7 +552,7 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        updateData['open_id'] = this.data.wxUserInfo.open_id
+        updateData['open_id'] = this.data.homePage.wxUserInfo.open_id
         updateData['role'] = 'seeker'
         wx.request({
             url: config.service.updateUserInfoUrl,
@@ -562,7 +564,7 @@ Page(extend({}, Tab, {
         })
     },
     releaseInfoBtn: function(opt) {
-        var openId = this.data.wxUserInfo.open_id
+        var openId = this.data.homePage.wxUserInfo.open_id
         wx.request({
             url: config.service.updateUserInfoUrl,
             data: {

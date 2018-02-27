@@ -31,6 +31,7 @@
         </view>
         <!--view class="weui-cells__tips">承诺:您的隐私信息绝不会被泄露</view-->
         <view class="weui-btn-area" style="text-align:center">
+            <view class="weui-cells__title" style="left:10%;color:red" hidden="{{tState!=1}}">对方已同意</view>
             <button class="weui-btn mini-btn" type="primary" bindtap="sendRefuseReq" hidden="{{btn.refuseBtn.hidden || type == 'messageList' || type == 'matchList'}}"
                 disabled="{{btn.refuseBtn.disable}}" size="mini">拒绝匹配</button>
             <button class="weui-btn mini-btn" type="{{btn.stateBtn.type}}" bindtap="sendMatchReq" hidden="{{btn.stateBtn.hidden || type == 'messageList' || type == 'matchList'}}"

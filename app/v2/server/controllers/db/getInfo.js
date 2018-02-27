@@ -24,7 +24,7 @@ connection.connect();
 var getContractByIdsList = async function(ctx) {
     var dataList = urlParser.parse(ctx.originalUrl,true).query.idsList
     dataList = JSON.parse(dataList)
-    console.log("=======contract:"+JSON.stringify(dataList))
+    //console.log("=======contract:"+JSON.stringify(dataList))
     var resArry = []
     for(var i=0;i<dataList.length;i++) {
         var item = dataList[i]
@@ -106,7 +106,7 @@ async function getPush(ctx, role) {
         for(var i=0;i<relatedList.length;i++) {
             var item = relatedList[i]
             var tmpPush = {}
-            console.log("========item:"+JSON.stringify(item))
+            //console.log("========item:"+JSON.stringify(item))
             if(role == 'delegator') {
                 if(open_id == item.pDelegator_openid) {
                     sendedArry.push(await getDSendedPush(item))
@@ -355,7 +355,7 @@ function getContractByIds_r(ids,fields) {
     return new Promise(function (resolve, reject) {
         var cdStr = util.getConditionAll(ids,'and')
         var queryStr = "select " + fields + " from MatchContract where " + cdStr
-        console.log("========query:"+queryStr)
+        //console.log("========query:"+queryStr)
         queryFromDB(resolve,reject,queryStr,connection)
     })
 }
@@ -383,7 +383,7 @@ function getD2SPushInfo(ctx) {
 function getD2DInfo(ctx, connection) {
     return new Promise(function (resolve, reject) {
         var data = urlParser.parse(ctx.originalUrl,true).query
-        console.log("=========data:"+JSON.stringify(data))
+        //console.log("=========data:"+JSON.stringify(data))
         var queryStr = "select * from D2DPush where tDelegator_openid='" + data.delegator_openid + "' or pDelegator_openid='" + data.delegator_openid + "'"
         queryFromDB(resolve,reject,queryStr,connection)
     })

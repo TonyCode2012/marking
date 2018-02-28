@@ -282,6 +282,18 @@ Page(extend({}, Tab, {
             [curKey + '.value']: opt.detail.value
         })
     },
+    previewImage: function(e){
+        var urls = ""
+        if(this.data.registered) {
+            urls = this.data.homePage.tabContent.list.myInfo.data.list.privateInfo.data.life_photo.value
+        } else {
+            urls = this.data.registerPage.list.privateInfo.data.life_photo.value
+        }
+        wx.previewImage({
+            current: e.currentTarget.id, // 当前显示图片的http链接
+            urls: urls // 需要预览的图片http链接列表
+        })
+    },
     // set private info about photos
     chooseImage: function (e) {
         var that = this;
@@ -626,12 +638,6 @@ Page(extend({}, Tab, {
         this.setData({
             'registerPage.curPageId': prePageId,
             'registerPage.curInfo': this.data.registerPage.list[prePageId]
-        })
-    },
-    previewImage: function(e){
-        wx.previewImage({
-            current: e.currentTarget.id, // 当前显示图片的http链接
-            urls: this.data.registerPage.list.privateInfo.data.life_photo.value // 需要预览的图片http链接列表
         })
     },
     generateRegisterInfo: function(opt) {

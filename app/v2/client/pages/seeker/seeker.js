@@ -319,12 +319,13 @@ Page(extend({}, Tab, {
                 wx.uploadFile({
                     url: config.service.uploadUrl,
                     //filePath: filePath,
-                    header:{
+                    //header:{
                         //"content-Type":"application/x-www-form-urlencoded"
                         //"content-Type":"application/json"
-                        "content-Type":"multipart/form-data, boundary=AaB03x"
-                    },
+                        //"content-Type":"multipart/form-data, boundary=AaB03x"
+                    //},
                     filePath: filesUrl[0],
+                    //filePath: '/home/vdeadmin/.config/微信web开发者工具/WeappFileSystem/o6zAJs75t4JSQS-cyBGMVgTWBF20/wx8727802679966793/tmp/wx8727802679966793.o6zAJs75t4JSQS-cyBGMVgTWBF20.7b518e6ce93d1beda4ab5a0c027e7cf3.png',
                     name: 'file',
                     success: function(res){
                         util.showSuccess('上传图片成功')

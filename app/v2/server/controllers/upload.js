@@ -59,9 +59,12 @@ function  upload2Mysql(ctx) {
 
 module.exports = {
     upload2Mysql: async function(ctx) {
-        var result = await upload2Mysql(ctx)
+        //console.log(JSON.stringify(ctx.req))
+        console.log(ctx.req)
+        const data = await uploader(ctx.req)
+        //var result = await upload2Mysql(ctx)
         ctx.state.data = {
-            result: result
+            result: data
         }
     },
     uploadByQcloud: async function(ctx) {

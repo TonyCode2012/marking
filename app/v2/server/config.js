@@ -38,7 +38,7 @@ const CONF = {
         // Bucket 名称
         fileBucket: 'qcloudtest',
         // 文件夹
-        uploadFolder: ''
+        uploadFolder: '/home/vdeadmin/errands/ethereum/project/marking/app/v2/uploadFolder'
     },
 
     // 微信登录态有效期

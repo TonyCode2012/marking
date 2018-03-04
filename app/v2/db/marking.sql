@@ -11,7 +11,7 @@
  Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 27/02/2018 23:54:34
+ Date: 04/03/2018 22:39:08
 */
 
 SET NAMES utf8mb4;
@@ -188,8 +188,8 @@ CREATE TABLE `User`  (
   `balance` float(255, 0) NOT NULL,
   `register_time` datetime(0) NOT NULL,
   `identity_hash` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `status` int(255) NOT NULL DEFAULT 0,
   `role` int(255) NOT NULL,
+  `status` int(255) NOT NULL DEFAULT 0,
   PRIMARY KEY (`open_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 

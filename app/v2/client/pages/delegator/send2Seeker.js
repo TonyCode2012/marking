@@ -1,6 +1,6 @@
 var util = require('../../utils/util.js')
 var config = require('../../config')
-var Zan = require('../../zanui-style/index');
+var Zan = require('../../3rd_party/zanui-style/index');
 
 Page(Object.assign({}, Zan.CheckLabel, {
 

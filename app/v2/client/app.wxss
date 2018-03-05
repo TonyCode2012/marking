@@ -1,7 +1,8 @@
 /**app.wxss**/
-@import 'style/weui.wxss';
-@import 'style/icon.wxss';
-@import 'zanui-style/index.wxss';
+@import '3rd_party/weui-style/weui.wxss';
+@import '3rd_party/weui-style/icon.wxss';
+@import '3rd_party/zanui-style/index.wxss';
+@import '3rd_party/wux-style/wux.wxss';
 
 .container {
   display: flex;

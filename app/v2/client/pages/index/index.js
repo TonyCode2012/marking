@@ -1,4 +1,6 @@
 //index.js
+import { $wuxDialog } from '../../3rd_party/wux-style/wux'
+
 var qcloud = require('../../vendor/wafer2-client-sdk/index')
 var config = require('../../config')
 var util = require('../../utils/util.js')
@@ -8,7 +10,8 @@ Page({
         userInfo: {},
         logged: false,
         takeSession: false,
-        requestResult: ''
+        requestResult: '',
+        showModal: false
     },
 
     onShow: function(opt) {
@@ -16,7 +19,7 @@ Page({
         var appInstance = getApp()
         var loginAppInfo = appInstance.data.loginAppInfo
         if(loginAppInfo.scene == 1044) {
-            // 转发登录场景
+            // 转发登录场景，根据参数跳转到对应页面
             this.login({loginAppInfo:loginAppInfo},() => {
                 if(loginAppInfo.query.role == 'seeker') {
                     wx.switchTab({
@@ -134,7 +137,6 @@ Page({
                     } else {
                         that.regAndGetUser(result,() => {
                             wx.switchTab({
-                                //url: '../delegator/delegator'
                                 url: '../seeker/seeker'
                             })
                         })
@@ -159,12 +161,14 @@ Page({
                             } catch(e) {
                                 util.showModel('set login info failed!',JSON.stringify(e))
                             }
+                            // 判断转发条件
                             if(args.loginAppInfo == undefined) {
                                 wx.switchTab({
                                     //url: '../delegator/delegator'
                                     url: '../seeker/seeker'
                                 })
                             } else if(args.loginAppInfo.scene == 1044){
+                                // 带场景的登录，则转到相应路径
                                 var role = args.loginAppInfo.query.role
                                 var url = '../'+role+'/'+role
                                 wx.switchTab({
@@ -188,66 +192,106 @@ Page({
     },
 
     regAndGetUser: function(opt,callback) {
-        var openId = opt.openId
-        var userInfo = {
-            data: {
-                open_id: openId,
-                public_key: openId + '12345',
-                chain_addr: openId + '98765',
-                balance: 100,
-                //gender: gender==1?'男':'女',
-                register_time: util.getCurDatetime(),
-                identity_hash: openId + 'yaoz',
-                status: 0,
-                role: 0
-            },
-            role: 'user'
-        }
-        wx.request({
-            url: config.service.registerUrl,
-            data: userInfo,
-            success: function(res) {
-                if(res.data.data.result.errno == 1062) {
-                    // 如果重复注册，说明之前用户已经注册过,则尝试获取对应用户(seeker/delegator)的信息
-                    var role = (opt.role == undefined ? 'seeker' : opt.role)    // 进行场景判断
-                    wx.request({
-                        url: config.service.getUserInfoUrl,
-                        data: {
-                            open_id: openId,
-                            role: role
-                        },
-                        success: function(res){
-                            var result = res.data.data.result
-                            var roleUserInfo = {}
-                            // 获取seeker或者delegator信息
-                            if(result.status == 200) {
-                                roleUserInfo = {
-                                    data: result.data[0],
-                                    registered: true
-                                }
-                            } else {
-                                roleUserInfo = {
-                                    registered: false
-                                }
-                            }
-                            try {
-                                wx.setStorageSync('roleUserInfo',roleUserInfo)
-                            } catch(e) {
-                                util.showModel('set role user info failed!',JSON.stringify(e))
-                            }
-                            callback()
-                        },
-                        fail: function(res) {
-                            util.showModel('get user info failed!',JSON.stringify(res))
-                        }
-                    })
-                }
-            },
-            fail: function(res) {
-                util.showModel('register user failed!',JSON.stringify(res))
+        //var openId = opt.openId
+        this.prompt((openId)=>{
+            var userInfo = {
+                data: {
+                    open_id: openId,
+                    public_key: openId + '12345',
+                    chain_addr: openId + '98765',
+                    balance: 100,
+                    //gender: gender==1?'男':'女',
+                    register_time: util.getCurDatetime(),
+                    identity_hash: openId + 'yaoz',
+                    status: 0,
+                    role: 0
+                },
+                role: 'user'
             }
+            wx.request({
+                url: config.service.registerUrl,
+                data: userInfo,
+                success: function(res) {
+                    if(res.data.data.result.errno == 1062) {
+                        // 如果重复注册，说明之前用户已经注册过,则尝试获取对应用户(seeker/delegator)的信息
+                        var role = (opt.role == undefined ? 'seeker' : opt.role)    // 进行场景判断
+                        wx.request({
+                            url: config.service.getUserInfoUrl,
+                            data: {
+                                open_id: openId,
+                                role: role
+                            },
+                            success: function(res){
+                                var result = res.data.data.result
+                                var roleUserInfo = {}
+                                // 获取seeker或者delegator信息
+                                if(result.status == 200) {
+                                    roleUserInfo = {
+                                        data: result.data[0],
+                                        registered: true
+                                    }
+                                } else {
+                                    roleUserInfo = {
+                                        registered: false
+                                    }
+                                }
+                                try {
+                                    wx.setStorageSync('roleUserInfo',roleUserInfo)
+                                } catch(e) {
+                                    util.showModel('set role user info failed!',JSON.stringify(e))
+                                }
+                                callback()
+                            },
+                            fail: function(res) {
+                                util.showModel('get user info failed!',JSON.stringify(res))
+                            }
+                        })
+                    } else {
+                        callback()
+                    }
+                },
+                fail: function(res) {
+                    util.showModel('register user failed!',JSON.stringify(res))
+                }
+            })
         })
     },
+
+    /***** 以下为对话框函数 *****/
+    prompt(callback) {
+        const that = this
+        const alert = (content) => {
+            $wuxDialog.alert({
+                title: '提示', 
+                content: content, 
+            })
+        }
+
+        $wuxDialog.prompt({
+            title: '提示', 
+            content: '请输入openId', 
+            fieldtype: 'number', 
+            //password: !0, 
+            password: 0, 
+            defaultText: '', 
+            placeholder: '请输入openId密码', 
+            maxlength: 10, 
+            onConfirm(e) {
+                const value = that.data.$wux.dialog.prompt.response
+                //const content = value.length === 8 ? `Wi-Fi密码到手了: ${value}` : `请输入正确的Wi-Fi密码`
+                alert(value)
+                setTimeout(function(){
+                    callback(value)
+                },2000)
+            },
+        })
+    },
+
+
+
+
+
+    /***** 以下是模板自带函数 *****/
 
     // 切换是否带有登录态
     switchRequestMode: function (e) {

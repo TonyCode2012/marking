@@ -22,7 +22,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 5,
 			"list": [
 				{
 					"id": 0,
@@ -78,6 +78,17 @@
 					"referrerInfo": {
 						"appId": "wx8727802679966793",
 						"extraData": "{\"name\":\"delegatorB\"}"
+					}
+				},
+				{
+					"id": -1,
+					"name": "注册用户",
+					"pathName": "pages/index/index",
+					"query": "",
+					"scene": "1037",
+					"referrerInfo": {
+						"appId": "wx8727802679966793",
+						"extraData": "{}"
 					}
 				}
 			]

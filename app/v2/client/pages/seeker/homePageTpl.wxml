@@ -1,4 +1,4 @@
-<import src="../../zanui-style/tab/index.wxml" />
+<import src="../../3rd_party/zanui-style/tab/index.wxml" />
 <import src="./homePageNavTpl.wxml" />
 
 <template name="homePage">

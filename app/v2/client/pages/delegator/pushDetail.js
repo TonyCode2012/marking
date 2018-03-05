@@ -1,6 +1,6 @@
 var util = require('../../utils/util.js')
 var config = require('../../config')
-const { Tab, extend } = require('../../zanui-style/index');
+const { Tab, extend } = require('../../3rd_party/zanui-style/index');
 
 Page({
     data: {

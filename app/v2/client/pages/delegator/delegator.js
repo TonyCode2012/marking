@@ -1,7 +1,7 @@
 var sliderWidth = 96; // 需要设置slider的宽度，用于计算中间位置
 var util = require('../../utils/util.js')
 var config = require('../../config')
-const { Tab, extend } = require('../../zanui-style/index');
+const { Tab, extend } = require('../../3rd_party/zanui-style/index');
 
 Page(extend({}, Tab, {
     data: {

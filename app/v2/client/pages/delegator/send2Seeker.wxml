@@ -1,4 +1,4 @@
-<import src="../../zanui-style/select/index.wxml" />
+<import src="../../3rd_party/zanui-style/select/index.wxml" />
 
 <view class="zanui-container">
 

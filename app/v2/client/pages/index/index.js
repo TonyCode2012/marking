@@ -195,60 +195,57 @@ Page({
         //var openId = opt.openId
         this.prompt((openId)=>{
             var userInfo = {
-                data: {
-                    open_id: openId,
-                    public_key: openId + '12345',
-                    chain_addr: openId + '98765',
-                    balance: 100,
-                    //gender: gender==1?'男':'女',
-                    register_time: util.getCurDatetime(),
-                    identity_hash: openId + 'yaoz',
-                    status: 0,
-                    role: 0
-                },
-                role: 'user'
+                open_id: openId,
+                public_key: openId + '12345',
+                chain_addr: openId + '98765',
+                balance: 100,
+                //gender: gender==1?'男':'女',
+                register_time: util.getCurDatetime(),
+                identity_hash: openId + 'yaoz',
+                status: 0,
+                role: 0
             }
             wx.request({
-                url: config.service.registerUrl,
+                url: config.service.registerUserUrl,
                 data: userInfo,
                 success: function(res) {
-                    if(res.data.data.result.errno == 1062) {
-                        // 如果重复注册，说明之前用户已经注册过,则尝试获取对应用户(seeker/delegator)的信息
-                        var role = (opt.role == undefined ? 'seeker' : opt.role)    // 进行场景判断
-                        wx.request({
-                            url: config.service.getUserInfoUrl,
-                            data: {
-                                open_id: openId,
-                                role: role
-                            },
-                            success: function(res){
-                                var result = res.data.data.result
-                                var roleUserInfo = {}
-                                // 获取seeker或者delegator信息
-                                if(result.status == 200) {
-                                    roleUserInfo = {
-                                        data: result.data[0],
-                                        registered: true
-                                    }
-                                } else {
-                                    roleUserInfo = {
-                                        registered: false
-                                    }
-                                }
-                                try {
-                                    wx.setStorageSync('roleUserInfo',roleUserInfo)
-                                } catch(e) {
-                                    util.showModel('set role user info failed!',JSON.stringify(e))
-                                }
-                                callback()
-                            },
-                            fail: function(res) {
-                                util.showModel('get user info failed!',JSON.stringify(res))
-                            }
-                        })
-                    } else {
+                    try {
+                        wx.setStorageSync('roleUserInfo',userInfo)
                         callback()
+                    } catch(e) {
+                        util.showModel('set role user openId failed!',JSON.stringify(e))
                     }
+                    //if(res.data.data.result.errno == 1062) {
+                    //    // 如果重复注册，说明之前用户已经注册过,则尝试获取对应用户(seeker/delegator)的信息
+                    //    var role = (opt.role == undefined ? 'seeker' : opt.role)    // 进行场景判断
+                    //    wx.request({
+                    //        url: config.service.getUserInfoUrl,
+                    //        data: {
+                    //            open_id: openId,
+                    //        },
+                    //        success: function(res){
+                    //            var result = res.data.data.result
+                    //            var roleUserInfo = {}
+                    //            // 获取seeker或者delegator信息
+                    //            if(result.status == 200) {
+                    //                roleUserInfo = {
+                    //                    data: result.data[0],
+                    //                }
+                    //                try {
+                    //                    wx.setStorageSync('roleUserInfo',roleUserInfo)
+                    //                } catch(e) {
+                    //                    util.showModel('set role user info failed!',JSON.stringify(e))
+                    //                }
+                    //            }
+                    //            callback()
+                    //        },
+                    //        fail: function(res) {
+                    //            util.showModel('get user info failed!',JSON.stringify(res))
+                    //        }
+                    //    })
+                    //} else {
+                    //    callback()
+                    //}
                 },
                 fail: function(res) {
                     util.showModel('register user failed!',JSON.stringify(res))
@@ -275,7 +272,7 @@ Page({
             password: 0, 
             defaultText: '', 
             placeholder: '请输入openId密码', 
-            maxlength: 10, 
+            maxlength: 12, 
             onConfirm(e) {
                 const value = that.data.$wux.dialog.prompt.response
                 //const content = value.length === 8 ? `Wi-Fi密码到手了: ${value}` : `请输入正确的Wi-Fi密码`

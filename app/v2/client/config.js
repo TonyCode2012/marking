@@ -35,7 +35,9 @@ var config = {
         updateUserInfoUrl: `${host}/weapp/updateUserInfo`,
 
         // 注册用户
-        registerUrl: `${host}/weapp/register`,
+        registerUserUrl: `${host}/weapp/registerUser`,
+        registerSeekerUrl: `${host}/weapp/registerSeeker`,
+        registerDelegatorUrl: `${host}/weapp/registerDelegator`,
 
         /*****获取红娘相关信息*****/
         getDTaskInfoUrl: `${host}/weapp/getDTaskInfo`,

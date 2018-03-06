@@ -26,7 +26,9 @@ router.post('/upload', controllers.upload.upload2Mysql)
 router.get('/decrypt', controllers.decrypt)
 
 // --- 数据库操作 --- //
-router.get('/register', dbControllers.register)
+router.get('/registerUser', dbControllers.register.registerUser)
+router.get('/registerSeeker', dbControllers.register.registerSeeker)
+router.get('/registerDelegator', dbControllers.register.registerDelegator)
 router.get('/insertD2S', dbControllers.insert.insertD2S)
 router.get('/insertD2D', dbControllers.insert.insertD2D)
 router.get('/insertDelegationShip', dbControllers.insert.insertDelegationShip)

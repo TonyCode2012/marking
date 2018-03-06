@@ -475,15 +475,7 @@ function getUserInfo_r(ctx, connection) {
         var data = urlParser.parse(ctx.originalUrl,true).query
 
         var openId = data.open_id
-        //var tableId = ''
-        //switch(data.role) {
-        //    case 'user': tableId='User';break;
-        //    case 'seeker': tableId='SeekerInfo';break;
-        //    case 'delegator': tableId='DelegatorInfo';break;
-        //}
-        //var queryStr = "select * from " + tableId + " where open_id='" + openId + "'"
         var queryStr = "select * from User where open_id='" + openId + "'"
-
         queryFromDB(resolve, reject, queryStr,connection)
     })
 }

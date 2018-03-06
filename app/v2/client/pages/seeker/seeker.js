@@ -78,7 +78,6 @@ Page(extend({}, Tab, {
                 scroll: true,
                 height: 45
             },
-            loginInfo: {},
             seekerInfo: {},
             userInfo: {},
             wxUserInfo: {},
@@ -129,6 +128,7 @@ Page(extend({}, Tab, {
     },
 
     onLoad: function (opt) {
+        var that = this;
         // 显示分享按钮
         wx.showShareMenu({
             withShareTicket: true
@@ -137,15 +137,53 @@ Page(extend({}, Tab, {
         wx.setNavigationBarTitle({
           title: '我要找对象'
         })
-        var that = this;
+
+        // 获取SeekerInfo
+        try {
+            var userInfo = wx.getStorageSync('roleUserInfo')
+            var wxUserInfo = wx.getStorageSync('wxUserInfo')
+            var openId = userInfo
+            wx.request({
+                url: config.service.getSeekerInfoUrl,
+                data: {open_id: openId},
+                success: function(res) {
+                    var result = res.data.data.result
+                    if(result.status == 200) {
+                        that.setData({
+                            registered: true
+                        })
+                        // 设置首页
+                        that.setHomePage(result.data)
+                        // 获取当前客户收到的推送
+                        that.getPush(openId)
+                        // 获取信息榜
+                        that.getMessageList()
+                    } else {
+                        that.setRegisterPage()
+                    }
+                    that.setData({
+                        wxUserInfo: wxUserInfo
+                    })
+                },
+                fail: function(res) {
+                    util.showModal('Get Seeker('+openId+') info failed!',JSON.stringify(res.data.data.result))
+                }
+            })
+        } catch(e) {
+            util.showModal('Get user info failed!',JSON.stringify(e))
+        }
+
+        that.setData({
+            title: opt.title
+        })
 
         // 演示流程 start {
-        var demoOpenid = opt.openId
-        var roleUserInfo = this.getDemoRoleInfo(demoOpenid)
-        var wxUserInfo = this.getDemoWxInfo(demoOpenid)
-        that.setData({
-            registered: true
-        }) 
+        //var demoOpenid = opt.openId
+        //var roleUserInfo = this.getDemoRoleInfo(demoOpenid)
+        //var wxUserInfo = this.getDemoWxInfo(demoOpenid)
+        //that.setData({
+        //    registered: true
+        //}) 
         // } end
 
 
@@ -174,14 +212,6 @@ Page(extend({}, Tab, {
             that.setRegisterPage()
             util.showModel('get user info failed!',JSON.stringify(e))
         }*/
-        // 获取当前客户收到的推送
-        //this.getReceivedPush(demoOpenid)
-        this.getPush(demoOpenid)
-        //this.getContract(demoOpenid)
-        this.getMessageList()
-        that.setData({
-            title: opt.title
-        })
         //wx.getSystemInfo({
         //    success: function(res) {
         //        that.setData({

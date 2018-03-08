@@ -65,11 +65,7 @@ Page(extend({}, Tab, {
                 scroll: false,
                 height: 45
             },
-            loginInfo: {},
             delegatorInfo: {},
-            open_id: "",
-            wxUserInfo: {},
-            userInfo: {},
             title: '',
             toView: 'red' ,
             scrollTop: 100
@@ -109,7 +105,7 @@ Page(extend({}, Tab, {
         registered: false,
         nonRegInfo: {verifyCode:'y'},
         wxUserInfo: {},
-        roleUserInfo: {}
+        userInfo: {}
     },
     onShareAppMessage: function (res) {
         if (res.from === 'button') {
@@ -136,29 +132,73 @@ Page(extend({}, Tab, {
         this.getMessageList()   // 获取信息发布榜信息
     },
     onLoad: function (opt) {
+        var that = this;
+        // show share menu
+        wx.showShareMenu({
+            withShareTicket: true
+        })
         // set page info
         wx.setNavigationBarTitle({
           title: '我是红娘'
         })
-        var that = this;
+
+        // 获取SeekerInfo
+        try {
+            var userInfo = wx.getStorageSync('roleUserInfo')
+            var wxUserInfo = wx.getStorageSync('wxUserInfo')
+            var delegatorInfo = {}
+            delegatorInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
+            delegatorInfo['nickName'] = wxUserInfo.nickName
+            // 设置userinfo
+            that.setData({
+                'homePage.delegatorInfo': delegatorInfo
+                wxUserInfo: wxUserInfo,
+                userInfo: userInfo
+            })
+            var openId = userInfo.open_id
+            wx.request({
+                url: config.service.getSeekerInfoUrl,
+                data: {open_id: openId},
+                success: function(res) {
+                    var result = res.data.data.result
+                    var delegatorData = result.data
+                    if(result.status == 200) {
+                        that.setData({
+                            registered: true
+                        })
+                        that.setHomePage(delegatorData) //设置首页数据
+                        that.getPush(openId)    // 获取当前红娘收到的推送
+                        that.getTask(openId)    // 获取红娘任务
+                        that.getMessageList()   // 获取信息发布榜信息
+                    } else {
+                        that.setRegisterPage()
+                    }
+                },
+                fail: function(res) {
+                    util.showModel('Get Seeker('+openId+') info failed!',JSON.stringify(res.data.data.result))
+                }
+            })
+        } catch(e) {
+            util.showModel('Get user info failed!',JSON.stringify(e))
+        }
 
         // 演示数据 start {
-        var openId = opt.openId
-        var roleUserInfo = this.getDemoRoleInfo(openId)
-        var wxUserInfo = this.getDemoWxInfo(openId)
-        that.setData({
-            registered: true
-        })
+        //var openId = opt.openId
+        //var userInfo = this.getDemoRoleInfo(openId)
+        //var wxUserInfo = this.getDemoWxInfo(openId)
+        //that.setData({
+        //    registered: true
+        //})
         // } end
 
 
         // 获取转发邀请的用户信息
         /*try {
-            var roleUserInfo = wx.getStorageSync('roleUserInfo')
+            var userInfo = wx.getStorageSync('userInfo')
             var wxUserInfo = wx.getStorageSync('wxUserInfo')
             wxUserInfo = wxUserInfo.data.data
-            if(roleUserInfo && roleUserInfo.registered){
-                that.setHomePage(roleUserInfo.data)
+            if(userInfo && userInfo.registered){
+                that.setHomePage(userInfo.data)
                 that.setData({
                     'homePage.wxUserInfo': wxUserInfo,
                     'registered': true
@@ -175,16 +215,9 @@ Page(extend({}, Tab, {
         }*/
         // 初始化信息
         //that.getReceivedPush(openId)  // 获取当前红娘收到的推送
-        that.getPush(openId)  // 获取当前红娘收到的推送
-        that.getTask(openId)          // 获取红娘任务
-        that.getMessageList()   // 获取信息发布榜信息
-        that.setData({
-            title: opt.title
-        })
-        // show share menu
-        wx.showShareMenu({
-            withShareTicket: true
-        })
+        //that.setData({
+        //    title: opt.title
+        //})
         //wx.getSystemInfo({
         //    success: function(res) {
         //        that.setData({
@@ -248,7 +281,7 @@ Page(extend({}, Tab, {
                 var data = res.data.data.result.data[0]
                 that.setHomePage(data)
                 that.setData({
-                    'homePage.roleUserInfo': data
+                    'homePage.userInfo': data
                 })
             }
         })
@@ -604,8 +637,8 @@ Page(extend({}, Tab, {
         return Y+M+D+h+m+s;
     },
     generateRegisterInfo: function(opt) {
-        var curUserInfo = this.data.wxUserInfo
-        var userInfo = {}
+        //var curUserInfo = this.data.wxUserInfo
+        var curUserInfo = this.data.userInfo
         var delegatorInfo = {}
         // get delegator info
         var objKeys = Object.keys(opt.list)
@@ -620,21 +653,19 @@ Page(extend({}, Tab, {
             }
         }
         delegatorInfo['open_id'] = curUserInfo.open_id
-        return {
-            data: delegatorInfo,
-            role: 'delegator'
-        }
+        return delegatorInfo
     },
     submitRegister: function(opt) {
         var that = this
         var data = that.generateRegisterInfo(that.data.registerPage)
         wx.request({
-            url: config.service.registerUrl,
+            url: config.service.registerDelegatorUrl,
             data: data,
             success: function(res) {
                 var registerData = that.data.registerPage.list
                 that.setData({
                     'homePage.tabContent.list.myInfo.data.list.identityInfo.data': registerData.identityInfo.data,
+                    registered: true
                 })
             }
         })

@@ -79,8 +79,6 @@ Page(extend({}, Tab, {
                 height: 45
             },
             seekerInfo: {},
-            userInfo: {},
-            wxUserInfo: {},
             transSceneInfo: {},
             title: '',
             toView: 'red' ,
@@ -95,9 +93,6 @@ Page(extend({}, Tab, {
                 privateInfo: {mode:'register', title:'隐私信息', data:{}}
             }
         },
-        registered: false,
-        nonRegInfo: {verifyCode:'y'},
-        wxUserInfo: {},
         dataTpl: {
             identityInfo: {
                 name: {title: '姓名', placeHolder: '请输入您的姓名', value: ''},
@@ -113,7 +108,7 @@ Page(extend({}, Tab, {
                 education: {title: '学历', placeHolder: '请输入您的学历', value: ''},
                 constellation: {title: '星座', placeHolder: '请输入您的星座', value: ''},
                 blood_type: {title: '血型', placeHolder: '请输入您的血型', value: ''},
-                locality: {title: '所在地', placeHolder: '请输入您的所在地', value: ''},
+                residence: {title: '所在地', placeHolder: '请输入您的所在地', value: ''},
                 hometown: {title: '家乡', placeHolder: '请输入您的家乡', value: ''}
             },
             privateInfo: {
@@ -124,7 +119,11 @@ Page(extend({}, Tab, {
                 requirement: {title:'我的要求', type:'textarea', placeHolder:'请输入您的要求', value:''},
                 reward: {title:'悬赏金额', placeHolder:'请输入您的悬赏金额', value:'', valueType:'人民币'}
             }
-        }
+        },
+        registered: false,
+        nonRegInfo: {verifyCode:'y'},
+        wxUserInfo: {},
+        userInfo: {}
     },
 
     onLoad: function (opt) {
@@ -142,35 +141,39 @@ Page(extend({}, Tab, {
         try {
             var userInfo = wx.getStorageSync('roleUserInfo')
             var wxUserInfo = wx.getStorageSync('wxUserInfo')
-            var openId = userInfo
+            var seekerInfo = {}
+            seekerInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
+            seekerInfo['nickName'] = wxUserInfo.nickName
+            // 设置userinfo
+            that.setData({
+                'homePage.seekerInfo': seekerInfo,
+                wxUserInfo: wxUserInfo,
+                userInfo: userInfo
+            })
+            var openId = userInfo.open_id
             wx.request({
                 url: config.service.getSeekerInfoUrl,
                 data: {open_id: openId},
                 success: function(res) {
                     var result = res.data.data.result
                     if(result.status == 200) {
+                        var seekerData = result.data
                         that.setData({
                             registered: true
                         })
-                        // 设置首页
-                        that.setHomePage(result.data)
-                        // 获取当前客户收到的推送
-                        that.getPush(openId)
-                        // 获取信息榜
-                        that.getMessageList()
+                        that.setHomePage(seekerData)   // 设置首页
+                        that.getPush(openId)    // 获取当前客户收到的推送
+                        that.getMessageList()   // 获取信息榜
                     } else {
                         that.setRegisterPage()
                     }
-                    that.setData({
-                        wxUserInfo: wxUserInfo
-                    })
                 },
                 fail: function(res) {
-                    util.showModal('Get Seeker('+openId+') info failed!',JSON.stringify(res.data.data.result))
+                    util.showModel('Get Seeker('+openId+') info failed!',JSON.stringify(res.data.data.result))
                 }
             })
         } catch(e) {
-            util.showModal('Get user info failed!',JSON.stringify(e))
+            util.showModel('Get user info failed!',JSON.stringify(e))
         }
 
         that.setData({
@@ -179,7 +182,7 @@ Page(extend({}, Tab, {
 
         // 演示流程 start {
         //var demoOpenid = opt.openId
-        //var roleUserInfo = this.getDemoRoleInfo(demoOpenid)
+        //var userInfo = this.getDemoRoleInfo(demoOpenid)
         //var wxUserInfo = this.getDemoWxInfo(demoOpenid)
         //that.setData({
         //    registered: true
@@ -189,12 +192,12 @@ Page(extend({}, Tab, {
 
         // 获取转发邀请的用户信息
         /*try {
-            var roleUserInfo = wx.getStorageSync('roleUserInfo')
+            var userInfo = wx.getStorageSync('userInfo')
             var wxUserInfo = wx.getStorageSync('wxUserInfo')
             var transSceneInfo = wx.getStorageSync('transSceneInfo')
             wxUserInfo = wxUserInfo.data.data
-            if(roleUserInfo && roleUserInfo.registered){
-                that.setHomePage(roleUserInfo.data)
+            if(userInfo && userInfo.registered){
+                that.setHomePage(userInfo.data)
                 that.setData({
                     //'homePage.wxUserInfo': wxUserInfo,
                     'homePage.transSceneInfo': transSceneInfo,
@@ -276,7 +279,7 @@ Page(extend({}, Tab, {
                 var data = res.data.data.result.data[0]
                 that.setHomePage(data)
                 that.setData({
-                    'homePage.roleUserInfo': data
+                    'homePage.userInfo': data
                 })
             }
         })
@@ -639,7 +642,7 @@ Page(extend({}, Tab, {
                         delegationship_id: delegatorId+seekerId
                     }
                     wx.request({
-                        url: config.service.registerUrl,
+                        url: config.service.registerDelegatorUrl,
                         data: {
                             data: relationData,
                             role: 'delegationShip'
@@ -671,8 +674,8 @@ Page(extend({}, Tab, {
         })
     },
     generateRegisterInfo: function(opt) {
-        var curUserInfo = this.data.wxUserInfo
-        var userInfo = {}
+        //var curUserInfo = this.data.wxUserInfo
+        var curUserInfo = this.data.userInfo
         var seekerInfo = {}
         // get seeker info
         var objKeys = Object.keys(opt.list)
@@ -687,13 +690,13 @@ Page(extend({}, Tab, {
             }
         }
         seekerInfo['open_id'] = curUserInfo.open_id
-        return { data: seekerInfo,role: 'seeker' }
+        return seekerInfo
     },
     submitRegister: function(opt) {
         var that = this
         var data = that.generateRegisterInfo(that.data.registerPage)
         wx.request({
-            url: config.service.registerUrl,
+            url: config.service.registerSeekerUrl,
             data: data,
             success: function(res) {
                 var registerData = that.data.registerPage.list

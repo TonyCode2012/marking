@@ -151,7 +151,7 @@ Page(extend({}, Tab, {
             delegatorInfo['nickName'] = wxUserInfo.nickName
             // 设置userinfo
             that.setData({
-                'homePage.delegatorInfo': delegatorInfo
+                'homePage.delegatorInfo': delegatorInfo,
                 wxUserInfo: wxUserInfo,
                 userInfo: userInfo
             })

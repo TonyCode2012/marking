@@ -271,7 +271,7 @@ Page({
             //password: !0, 
             password: 0, 
             defaultText: '', 
-            placeholder: '请输入openId密码', 
+            placeholder: '请输入openId', 
             maxlength: 12, 
             onConfirm(e) {
                 const value = that.data.$wux.dialog.prompt.response

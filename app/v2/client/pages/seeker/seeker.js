@@ -3,6 +3,23 @@ var util = require('../../utils/util.js')
 var config = require('../../config')
 const { Tab, extend } = require('../../3rd_party/zanui-style/index');
 
+const date = new Date()
+const years = []
+const months = []
+const days = []
+
+for (let i = 1990; i <= date.getFullYear(); i++) {
+  years.push(i)
+}
+
+for (let i = 1 ; i <= 12; i++) {
+  months.push(i)
+}
+
+for (let i = 1 ; i <= 31; i++) {
+  days.push(i)
+}
+
 Page(extend({}, Tab, {
     data: {
         homePage: {
@@ -80,6 +97,7 @@ Page(extend({}, Tab, {
             },
             seekerInfo: {},
             transSceneInfo: {},
+            date: '',
             title: '',
             toView: 'red' ,
             scrollTop: 100
@@ -87,6 +105,7 @@ Page(extend({}, Tab, {
         registerPage: {
             curPageId: 'identityInfo',
             curInfo: {},
+            date: '',
             list: {
                 identityInfo: {mode:'register', title:'身份识别信息', data:{}},
                 publicInfo: {mode:'register', title:'可公布信息', data:{}},
@@ -95,21 +114,23 @@ Page(extend({}, Tab, {
         },
         dataTpl: {
             identityInfo: {
-                name: {title: '姓名', placeHolder: '请输入您的姓名', value: ''},
-                gender: {title: '性别', placeHolder: '请输入您的性别', value: ''},
-                identity_num: {title: '身份证号', placeHolder: '请输入您的身份证号', value: ''},
-                wechat: {title: '微信号', placeHolder: '请输入您的微信号', value: ''},
-                phone_num: {title: '手机号', placeHolder: '请输入您的手机号', value: ''},
-                verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: ''}
+                nickName: {title: '昵称', placeHolder: '请输入您的昵称', value: '', tip:'昵称为8位字符', tipColor:'black'},
+                name: {title: '姓名', placeHolder: '请输入您的姓名', value: '', tip:'姓名不超过6位字符', tipColor:'black'},
+                gender: {title: '性别', placeHolder: '请输入您的性别', value: '', tip:'性别为男或女', tipColor:'black'},
+                identity_num: {title: '身份证号', placeHolder: '请输入您的身份证号', value: '', tip:'身份证号为18位字符', tipType:'idcard', tipColor:'black'},
+                wechat: {title: '微信号', placeHolder: '请输入您的微信号', value: '', tip:'', tipColor:'black'},
+                phone_num: {title: '手机号', placeHolder: '请输入您的手机号', value: '', tip:'手机号为13位数字', tipType:'number', tipColor:'black'},
+                verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: '', tip:'', tipType:'number', tipColor:'black'}
             },
             publicInfo: {
-                age: {title: '年龄', placeHolder: '请输入您的年龄', value: ''},
-                height: {title: '身高', placeHolder: '请输入您的身高', value: ''},
-                education: {title: '学历', placeHolder: '请输入您的学历', value: ''},
-                constellation: {title: '星座', placeHolder: '请输入您的星座', value: ''},
-                blood_type: {title: '血型', placeHolder: '请输入您的血型', value: ''},
-                residence: {title: '所在地', placeHolder: '请输入您的所在地', value: ''},
-                hometown: {title: '家乡', placeHolder: '请输入您的家乡', value: ''}
+                //age: {title: '年龄', placeHolder: '请输入您的年龄', value: '', tip:''},
+                birthday: {title: '生日', placeHolder: '请输入您的生日', value: '1970-01-01', tip:''},
+                height: {title: '身高', placeHolder: '请输入您的身高', value: '', tip:''},
+                education: {title: '学历', placeHolder: '请输入您的学历', value: '', tip:''},
+                constellation: {title: '星座', placeHolder: '请输入您的星座', value: '', tip:''},
+                blood_type: {title: '血型', placeHolder: '请输入您的血型', value: '', tip:''},
+                residence: {title: '所在地', placeHolder: '请输入您的所在地', value: '', tip:''},
+                hometown: {title: '家乡', placeHolder: '请输入您的家乡', value: '', tip:''}
             },
             privateInfo: {
                 life_photo: {title:'生活照', placeHolder:'请上传您的生活照', value:[]}
@@ -118,6 +139,16 @@ Page(extend({}, Tab, {
                 self_introduction: {title:'自我介绍', type:'textarea', placeHolder:'请输入您的自我介绍', value:''},
                 requirement: {title:'我的要求', type:'textarea', placeHolder:'请输入您的要求', value:''},
                 reward: {title:'悬赏金额', placeHolder:'请输入您的悬赏金额', value:'', valueType:'人民币'}
+            },
+            date: {
+                years: years,
+                year: date.getFullYear(),
+                months: months,
+                month: 2,
+                days: days,
+                day: 2,
+                //year: date.getFullYear(),
+                value: [9999, 1, 1]
             }
         },
         registered: false,
@@ -238,7 +269,8 @@ Page(extend({}, Tab, {
         // 设置注册页面的当前页面
         var curRegPageId = this.data.registerPage.curPageId
         this.setData({
-            'registerPage.curInfo': this.data.registerPage.list[curRegPageId]
+            'registerPage.curInfo': this.data.registerPage.list[curRegPageId],
+            //'registerPage.curInfo.date': this.data.dataTpl['date']
         })
     },
     setHomePage: function(opt) {
@@ -263,6 +295,10 @@ Page(extend({}, Tab, {
                 })
             }
         }
+        // 设置时间选择器时间
+        this.setData({
+            'homePage.date': this.data.dataTpl['date']
+        })
     },
 
 
@@ -302,17 +338,84 @@ Page(extend({}, Tab, {
 
 
     //--------------- both Page functions -----------------//
+    bindDateChange: function(e) {
+        var mode = e.currentTarget.dataset.mode
+        var type = e.currentTarget.dataset.type
+        var key = e.currentTarget.dataset.key
+        var value = e.detail.value
+        var titleStr = ''
+        if(mode == 'register') {
+            titleStr = 'registerPage.list.' + type + '.data.' + key
+            this.setData({
+                'registerPage.curInfo.data.birthday.value': value
+            })
+        }
+        else titleStr = 'homePage.tabContent.list.myInfo.data.list.' + type + '.data.' + key
+        this.setData({
+            [titleStr + '.value']: value,
+        })
+    },
     getInputVal: function(opt) {
-        var curInfoType = opt.currentTarget.dataset.infotype
-        var mode = opt.currentTarget.dataset.mode
-        var curDataId = opt.currentTarget.dataset.id
-        var curKey = ''
-        if(mode == 'register') curKey = 'registerPage.list.' + curInfoType + '.data.' + curDataId
-        else curKey = 'homePage.tabContent.list.myInfo.data.list.' + curInfoType + '.data.' + curDataId
+        var titleStr = ''
+        var titleCur = ''
+        var curInfoType = opt.currentTarget.dataset.infotype    // 信息类型
+        var mode = opt.currentTarget.dataset.mode               // 注册或是首页
+        var curKey = opt.currentTarget.dataset.id               // 数据名称
+        var curVal = opt.detail.value                           // 输入的值
+        if(mode == 'register') {
+            titleStr = 'registerPage.list.' + curInfoType + '.data.' + curKey
+            titleCur = 'registerPage.curInfo.data.'+curKey
+        }
+        else titleStr = 'homePage.tabContent.list.myInfo.data.list.' + curInfoType + '.data.' + curKey
+        this.checkAndSetVal(curKey,curVal,titleStr,titleCur)
+    },
+    checkAndSetVal(key,val,title,ctitle) {
+        switch(key) {
+            case 'nickName':
+                if(val.length > 8){
+                    val = val.substring(0,8)
+                    this.showTipStyle(title,ctitle,'red','black')
+                }
+                break;
+            case 'name':
+                if(val.length > 6){
+                    val = val.substring(0,6)
+                    this.showTipStyle(title,ctitle,'red','black')
+                }
+                break;
+            case 'identity_num':
+                if(!util.isValidID(val)){
+                    if(val.length > 18) val = val.substring(0,18)
+                    this.showTipStyle(title,ctitle,'red','black')
+                }
+                break;
+            case 'phone_num':
+                if(val.length > 11){
+                    val = val.substring(0,11)
+                    this.showTipStyle(title,ctitle,'red','black')
+                }
+                break;
+        }
         // get new value and set to corresponding info(not curInfo)
         this.setData({
-            [curKey + '.value']: opt.detail.value
+            [ctitle + '.value']: val,
+            [title + '.value']: val
         })
+    },
+    showTipStyle(title,ctitle,newColor,orgColor) {
+        var that = this
+        if(this.data+'.'+title != newColor) {
+            that.setData({
+                [title+'.tipColor']: newColor,
+                [ctitle+'.tipColor']: newColor
+            })
+            setTimeout(function(){
+                that.setData({
+                    [title+'.tipColor']: orgColor,
+                    [ctitle+'.tipColor']: orgColor
+                })
+            },1500)
+        }
     },
     previewImage: function(e){
         var urls = ""
@@ -663,14 +766,16 @@ Page(extend({}, Tab, {
         var nextPageId = opt.currentTarget.dataset.nextpageid
         this.setData({
             'registerPage.curPageId': nextPageId,
-            'registerPage.curInfo': this.data.registerPage.list[nextPageId]
+            'registerPage.curInfo': this.data.registerPage.list[nextPageId],
+            //'registerPage.curInfo.date': this.data.dataTpl['date']
         })
     },
     goPreStep: function(opt) {
         var prePageId = opt.currentTarget.dataset.prepageid
         this.setData({
             'registerPage.curPageId': prePageId,
-            'registerPage.curInfo': this.data.registerPage.list[prePageId]
+            'registerPage.curInfo': this.data.registerPage.list[prePageId],
+            //'registerPage.curInfo.date': this.data.dataTpl['date']
         })
     },
     generateRegisterInfo: function(opt) {

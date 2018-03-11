@@ -11,7 +11,7 @@
  Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 04/03/2018 22:39:08
+ Date: 12/03/2018 00:56:49
 */
 
 SET NAMES utf8mb4;
@@ -108,14 +108,14 @@ INSERT INTO `DelegatorInfo` VALUES ('delegatorBID', 'delegatorB', 'male', '52263
 DROP TABLE IF EXISTS `MatchContract`;
 CREATE TABLE `MatchContract`  (
   `contract_addr` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `pDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `pSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `tDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `tSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `pReward` float(10, 0) NOT NULL,
-  `tReward` float(10, 0) NOT NULL,
-  `pAdvance` float(10, 0) NOT NULL,
-  `tAdvance` float(10, 0) NOT NULL,
+  `mDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `mSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `fDelegator_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `fSeeker_openid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `mReward` float(10, 0) NOT NULL,
+  `fReward` float(10, 0) NOT NULL,
+  `mAdvance` float(10, 0) NOT NULL,
+  `fAdvance` float(10, 0) NOT NULL,
   `status` int(1) NOT NULL,
   `signature` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `signature_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
@@ -148,8 +148,9 @@ CREATE TABLE `S2DPush`  (
 DROP TABLE IF EXISTS `SeekerInfo`;
 CREATE TABLE `SeekerInfo`  (
   `open_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `nickName` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `age` int(11) NOT NULL,
+  `birthday` date NOT NULL,
   `gender` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `height` int(11) NULL DEFAULT NULL,
   `weight` int(11) NULL DEFAULT NULL,
@@ -158,6 +159,8 @@ CREATE TABLE `SeekerInfo`  (
   `blood_type` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `portrait` mediumblob NULL,
   `wx_portraitAddr` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `hometown` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `residence` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `identity_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `wechat` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `phone_num` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -170,12 +173,6 @@ CREATE TABLE `SeekerInfo`  (
   `status` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`open_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of SeekerInfo
--- ----------------------------
-INSERT INTO `SeekerInfo` VALUES ('seekerAID', 'xiaomei', 18, 'female', 170, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volubility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, 200, 1, 1);
-INSERT INTO `SeekerInfo` VALUES ('seekerBID', 'xiaoming', 18, 'male', 183, NULL, 'postgraduate', 'baiyang', 'O', NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0', '522636', 't6865733', '15021128363', 0x5B5D, 'optimistc life attitude, volu    bility, independence and brave.', 'brave, like fitness, cooking and basketball, sometimes I like taking a travel with my friends.', 400, 200, 1, 1);
 
 -- ----------------------------
 -- Table structure for User
@@ -198,8 +195,6 @@ CREATE TABLE `User`  (
 -- ----------------------------
 INSERT INTO `User` VALUES ('delegatorAID', 'delegatorAPUBKEY', 'delegatorACADDR', 100, '2018-02-01 18:38:11', 'delegatorAIHASH', 0, 0);
 INSERT INTO `User` VALUES ('delegatorBID', 'delegatorBPUBKEY', 'delegatorBCADDR', 100, '2018-02-01 18:38:11', 'delegatorBIHASH', 0, 0);
-INSERT INTO `User` VALUES ('seekerAID', 'seekerAPUBKEY', 'seekerACADDR', 100, '2018-02-01 18:38:11', 'seekerAIHASH', 0, 0);
-INSERT INTO `User` VALUES ('seekerBID', 'seekerBPUBKEY', 'seekerBCADDR', 100, '2018-02-01 18:38:11', 'seekerBIHASH', 0, 0);
 
 -- ----------------------------
 -- Table structure for cSessionInfo
@@ -221,6 +216,6 @@ CREATE TABLE `cSessionInfo`  (
 -- ----------------------------
 -- Records of cSessionInfo
 -- ----------------------------
-INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', 'ee1a07ae-cc1d-4329-86cf-86f56aa19984', 'a182d5e9ff05076f61c7a881ce7780b77795f2d2', '2018-01-30 22:00:14', '2018-01-30 22:00:14', 'r6yLSJgTcFaOba6xSrMIUg==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1517320814,\"appid\":\"wx8727802679966793\"}}');
+INSERT INTO `cSessionInfo` VALUES ('oHEkW0dNJwwjb3ete07iObpWGFcM', '2366dcf4-ec1f-4698-8e38-2c2c7aca0620', 'a4dcdd1324683aea75347e37638cbd08e94e8033', '2018-03-12 00:40:43', '2018-03-12 00:40:43', 'f4SfA1Mi1nQjuXE+Vs6eUA==', '{\"openId\":\"oHEkW0dNJwwjb3ete07iObpWGFcM\",\"nickName\":\"yo\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Minhang\",\"province\":\"Shanghai\",\"country\":\"China\",\"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIurjgzyviayzePjJr1VWzsiaCd0OBxqsY7hOSPqrcQ2s8xOsSU21Nuwf5QxcDz5W74eMYIOUe9j54w/0\",\"watermark\":{\"timestamp\":1520786442,\"appid\":\"wx8727802679966793\"}}');
 
 SET FOREIGN_KEY_CHECKS = 1;

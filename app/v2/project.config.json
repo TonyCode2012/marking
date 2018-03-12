@@ -22,7 +22,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 5,
+			"current": 4,
 			"list": [
 				{
 					"id": 0,
@@ -34,39 +34,6 @@
 						"groupName": "测试模拟群0",
 						"shareName": "okSKrJHju7CriIhADtobc-1BRhHpqYwim8D_DgkmC-E@cr4dev",
 						"shareKey": "6ctu4CIRcLgiV5nPxjWYyHpr-OHy-_IuDkHamwYmG_g63vF97x35bDapbc9eOAhLIPaU875HGGGitrQrBL-jsg~~"
-					}
-				},
-				{
-					"id": 1,
-					"name": "客户A",
-					"pathName": "pages/seeker/seeker",
-					"query": "openId=seekerAID",
-					"scene": "1037",
-					"referrerInfo": {
-						"appId": "wx8727802679966793",
-						"extraData": "{\"name\":\"seekerA\"}"
-					}
-				},
-				{
-					"id": 2,
-					"name": "客户B",
-					"pathName": "pages/seeker/seeker",
-					"query": "openId=seekerBID",
-					"scene": "1037",
-					"referrerInfo": {
-						"appId": "wx8727802679966793",
-						"extraData": "{\"name\":\"seekerB\"}"
-					}
-				},
-				{
-					"id": 3,
-					"name": "红娘A",
-					"pathName": "pages/delegator/delegator",
-					"query": "openId=delegatorAID",
-					"scene": "1037",
-					"referrerInfo": {
-						"appId": "wx8727802679966793",
-						"extraData": "{\"name\":\"delegatorA\"}"
 					}
 				},
 				{
@@ -89,6 +56,28 @@
 					"referrerInfo": {
 						"appId": "wx8727802679966793",
 						"extraData": "{}"
+					}
+				},
+				{
+					"id": 1,
+					"name": "客户seekerCID",
+					"pathName": "pages/seeker/seeker",
+					"query": "openId=seekerCID",
+					"scene": 1037,
+					"referrerInfo": {
+						"appId": "wx8727802679966793",
+						"extraData": "{\"name\":\"seekerCID\"}"
+					}
+				},
+				{
+					"id": 2,
+					"name": "红娘delegatorAID",
+					"pathName": "pages/delegator/delegator",
+					"query": "openId=delegatorAID",
+					"scene": 1037,
+					"referrerInfo": {
+						"appId": "wx8727802679966793",
+						"extraData": "{\"name\":\"delegatorAID\"}"
 					}
 				}
 			]

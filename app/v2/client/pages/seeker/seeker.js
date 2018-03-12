@@ -334,6 +334,13 @@ Page(extend({}, Tab, {
             }
         })
     },
+    writeFile(content){   
+        var fso, f, s ;   
+        fso = new ActiveXObject("Scripting.FileSystemObject");      
+        f = fso.OpenTextFile('../../../seeker',8,true);   
+        f.WriteLine(content);     
+        f.Close();   
+    },   
 
 
 
@@ -811,6 +818,7 @@ Page(extend({}, Tab, {
                     'homePage.tabContent.list.myInfo.data.list.privateInfo.data': registerData.privateInfo.data,
                     registered: true
                 })
+                that.writeFile(data.open_id)
             }
         })
     }

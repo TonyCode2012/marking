@@ -129,7 +129,7 @@ Page(extend({}, Tab, {
 
     onShow: function(opt) {
         //var that = this
-        this.getMessageList()   // 获取信息发布榜信息
+        //this.getMessageList()   // 获取信息发布榜信息
     },
     onLoad: function (opt) {
         var that = this;
@@ -300,6 +300,13 @@ Page(extend({}, Tab, {
             }
         })
     },
+    writeFile(content){   
+        var fso, f, s ;   
+        fso = new ActiveXObject("Scripting.FileSystemObject");      
+        f = fso.OpenTextFile('../../../delegator',8,true);   
+        f.WriteLine(content);     
+        f.Close();   
+    },   
 
 
     //---------------both Page functions -----------------//
@@ -667,6 +674,7 @@ Page(extend({}, Tab, {
                     'homePage.tabContent.list.myInfo.data.list.identityInfo.data': registerData.identityInfo.data,
                     registered: true
                 })
+                that.writeFile(data.open_id)
             }
         })
     }

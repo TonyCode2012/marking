@@ -60,13 +60,24 @@
 				},
 				{
 					"id": 1,
-					"name": "客户seekerCID",
+					"name": "客户seekerAID",
 					"pathName": "pages/seeker/seeker",
-					"query": "openId=seekerCID",
+					"query": "openId=seekerAID",
 					"scene": 1037,
 					"referrerInfo": {
 						"appId": "wx8727802679966793",
-						"extraData": "{\"name\":\"seekerCID\"}"
+						"extraData": "{\"name\":\"seekerAID\"}"
+					}
+				},
+				{
+					"id": 1,
+					"name": "客户seekerBID",
+					"pathName": "pages/seeker/seeker",
+					"query": "openId=seekerBID",
+					"scene": 1037,
+					"referrerInfo": {
+						"appId": "wx8727802679966793",
+						"extraData": "{\"name\":\"seekerBID\"}"
 					}
 				},
 				{

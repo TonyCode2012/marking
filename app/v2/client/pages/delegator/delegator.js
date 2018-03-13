@@ -146,27 +146,27 @@ Page(extend({}, Tab, {
         try {
             var userInfo = wx.getStorageSync('roleUserInfo')
             var wxUserInfo = wx.getStorageSync('wxUserInfo')
-            var delegatorInfo = {}
-            delegatorInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
-            delegatorInfo['nickName'] = wxUserInfo.nickName
             // 设置userinfo
             that.setData({
-                'homePage.delegatorInfo': delegatorInfo,
                 wxUserInfo: wxUserInfo,
                 userInfo: userInfo
             })
             var openId = userInfo.open_id
+            if(opt.openId) openId = opt.openId
             wx.request({
-                url: config.service.getSeekerInfoUrl,
+                url: config.service.getDelegatorInfoUrl,
                 data: {open_id: openId},
                 success: function(res) {
                     var result = res.data.data.result
-                    var delegatorData = result.data
                     if(result.status == 200) {
+                        var delegatorInfo = result.data[0]
+                        //delegatorInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
+                        delegatorInfo['nickName'] = wxUserInfo.nickName
                         that.setData({
+                            'homePage.delegatorInfo': delegatorInfo,
                             registered: true
                         })
-                        that.setHomePage(delegatorData) //设置首页数据
+                        that.setHomePage(delegatorInfo) //设置首页数据
                         that.getPush(openId)    // 获取当前红娘收到的推送
                         that.getTask(openId)    // 获取红娘任务
                         that.getMessageList()   // 获取信息发布榜信息
@@ -396,7 +396,7 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             seeker_openid: data['open_id'],
-            delegator_openid: this.data.homePage.wxUserInfo.open_id,
+            delegator_openid: this.data.wxUserInfo.open_id,
             index: index,
             type: 'seekerInfo',
             tArry: ["myTask"]
@@ -412,7 +412,7 @@ Page(extend({}, Tab, {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
         var eData = {
-            delegator_openid: this.data.homePage.wxUserInfo.open_id,
+            delegator_openid: this.data.wxUserInfo.open_id,
             MS_openid: data['open_id'],         // 发布信息的seeker id
             MD_openid: data['delegator_openid'],// 发布信息的seeker的红娘id
             isOwn: data['isOwn'],
@@ -432,7 +432,7 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             index: index,
-            pDelegator_openid: this.data.homePage.wxUserInfo.open_id,
+            pDelegator_openid: this.data.wxUserInfo.open_id,
             type: 'receivedPush'
         }
         wx.navigateTo({
@@ -447,7 +447,7 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             index: index,
-            pDelegator_openid: this.data.homePage.wxUserInfo.open_id,
+            pDelegator_openid: this.data.wxUserInfo.open_id,
             type: 'sendedPush',
         }
         wx.navigateTo({
@@ -458,7 +458,7 @@ Page(extend({}, Tab, {
     },
     setRecvdPushType(data) {
         var that = this
-        var cur_openId = that.data.homePage.wxUserInfo.open_id
+        var cur_openId = that.data.wxUserInfo.open_id
         var recvdPush = data.recvdPush
         var sendedPush = data.sendedPush
         var rRecvdPush= []
@@ -533,7 +533,7 @@ Page(extend({}, Tab, {
         }
     },
     setMsgDataType(data) {
-        var curOpenId = this.data.homePage.wxUserInfo.open_id
+        var curOpenId = this.data.wxUserInfo.open_id
         for(var i=0;i<data.length;i++) {
             if(data[i].delegator_openid != curOpenId) {
                 data[i]['bgc'] = '#96CE54'
@@ -584,7 +584,8 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        updateData['open_id'] = this.data.wxUserInfo.open_id
+        //updateData['open_id'] = this.data.wxUserInfo.open_id
+        updateData['open_id'] = this.data.userInfo.open_id
         updateData['role'] = 'delegator'
         wx.request({
             url: config.service.updateUserInfoUrl,
@@ -645,6 +646,7 @@ Page(extend({}, Tab, {
     },
     generateRegisterInfo: function(opt) {
         //var curUserInfo = this.data.wxUserInfo
+        var wxUserInfo = this.data.wxUserInfo
         var curUserInfo = this.data.userInfo
         var delegatorInfo = {}
         // get delegator info
@@ -660,6 +662,7 @@ Page(extend({}, Tab, {
             }
         }
         delegatorInfo['open_id'] = curUserInfo.open_id
+        delegatorInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
         return delegatorInfo
     },
     submitRegister: function(opt) {
@@ -672,9 +675,10 @@ Page(extend({}, Tab, {
                 var registerData = that.data.registerPage.list
                 that.setData({
                     'homePage.tabContent.list.myInfo.data.list.identityInfo.data': registerData.identityInfo.data,
+                    'homePage.delegatorInfo': data,
                     registered: true
                 })
-                that.writeFile(data.open_id)
+                //that.writeFile(data.open_id)
             }
         })
     }

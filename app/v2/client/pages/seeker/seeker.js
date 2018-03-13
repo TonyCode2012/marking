@@ -172,27 +172,27 @@ Page(extend({}, Tab, {
         try {
             var userInfo = wx.getStorageSync('roleUserInfo')
             var wxUserInfo = wx.getStorageSync('wxUserInfo')
-            var seekerInfo = {}
-            seekerInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
-            seekerInfo['nickName'] = wxUserInfo.nickName
             // 设置userinfo
             that.setData({
-                'homePage.seekerInfo': seekerInfo,
                 wxUserInfo: wxUserInfo,
                 userInfo: userInfo
             })
             var openId = userInfo.open_id
+            if(opt.openId) openId = opt.openId
             wx.request({
                 url: config.service.getSeekerInfoUrl,
                 data: {open_id: openId},
                 success: function(res) {
                     var result = res.data.data.result
                     if(result.status == 200) {
-                        var seekerData = result.data
+                        var seekerInfo = result.data[0]
+                        //seekerInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
+                        seekerInfo['nickName'] = wxUserInfo.nickName
                         that.setData({
+                            'homePage.seekerInfo': seekerInfo,
                             registered: true
                         })
-                        that.setHomePage(seekerData)   // 设置首页
+                        that.setHomePage(seekerInfo)   // 设置首页
                         that.getPush(openId)    // 获取当前客户收到的推送
                         that.getMessageList()   // 获取信息榜
                     } else {
@@ -707,7 +707,8 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        updateData['open_id'] = this.data.homePage.wxUserInfo.open_id
+        //updateData['open_id'] = this.data.wxUserInfo.open_id
+        updateData['open_id'] = this.data.userInfo.open_id
         updateData['role'] = 'seeker'
         wx.request({
             url: config.service.updateUserInfoUrl,
@@ -719,7 +720,7 @@ Page(extend({}, Tab, {
         })
     },
     releaseInfoBtn: function(opt) {
-        var openId = this.data.homePage.wxUserInfo.open_id
+        var openId = this.data.wxUserInfo.open_id
         wx.request({
             url: config.service.updateUserInfoUrl,
             data: {
@@ -743,7 +744,7 @@ Page(extend({}, Tab, {
             success: function (res) {
                 console.log(res);
                 if (res.confirm) {
-                    var seekerId= that.data.homePage.wxUserInfo.open_id
+                    var seekerId= that.data.wxUserInfo.open_id
                     var delegatorId = that.data.homePage.transSceneInfo.query.openId
                     // 将转发者作为当前seeker的delegator在关系表中进行注册
                     var relationData = {
@@ -787,6 +788,7 @@ Page(extend({}, Tab, {
     },
     generateRegisterInfo: function(opt) {
         //var curUserInfo = this.data.wxUserInfo
+        var wxUserInfo = this.data.wxUserInfo
         var curUserInfo = this.data.userInfo
         var seekerInfo = {}
         // get seeker info
@@ -802,6 +804,7 @@ Page(extend({}, Tab, {
             }
         }
         seekerInfo['open_id'] = curUserInfo.open_id
+        seekerInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
         return seekerInfo
     },
     submitRegister: function(opt) {
@@ -816,9 +819,10 @@ Page(extend({}, Tab, {
                     'homePage.tabContent.list.myInfo.data.list.identityInfo.data': registerData.identityInfo.data,
                     'homePage.tabContent.list.myInfo.data.list.publicInfo.data': registerData.publicInfo.data,
                     'homePage.tabContent.list.myInfo.data.list.privateInfo.data': registerData.privateInfo.data,
+                    'homePage.seekerInfo': data,
                     registered: true
                 })
-                that.writeFile(data.open_id)
+                //that.writeFile(data.open_id)
             }
         })
     }

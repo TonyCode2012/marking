@@ -172,10 +172,11 @@ Page(extend({}, Tab, {
         try {
             var userInfo = wx.getStorageSync('roleUserInfo')
             var wxUserInfo = wx.getStorageSync('wxUserInfo')
+            var transSceneInfo = wx.getStorageSync('transSceneInfo')
             // 设置userinfo
             that.setData({
                 wxUserInfo: wxUserInfo,
-                userInfo: userInfo
+                userInfo: userInfo,
             })
             var openId = userInfo.open_id
             if(opt.openId) openId = opt.openId
@@ -187,14 +188,14 @@ Page(extend({}, Tab, {
                     if(result.status == 200) {
                         var seekerInfo = result.data[0]
                         //seekerInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
-                        seekerInfo['nickName'] = wxUserInfo.nickName
+                        //seekerInfo['nickName'] = wxUserInfo.nickName
                         that.setData({
                             'homePage.seekerInfo': seekerInfo,
                             registered: true
                         })
-                        that.setHomePage(seekerInfo)   // 设置首页
-                        that.getPush(openId)    // 获取当前客户收到的推送
-                        that.getMessageList()   // 获取信息榜
+                        that.setHomePage(seekerInfo)    // 设置首页
+                        that.getPush(openId)            // 获取当前客户收到的推送
+                        that.getMessageList()           // 获取信息榜
                     } else {
                         that.setRegisterPage()
                     }
@@ -204,7 +205,7 @@ Page(extend({}, Tab, {
                 }
             })
         } catch(e) {
-            util.showModel('Get user info failed!',JSON.stringify(e))
+            util.showModel('Get seeker info failed!',JSON.stringify(e))
         }
 
         that.setData({

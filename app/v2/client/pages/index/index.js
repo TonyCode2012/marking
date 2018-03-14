@@ -16,22 +16,22 @@ Page({
 
     onShow: function(opt) {
         // 获取登录场景值
-        var appInstance = getApp()
-        var loginAppInfo = appInstance.data.loginAppInfo
-        if(loginAppInfo.scene == 1044) {
-            // 转发登录场景，根据参数跳转到对应页面
-            this.login({loginAppInfo:loginAppInfo},() => {
-                if(loginAppInfo.query.role == 'seeker') {
-                    wx.switchTab({
-                        url: '../seeker/seeker'
-                    })
-                } else {
-                    wx.switchTab({
-                        url: '../delegator/delegator'
-                    })
-                }
-            })
-        }
+        //var appInstance = getApp()
+        //var loginAppInfo = appInstance.data.loginAppInfo
+        //if(loginAppInfo.scene == 1044) {
+        //    // 转发登录场景，根据参数跳转到对应页面
+        //    this.login({loginAppInfo:loginAppInfo},() => {
+        //        if(loginAppInfo.query.role == 'seeker') {
+        //            wx.switchTab({
+        //                url: '../seeker/seeker'
+        //            })
+        //        } else {
+        //            wx.switchTab({
+        //                url: '../delegator/delegator'
+        //            })
+        //        }
+        //    })
+        //}
     },
     onLoad: function(opt) {
         wx.showShareMenu({
@@ -96,6 +96,10 @@ Page({
     login: function(args,callback) {
         if (this.data.logged) return
 
+        var appInstance = getApp()
+        var loginAppInfo = appInstance.data.loginAppInfo
+        args = {loginAppInfo: loginAppInfo}
+
         util.showBusy('正在登录')
         var that = this
 
@@ -123,27 +127,38 @@ Page({
                     //        }
                     //    })
                     //}
-                    // 首次登陆时,进行用户注册并获取(seeker/delegator)信息
-                    // 场景判断,若为转发登陆场景设置相关参数
-                    if(args.loginAppInfo && args.loginAppInfo.scene == 1044) {
-                        result['role'] = args.loginAppInfo.query.role
-                        result['scene'] = args.loginAppInfo.scene
+                    // 保存登录获取的用户微信信息
+                    try {
+                        // 首次登陆时,进行用户注册并获取(seeker/delegator)信息
+                        // 场景判断,若为转发登陆场景设置相关参数
+                        wx.setStorageSync('wxUserInfo',result)
+                        wx.setStorageSync('transSceneInfo',args.loginAppInfo)
                         that.regAndGetUser(result,callback)
-                        try {
-                            wx.setStorageSync('transSceneInfo',args.loginAppInfo)
-                        } catch(e) {
-                            util.showModel('set login info failed!',JSON.stringify(e))
-                        }
-                    } else {
-                        that.regAndGetUser(result,() => {
+                        // 判断转发条件
+                        if(args.loginAppInfo == undefined) {
                             wx.switchTab({
                                 url: '../seeker/seeker'
                             })
-                        })
-                    }
-                    // 保存登录获取的用户微信信息
-                    try {
-                        wx.setStorageSync('wxUserInfo',result)
+                        } else if(args.loginAppInfo.scene == 1044){
+                            // 带场景的登录，则转到相应路径
+                            var role = args.loginAppInfo.query.role
+                            var url = '../'+role+'/'+role
+                            wx.switchTab({
+                                url: url
+                            })
+                        }
+                        /*if(args.loginAppInfo && args.loginAppInfo.scene == 1044) {
+                            result['role'] = args.loginAppInfo.query.role
+                            result['scene'] = args.loginAppInfo.scene
+                            that.regAndGetUser(result,callback)
+                            wx.setStorageSync('transSceneInfo',args.loginAppInfo)
+                        } else {
+                            that.regAndGetUser(result,() => {
+                                wx.switchTab({
+                                    url: '../seeker/seeker'
+                                })
+                            })
+                        }*/
                     } catch(e) {
                         util.showModel('set login info failed!',JSON.stringify(e))
                     }
@@ -155,26 +170,33 @@ Page({
                         success(result) {
                             util.showSuccess('登录成功')
                             // 保存登录获取的用户微信信息
-                            try {
-                                wx.setStorageSync('transSceneInfo',args.loginAppInfo)
-                                wx.setStorageSync('wxUserInfo',result)
-                            } catch(e) {
-                                util.showModel('set login info failed!',JSON.stringify(e))
-                            }
-                            // 判断转发条件
-                            if(args.loginAppInfo == undefined) {
-                                wx.switchTab({
-                                    //url: '../delegator/delegator'
-                                    url: '../seeker/seeker'
-                                })
-                            } else if(args.loginAppInfo.scene == 1044){
-                                // 带场景的登录，则转到相应路径
-                                var role = args.loginAppInfo.query.role
-                                var url = '../'+role+'/'+role
-                                wx.switchTab({
-                                    url: url
-                                })
-                            }
+                            var openId = args.loginAppInfo.query.openId
+                            wx.request({
+                                url: config.service.getUserInfoUrl,
+                                data: {open_id:openId},
+                                success: function(res) {
+                                    try {
+                                        wx.setStorageSync('roleUserInfo',res.data.data.result.data[0])
+                                        wx.setStorageSync('wxUserInfo',result)
+                                        wx.setStorageSync('transSceneInfo',args.loginAppInfo)
+                                        // 判断转发条件
+                                        if(args.loginAppInfo == undefined) {
+                                            wx.switchTab({
+                                                url: '../seeker/seeker'
+                                            })
+                                        } else if(args.loginAppInfo.scene == 1044){
+                                            // 带场景的登录，则转到相应路径
+                                            var role = args.loginAppInfo.query.role
+                                            var url = '../'+role+'/'+role
+                                            wx.switchTab({
+                                                url: url
+                                            })
+                                        }
+                                    } catch(e) {
+                                        util.showModel('set login info failed!',JSON.stringify(e))
+                                    }
+                                }
+                            })
                         },
                         fail(error) {
                             util.showModel('请求失败', error)
@@ -191,6 +213,7 @@ Page({
         })
     },
 
+    // 注册并获取用户信息
     regAndGetUser: function(opt,callback) {
         //var openId = opt.openId
         this.prompt((openId)=>{

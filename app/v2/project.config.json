@@ -59,36 +59,27 @@
 					}
 				},
 				{
-					"id": 1,
+					"id": 3,
 					"name": "客户seekerAID",
-					"pathName": "pages/seeker/seeker",
-					"query": "openId=seekerAID",
-					"scene": 1037,
-					"referrerInfo": {
-						"appId": "wx8727802679966793",
-						"extraData": "{\"name\":\"seekerAID\"}"
+					"pathName": "pages/index/index",
+					"query": "openId=seekerAID&role=seeker",
+					"scene": "1044",
+					"shareInfo": {
+						"groupName": "测试模拟群0",
+						"shareName": "okSKrJHju7CriIhADtobc-1BRhHpqYwim8D_DgkmC-E@cr4dev",
+						"shareKey": "6ctu4CIRcLgiV5nPxjWYyHpr-OHy-_IuDkHamwYmG_g63vF97x35bDapbc9eOAhLIPaU875HGGGitrQrBL-jsg~~"
 					}
 				},
 				{
-					"id": 1,
+					"id": 4,
 					"name": "客户seekerBID",
-					"pathName": "pages/seeker/seeker",
-					"query": "openId=seekerBID",
-					"scene": 1037,
-					"referrerInfo": {
-						"appId": "wx8727802679966793",
-						"extraData": "{\"name\":\"seekerBID\"}"
-					}
-				},
-				{
-					"id": 2,
-					"name": "红娘delegatorAID",
-					"pathName": "pages/delegator/delegator",
-					"query": "openId=delegatorAID",
-					"scene": 1037,
-					"referrerInfo": {
-						"appId": "wx8727802679966793",
-						"extraData": "{\"name\":\"delegatorAID\"}"
+					"pathName": "pages/index/index",
+					"query": "openId=seekerBID&role=seeker",
+					"scene": "1044",
+					"shareInfo": {
+						"groupName": "测试模拟群0",
+						"shareName": "okSKrJHju7CriIhADtobc-1BRhHpqYwim8D_DgkmC-E@cr4dev",
+						"shareKey": "6ctu4CIRcLgiV5nPxjWYyHpr-OHy-_IuDkHamwYmG_g63vF97x35bDapbc9eOAhLIPaU875HGGGitrQrBL-jsg~~"
 					}
 				}
 			]

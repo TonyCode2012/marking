@@ -149,7 +149,7 @@ Page(extend({}, Tab, {
             // 设置userinfo
             that.setData({
                 wxUserInfo: wxUserInfo,
-                userInfo: userInfo
+                userInfo: userInfo,
             })
             var openId = userInfo.open_id
             if(opt.openId) openId = opt.openId
@@ -161,15 +161,15 @@ Page(extend({}, Tab, {
                     if(result.status == 200) {
                         var delegatorInfo = result.data[0]
                         //delegatorInfo['wx_portraitAddr'] = wxUserInfo.avatarUrl
-                        delegatorInfo['nickName'] = wxUserInfo.nickName
+                        //delegatorInfo['nickName'] = wxUserInfo.nickName
                         that.setData({
                             'homePage.delegatorInfo': delegatorInfo,
                             registered: true
                         })
                         that.setHomePage(delegatorInfo) //设置首页数据
-                        that.getPush(openId)    // 获取当前红娘收到的推送
-                        that.getTask(openId)    // 获取红娘任务
-                        that.getMessageList()   // 获取信息发布榜信息
+                        that.getPush(openId)            // 获取当前红娘收到的推送
+                        that.getTask(openId)            // 获取红娘任务
+                        that.getMessageList()           // 获取信息发布榜信息
                     } else {
                         that.setRegisterPage()
                     }

@@ -1,5 +1,6 @@
 const { mysql: config } = require('../../config')
 var mysql = require('mysql')
+var moment = require('moment')
 var urlParser = require('url')
 var queryString  = require("querystring");
 var util = require('./util')
@@ -178,6 +179,11 @@ var getMessageList = async function(ctx) {
 
 var getSeekerInfo = async function(ctx) {
     var result = await getSeekerInfo_r(ctx,connection)
+    if(result.status == 200) {
+        var birthday = result.data[0]['birthday']
+        birthday = moment(birthday).format('YYYY-MM-DD')
+        result.data[0]['birthday'] = birthday
+    }
     ctx.state.data = {
         result: result
     }

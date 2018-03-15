@@ -133,20 +133,22 @@ Page({
                         // 场景判断,若为转发登陆场景设置相关参数
                         wx.setStorageSync('wxUserInfo',result)
                         wx.setStorageSync('transSceneInfo',args.loginAppInfo)
-                        that.regAndGetUser(result,callback)
-                        // 判断转发条件
-                        if(args.loginAppInfo == undefined) {
-                            wx.switchTab({
-                                url: '../seeker/seeker'
-                            })
-                        } else if(args.loginAppInfo.scene == 1044){
-                            // 带场景的登录，则转到相应路径
-                            var role = args.loginAppInfo.query.role
-                            var url = '../'+role+'/'+role
-                            wx.switchTab({
-                                url: url
-                            })
-                        }
+                        that.regAndGetUser(result,()=>{
+                            // 判断转发条件
+                            if(args.loginAppInfo == undefined) {
+                                wx.switchTab({
+                                    url: '../seeker/seeker'
+                                })
+                            } else if(args.loginAppInfo.scene == 1044){
+                                // 带场景的登录，则转到相应路径
+                                var role = args.loginAppInfo.query.role
+                                //var url = '../'+role+'/'+role
+                                var url = '../seeker/seeker'
+                                wx.switchTab({
+                                    url: url
+                                })
+                            }
+                        })
                         /*if(args.loginAppInfo && args.loginAppInfo.scene == 1044) {
                             result['role'] = args.loginAppInfo.query.role
                             result['scene'] = args.loginAppInfo.scene

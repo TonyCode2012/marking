@@ -34,7 +34,7 @@ function insertUser()
         ((lineNum++))
         sed -i "${lineNum} a\\\t\t\t\t\t\t\"groupName\": \"测试模拟群0\"," $pf
         ((lineNum++))
-        sed -i "${lineNum} a\\\t\t\t\t\t\t\"shareName\": \"okSKrJHju7CriIhADtobc-1BRhHpqYwim8D_DgkmC-E@cr4dev\"" $pf
+        sed -i "${lineNum} a\\\t\t\t\t\t\t\"shareName\": \"okSKrJHju7CriIhADtobc-1BRhHpqYwim8D_DgkmC-E@cr4dev\"," $pf
         ((lineNum++))
         sed -i "${lineNum} a\\\t\t\t\t\t\t\"shareKey\": \"6ctu4CIRcLgiV5nPxjWYyHpr-OHy-_IuDkHamwYmG_g63vF97x35bDapbc9eOAhLIPaU875HGGGitrQrBL-jsg~~\"" $pf
         ((lineNum++))
@@ -57,7 +57,6 @@ basedir=`dirname $0`
 basedir=`cd $basedir;pwd`
 seeker="$basedir/../seeker"
 delegator="$basedir/../delegator"
-#pf="$basedir/../testfile"
 pf="$basedir/../project.config.json"
 
 id=1

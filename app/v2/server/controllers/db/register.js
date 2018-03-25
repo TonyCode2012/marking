@@ -14,6 +14,14 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
+var registerDelegationship = async function(ctx) {
+    var data = urlParser.parse(ctx.originalUrl,true).query
+    var result = await register_r(data,'DelegationShip')
+    ctx.state.data = {
+        result: result
+    }
+}
+
 var registerUser = async function(ctx) {
     var data = urlParser.parse(ctx.originalUrl,true).query
     var result = await register_r(data,'User')
@@ -73,5 +81,6 @@ function queryFromDB(resolve, reject, queryStr, tableId, connection) {
 module.exports = {
     registerUser: registerUser,
     registerSeeker: registerSeeker,
-    registerDelegator: registerDelegator
+    registerDelegator: registerDelegator,
+    registerDelegationship: registerDelegationship
 }

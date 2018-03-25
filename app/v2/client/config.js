@@ -38,6 +38,7 @@ var config = {
         registerUserUrl: `${host}/weapp/registerUser`,
         registerSeekerUrl: `${host}/weapp/registerSeeker`,
         registerDelegatorUrl: `${host}/weapp/registerDelegator`,
+        registerDelegationshipUrl: `${host}/weapp/registerDelegationship`,
 
         /*****获取红娘相关信息*****/
         getDTaskInfoUrl: `${host}/weapp/getDTaskInfo`,
@@ -62,6 +63,7 @@ var config = {
         sendMatchRefuseUrl: `${host}/weapp/sendMatchRefuse`,
         // 获取匹配状态
         getDPushStatusUrl: `${host}/weapp/getDPushStatus`,
+        getDelegationShipUrl: `${host}/weapp/getDelegationShip`,
         
         /*****合同流程*****/
         insertMatchContractUrl: `${host}/weapp/insertMatchContract`,

@@ -6,7 +6,7 @@ var queryString  = require("querystring");
 var util = require('./util')
 
 
-var seekerPubInfoItems = "open_id,name,age,gender,height,weight,education,constellation,blood_type,portrait,wx_portraitAddr,requirement,self_introduction"
+var seekerPubInfoItems = "open_id,name,birthday,gender,height,weight,education,constellation,blood_type,portrait,wx_portraitAddr,requirement,self_introduction"
 
 var delegatorPubInfoItems = "open_id,name,wx_portraitAddr"
 
@@ -21,6 +21,14 @@ var connection = mysql.createConnection({
 });
 
 connection.connect();
+
+var getDelegationShip = async function(ctx) {
+    var data = urlParser.parse(ctx.originalUrl,true).query
+    var result = await getDelegationShip_r(data)
+    ctx.state.data = {
+        result: result
+    }
+}
 
 var getContractByIdsList = async function(ctx) {
     var dataList = urlParser.parse(ctx.originalUrl,true).query.idsList
@@ -136,7 +144,7 @@ var getMySeeker = async function(ctx) {
     } else {
         var idArry = data.data
         var resArry = []
-        var selectStr = "name,age,education,height,requirement,wx_portraitAddr,open_id"
+        var selectStr = "name,birthday,education,height,requirement,wx_portraitAddr,open_id"
         for(var i=0;i<idArry.length;i++) {
             var queryStr = "select " + selectStr + " from SeekerInfo where open_id='" + idArry[i].seeker_openId + "'"
             var result = await getSeekerInfoByQuery(queryStr,connection)
@@ -347,6 +355,14 @@ async function getSRecvdPush(data,open_id) {
         status: data.status,
         role: data.role
     }
+}
+
+function getDelegationShip_r(ids) {
+    return new Promise(function (resolve, reject) {
+        var cdStr = util.getConditionAll(ids,'and')
+        var queryStr = "select * from DelegationShip where " + cdStr
+        queryFromDB(resolve,reject,queryStr,connection)
+    })
 }
 
 function getD2SPushStatus(ids) {
@@ -564,8 +580,7 @@ module.exports = {
     getSPush: getSPush,
     getContractBySeekerId: getContractBySeekerId,
     getContractByIdsList: getContractByIdsList,
-    //getDReceivedPush: getDReceivedPush,
-    //getSReceivedPush: getSReceivedPush,
     getDPushStatus: getDPushStatus,
     getD2SPushStatus: getD2SPushStatus,
+    getDelegationShip: getDelegationShip,
 }

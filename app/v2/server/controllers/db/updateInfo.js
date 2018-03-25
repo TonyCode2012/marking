@@ -190,6 +190,7 @@ function updateInfo_r(ctx, connection) {
         setStr = setStr.substring(0,setStr.length-1)
         var queryStr = "update " + tableId + " set " +  setStr + " where open_id='" + data.open_id + "'"
     
+        console.log("queryStr:"+queryStr)
         queryFromDB(resolve,reject,queryStr,connection)
     })
 }

@@ -63,7 +63,7 @@
 					"id": 3,
 					"name": "客户seekerAID",
 					"pathName": "pages/index/index",
-					"query": "openId=seekerAID&role=seeker",
+					"query": "openId=seekerAID&role=seeker&friend=delegatorAID",
 					"scene": "1044",
 					"shareInfo": {
 						"groupName": "测试模拟群0",
@@ -75,7 +75,7 @@
 					"id": 4,
 					"name": "客户seekerBID",
 					"pathName": "pages/index/index",
-					"query": "openId=seekerBID&role=seeker",
+					"query": "openId=seekerBID&role=seeker&friend=delegatorBID",
 					"scene": "1044",
 					"shareInfo": {
 						"groupName": "测试模拟群0",
@@ -87,7 +87,7 @@
 					"id": 5,
 					"name": "红娘delegatorAID",
 					"pathName": "pages/index/index",
-					"query": "openId=delegatorAID&role=delegator",
+					"query": "openId=delegatorAID&role=delegator&friend=seekerAID",
 					"scene": 1044,
 					"shareInfo": {
 						"groupName": "测试模拟群0",
@@ -99,7 +99,7 @@
 					"id": 6,
 					"name": "红娘delegatorBID",
 					"pathName": "pages/index/index",
-					"query": "openId=delegatorBID&role=delegator",
+					"query": "openId=delegatorBID&role=delegator&friend=seekerBID",
 					"scene": 1044,
 					"shareInfo": {
 						"groupName": "测试模拟群0",

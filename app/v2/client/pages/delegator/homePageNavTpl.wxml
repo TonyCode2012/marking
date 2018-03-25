@@ -93,7 +93,8 @@
                 <view class="weui-media-box weui-media-box_small-appmsg">
                     <view class="weui-cells weui-cells_in-small-appmsg">
                         <navigator wx:for="{{list}}" wx:key="this" url="" data-index="{{index}}" data-item="{{item}}" bindtap="goMessageDetail" 
-                            class="weui-cell weui-cell_access" hover-class="weui-cell_active" style="background-color:{{item.bgc}}">
+                            class="weui-cell weui-cell_access" hover-class="weui-cell_active" hidden="{{item.is_release == 0}}" 
+                            style="background-color:{{item.bgc}}">
                             <view class="weui-cell__hd" style="height:40px;width:40px"><image src="{{item.wx_portraitAddr}}" 
                                     style="width: 100%;height: 100%;margin-right: 5px" /></view>
                             <view class="weui-cell__bd weui-cell_primary" style="margin-left:10px">

@@ -56,7 +56,8 @@ Page({
         dataTpl: {
             basicInfo: {
                 name:{ title:"姓名", value:"" },
-                age:{ title:"年龄", value:"" },
+                //age:{ title:"年龄", value:"" },
+                birthday:{ title:"生日", value:"" },
                 gender:{ title:"性别", value:"" },
                 height:{ title:"身高", value:"" },
                 weight:{ title:"体重", value:"" },
@@ -194,15 +195,19 @@ Page({
                 seeker_openid: that.data.seekerInfo.seeker_openid
             },
             success: function(res) {
-                util.showSuccess('发布成功')
-                var index = that.data.prePageIndex
-                var type = that.data.type
-                that.data.prePage.setData({
-                    ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 1
-                })
-                that.setData({
-                    [type+'.released']: true
-                })
+                var result = res.data.data.result
+                if(result.status == 200) {
+                    util.showSuccess('发布成功')
+                    var index = that.data.prePageIndex
+                    var type = that.data.type
+                    that.data.prePage.setData({
+                        ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 1,
+                        ['homePage.tabContent.list.messageList.data.list['+index+'].is_release']: 1
+                    })
+                    that.setData({
+                        [type+'.released']: true
+                    })
+                }
             }
         })
     },
@@ -219,7 +224,8 @@ Page({
                 var index = that.data.prePageIndex
                 var type = that.data.type
                 that.data.prePage.setData({
-                    ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 0
+                    ['homePage.tabContent.list.myTask.data.list['+index+'].is_release']: 0,
+                    ['homePage.tabContent.list.messageList.data.list['+index+'].is_release']: 0
                 })
                 that.setData({
                     [type+'.released']: false

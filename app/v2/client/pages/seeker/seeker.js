@@ -196,6 +196,13 @@ Page(extend({}, Tab, {
                         that.setHomePage(seekerInfo)    // 设置首页
                         that.getPush(openId)            // 获取当前客户收到的推送
                         that.getMessageList()           // 获取信息榜
+                        if(transSceneInfo.scene == 1044) {
+                            var relationData = {
+                                delegator_openid: transSceneInfo.query.friend,
+                                seeker_openid: openId
+                            }
+                            that.addFriendQeq(relationData)
+                        }
                     } else {
                         that.setRegisterPage()
                     }
@@ -721,7 +728,7 @@ Page(extend({}, Tab, {
         })
     },
     releaseInfoBtn: function(opt) {
-        var openId = this.data.wxUserInfo.open_id
+        var openId = this.data.userInfo.open_id
         wx.request({
             url: config.service.updateUserInfoUrl,
             data: {
@@ -735,38 +742,37 @@ Page(extend({}, Tab, {
             }
         })
     },
-    addFriendQeq: function() {
+    addFriendQeq: function(relationData) {
         var that = this
-        wx.showModal({
-            title: '代理人请提醒',
-            content: '您的好友想成为您的代理人，是否同意？',
-            confirmText: "同意",
-            cancelText: "拒绝",
-            success: function (res) {
-                console.log(res);
-                if (res.confirm) {
-                    var seekerId= that.data.wxUserInfo.open_id
-                    var delegatorId = that.data.homePage.transSceneInfo.query.openId
-                    // 将转发者作为当前seeker的delegator在关系表中进行注册
-                    var relationData = {
-                        delegator_openId: delegatorId,
-                        seeker_openId: seekerId,
-                        delegationship_id: delegatorId+seekerId
-                    }
-                    wx.request({
-                        url: config.service.registerDelegatorUrl,
-                        data: {
-                            data: relationData,
-                            role: 'delegationShip'
-                        },
-                        success: function(res) {
-                            util.showSuccess('添加好友成功!')
+        wx.request({
+            url: config.service.getDelegationShipUrl,
+            data: relationData,
+            success: function(res) {
+                var result = res.data.data.result
+                if(result.status != 200) {
+                    wx.showModal({
+                        title: '代理人请提醒',
+                        content: '您的好友想成为您的代理人，是否同意？',
+                        confirmText: "同意",
+                        cancelText: "拒绝",
+                        success: function (res) {
+                            console.log(res);
+                            if (res.confirm) {
+                                // 将转发者作为当前seeker的delegator在关系表中进行注册
+                                wx.request({
+                                    url: config.service.registerDelegationshipUrl,
+                                    data: relationData,
+                                    success: function(res) {
+                                        util.showSuccess('添加好友成功!')
+                                    }
+                                })
+                            }else{
+                            }
                         }
-                    })
-                }else{
+                    });
                 }
             }
-        });
+        })
     },
 
 

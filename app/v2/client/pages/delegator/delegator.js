@@ -87,7 +87,8 @@ Page(extend({}, Tab, {
                 verifyCode: {title: '验证码', placeHolder: '请输入您的验证码', value: ''}
             },
             publicInfo: {
-                age: {title: '年龄', placeHolder: '请输入您的年龄', value: ''},
+                birthday: {title: '生日', placeHolder: '请输入您的生日', value: ''},
+                //age: {title: '年龄', placeHolder: '请输入您的年龄', value: ''},
                 height: {title: '身高', placeHolder: '请输入您的身高', value: ''},
                 education: {title: '学历', placeHolder: '请输入您的学历', value: ''},
                 constellation: {title: '星座', placeHolder: '请输入您的星座', value: ''},
@@ -112,7 +113,7 @@ Page(extend({}, Tab, {
           // 来自页面内转发按钮
           console.log(res.target)
         }
-        var openId = this.data.wxUserInfo.open_id
+        var openId = this.data.userInfo.open_id
         return {
           title: '转发给',
           path: '/pages/delegator/delegator?openId='+openId+'&role=seeker',
@@ -349,6 +350,7 @@ Page(extend({}, Tab, {
             url: config.service.getMessageListUrl,
             success: function(res) {
                 var data = res.data.data.result
+                data['is_release'] = 1
                 that.setMsgDataType(data)
                 that.setData({
                     'homePage.tabContent.list.messageList.data.list': data
@@ -396,7 +398,7 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             seeker_openid: data['open_id'],
-            delegator_openid: this.data.wxUserInfo.open_id,
+            delegator_openid: this.data.userInfo.open_id,
             index: index,
             type: 'seekerInfo',
             tArry: ["myTask"]
@@ -412,7 +414,7 @@ Page(extend({}, Tab, {
         var data = opt.currentTarget.dataset.item
         var index = opt.currentTarget.dataset.index
         var eData = {
-            delegator_openid: this.data.wxUserInfo.open_id,
+            delegator_openid: this.data.userInfo.open_id,
             MS_openid: data['open_id'],         // 发布信息的seeker id
             MD_openid: data['delegator_openid'],// 发布信息的seeker的红娘id
             isOwn: data['isOwn'],
@@ -432,7 +434,7 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             index: index,
-            pDelegator_openid: this.data.wxUserInfo.open_id,
+            pDelegator_openid: this.data.userInfo.open_id,
             type: 'receivedPush'
         }
         wx.navigateTo({
@@ -447,7 +449,7 @@ Page(extend({}, Tab, {
         var index = opt.currentTarget.dataset.index
         var eData = {
             index: index,
-            pDelegator_openid: this.data.wxUserInfo.open_id,
+            pDelegator_openid: this.data.userInfo.open_id,
             type: 'sendedPush',
         }
         wx.navigateTo({
@@ -458,7 +460,7 @@ Page(extend({}, Tab, {
     },
     setRecvdPushType(data) {
         var that = this
-        var cur_openId = that.data.wxUserInfo.open_id
+        var cur_openId = that.data.userInfo.open_id
         var recvdPush = data.recvdPush
         var sendedPush = data.sendedPush
         var rRecvdPush= []
@@ -533,7 +535,7 @@ Page(extend({}, Tab, {
         }
     },
     setMsgDataType(data) {
-        var curOpenId = this.data.wxUserInfo.open_id
+        var curOpenId = this.data.userInfo.open_id
         for(var i=0;i<data.length;i++) {
             if(data[i].delegator_openid != curOpenId) {
                 data[i]['bgc'] = '#96CE54'
@@ -584,7 +586,7 @@ Page(extend({}, Tab, {
             if(e != 'verifyCode')
                 updateData['data'][e] = curInfoData[e].value
         }
-        //updateData['open_id'] = this.data.wxUserInfo.open_id
+        //updateData['open_id'] = this.data.userInfo.open_id
         updateData['open_id'] = this.data.userInfo.open_id
         updateData['role'] = 'delegator'
         wx.request({
